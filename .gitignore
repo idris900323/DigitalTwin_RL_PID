@@ -23,7 +23,9 @@ ENV/
 *.urdf.bak
 
 # RL / experiment outputs (Stable-Baselines3, TensorBoard, W&B, etc.)
-results/
+# Note: results/ itself IS committed (small demo plots, team wants them
+# visible without regenerating) -- only future large/heavy RL run dirs are
+# ignored here.
 runs/
 wandb/
 logs/
