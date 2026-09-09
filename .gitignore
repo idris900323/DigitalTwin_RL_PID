@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyBullet
+*.bullet
+*.urdf.bak
+
+# RL / experiment outputs (Stable-Baselines3, TensorBoard, W&B, etc.)
+results/
+runs/
+wandb/
+logs/
+*.zip
+tensorboard_logs/
+
+# Note: cad/JGB37-520_converted.glb IS committed on purpose -- it's a small
+# (~500KB) required input for simulation/cad_pid_visualizer.py, not a build
+# cache. Regenerate it with cad/convert_step_to_glb.py if the source STEP
+# changes. Any *other* ad-hoc CAD exports stay untracked:
+cad/*.stl
+cad/*.obj
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+# .vscode/ intentionally NOT ignored -- shared editor settings live there.
+# If a teammate wants personal overrides, use .vscode/*.local.json patterns
+# instead of committing machine-specific settings.
+
+# Env / secrets
+.env
+*.local

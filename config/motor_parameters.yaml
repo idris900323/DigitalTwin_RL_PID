@@ -1,0 +1,103 @@
+# RMCS-3013 / RMCS-3070 Johnson Quad-Encoder Geared DC Motor
+# All values tagged with provenance in comments: DATASHEET / CALCULATED / ESTIMATED / ASSUMED
+# See datasheet/parameter_table.md for full derivation and flags.
+# All values below are SI unless a unit suffix says otherwise (kept for traceability).
+
+supply:
+  V_rated: 12.0  # V, DATASHEET
+
+gearbox:
+  ratio: 180.0  # DATASHEET
+  efficiency: 0.80  # ESTIMATED, typical small spur/planetary gearbox
+
+encoder:
+  hall_sensors: 13  # DATASHEET
+  quadrature_multiplier: 4  # DATASHEET
+  base_cpr: 52  # DATASHEET (13 * 4)
+  output_cpr: 9360  # DATASHEET (52 * 180), confirmed exact
+
+base_motor:
+  # Datasheet-stated operating points (base motor = before gearbox)
+  no_load_speed_rpm: 18000.0  # DATASHEET
+  no_load_current_A: 0.8  # DATASHEET
+  rated_torque_gcm: 151.0  # DATASHEET as printed; FLAGGED — numerically equals
+                           # (output stall torque / gear ratio) at 100% efficiency,
+                           # likely a reflected value, not an independent measurement.
+                           # Not used as an independent data point in derivations.
+  load_current_max_A: 7.5  # DATASHEET ("up to 7.5A (Max)") — NOT explicitly
+                            # confirmed to be locked-rotor stall current.
+
+  # Electrical/mechanical parameters — two independent derivation methods retained
+  # in parallel (do not collapse into a single value without justification).
+  derived:
+    method_a:
+      # Assumes load_current_max_A == stall current; gearbox eta=1 for reflection
+      description: "Stall-based: R = V/i_stall; Kt from reflected base stall torque / i_stall"
+      R_ohm: 1.6            # CALCULATED (low confidence, depends on stall-current assumption)
+      Kt_Nm_per_A: 1.974e-3 # CALCULATED (low confidence)
+      Ke_V_s_per_rad: 1.974e-3  # CALCULATED, Ke ~= Kt (ideal SI identity)
+    method_b:
+      description: "No-load-speed based: Ke = V / omega_no_load, neglects R*i_no_load drop"
+      Ke_V_s_per_rad: 6.366e-3  # CALCULATED (low confidence)
+      R_ohm: null           # not determinable by this method
+      Kt_Nm_per_A: null     # not determinable by this method
+    method_c:
+      # Hybrid: keeps method_a's R and Kt (from the stall relationship), but
+      # takes Ke from method_b's no-load-speed fit instead of forcing Ke=Kt.
+      # This is a deliberate departure from the ideal-motor identity Ke=Kt,
+      # not a silent fix -- real brushed motors' Kt/Ke can differ due to
+      # iron/brush losses, and this substitution is checked, not asserted:
+      # simulating this parameter set open-loop (no load) yields a no-load
+      # speed of ~15,968 RPM vs the datasheet's 18,000 RPM (-11%), a large
+      # improvement over method_a alone (+121% error, see
+      # simulation/simulate_motor.py). Still CALCULATED, medium confidence
+      # (better cross-check than A or B alone, but not validated against
+      # real hardware).
+      description: "Hybrid: R,Kt from method_a (stall); Ke from method_b (no-load speed)"
+      R_ohm: 1.6
+      Kt_Nm_per_A: 1.974e-3
+      Ke_V_s_per_rad: 6.366e-3
+
+  # Not derivable from the datasheet at all — order-of-magnitude placeholders only.
+  estimated:
+    L_H: 0.0              # ASSUMED negligible (electrical time constant << mechanical)
+    Jm_kgm2: 5.0e-7        # ESTIMATED, order-of-magnitude, wide uncertainty
+    Bm_Nms_per_rad: 1.0e-6 # ESTIMATED, order-of-magnitude, wide uncertainty
+
+output:
+  # Gearbox-output-side datasheet values (do not mix with base_motor values
+  # without going through gear ratio explicitly)
+  rated_speed_rpm: 100.0       # DATASHEET
+  stall_torque_kgcm: 27.18     # DATASHEET
+  rated_torque_kgcm: 12.5      # DATASHEET
+
+mass_g: 180.0  # DATASHEET
+
+mechanical_dims_mm:  # DATASHEET, from RMCS-3013 mechanical drawing
+  flange_diameter: 31.0
+  bolt_circle_diameter: 26.85
+  mounting_hole_count: 4
+  mounting_hole_spec: "M2.5x6"
+  output_shaft_diameter: 6.0
+  output_shaft_length_100rpm: 26.5
+  gearbox_body_diameter: 36.0
+  motor_body_diameter: 30.0
+  total_length: 55.50
+
+simulation:
+  # Design choices for the digital twin, not hardware specs.
+  control_loop_dt_s: 0.001  # ASSUMED, 1 kHz, configurable
+  active_electrical_scenario: "method_c"  # which derived.* block the closed-loop twin uses by default
+  theta_ref_default_deg: 90.0  # ASSUMED default step-reference target for the PID demo
+  run_duration_s: 2.0  # ASSUMED default sim window for the interactive PID demo
+
+pid_defaults:
+  # Starting gains for the interactive slider demo -- NOT tuned, just a
+  # stable-ish starting point; the whole point of the demo is that you move
+  # these. Kp in V/rad, Ki in V/(rad*s), Kd in V*s/rad.
+  Kp: 5.0
+  Ki: 20.0
+  Kd: 0.05
+  Kp_max: 50.0
+  Ki_max: 200.0
+  Kd_max: 1.0
