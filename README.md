@@ -21,8 +21,9 @@ Pandas, Matplotlib, [PyBullet](https://pybullet.org/),
 [Stable-Baselines3](https://stable-baselines3.readthedocs.io/) (+ PyTorch).
 Fixed per master prompt §1 — don't swap in MuJoCo/MATLAB/etc. without
 justifying it in a PR. CAD→mesh visualization additionally uses trimesh,
-cascadio, and pyvista (VTK) — see [Known issues](#known-issues-platform-notes)
-below for a PyBullet installation caveat on some platforms.
+cascadio, and pyvista (VTK); its interactive demo's window/controls use
+pyvistaqt + PyQt5 — see [Known issues](#known-issues-platform-notes) below
+for a PyBullet installation caveat on some platforms.
 
 ## Current status
 
@@ -89,20 +90,55 @@ PYTHONPATH=. python simulation/interactive_pid_twin.py     # matplotlib sliders,
 PYTHONPATH=. python simulation/cad_pid_visualizer.py       # 3D CAD viewer, live PID, presets
 ```
 
+`interactive_pid_twin.py` and `cad_pid_visualizer.py` also bootstrap the
+repo root onto `sys.path` themselves at import time, so you can equally just
+open either file in an editor (VS Code's Run button, `F5`, etc.) and run it
+directly — no `PYTHONPATH` needed either way. `cad_pid_visualizer.py`
+additionally needs a Qt binding installed (`pip install PyQt5`, now in
+`requirements.txt`) — `pyvistaqt`/`QtPy` only provide the glue, not a
+binding themselves.
+
 ### CAD 3D PID demo (`simulation/cad_pid_visualizer.py`)
 
-The most complete demo right now: renders the JGB37-520 CAD (motor housing
-static, output shaft + coupler rotating) via pyvista/VTK, with a rod+ball
-**arm** rigidly attached to the shaft (visualization-only — see the
-docstring in that file for why; it carries no mass/inertia in the physics)
-and three embedded live charts (angle, error, control voltage).
+The most complete demo right now: a real Qt window (pyvistaqt + PyQt5, not
+raw pyvista overlay widgets — those had no layout engine and kept
+overlapping each other/the 3D view as controls were added) split into a 3D
+view on the left, and embedded matplotlib graphs + a controls panel on the
+right. The 3D view renders the JGB37-520 CAD (motor housing static, output
+shaft + coupler rotating) with a rod+ball **arm** rigidly attached to the
+shaft so overshoot/oscillation/damping are actually visible; the camera
+re-fits itself to the arm's *current* length every time it changes
+(startup included), so it stays framed reasonably tight and the arm can
+never be lengthened out of view. The three graphs (angle, error,
+control voltage) autoscale to each run's actual data, and the angle graph
+carries two live markers: a dot tracking position along the current PID run
+(when one is playing), and a dashed line tracking the shaft's actual current
+angle at all times (including during the idle spin demo, where there's no
+PID run to show a dot for).
 
-Five buttons: **Spin (Demo)** — 0↔180° idle sweep, no physics, starts
-automatically on launch. **Run PID** — runs the closed-loop twin once using
-whatever Kp/Ki/Kd the sliders are set to at click time. Three **presets**
-(Sluggish / Oscillatory / Tuned) set gains and run immediately, chosen by
-grid-searching the model (not guessed) — see the file's docstring for the
-exact gains and measured metrics.
+The arm's **length and weight are adjustable** (drag the slider or type an
+exact value into the box next to it — every control here supports both) and
+are not purely cosmetic: both feed extra inertia (reflected through the
+gearbox, `m·L²/ratio²`) into the physics, so a heavier/longer arm visibly
+slows the PID response. Gravity sag/torque is *not* modeled (the arm's
+rotation plane is unspecified) — see the file's docstring for the exact
+assumption. Kp/Ki/Kd stay on screen; arm length/weight and the idle
+spin-demo speed live under a collapsed **"Arm / spin settings"** panel
+(click to expand) so they don't take up space when you're not using them.
+
+Two toggle buttons: **Spin (Demo)** — 0↔180° idle sweep at the slider-set
+speed, no physics, starts automatically on launch, and stops cleanly when
+unchecked (a real bug in the old overlay-widget version — unchecking it used
+to do nothing). **Run PID** — runs the closed-loop twin once using whatever
+Kp/Ki/Kd (and current arm length/weight) the controls are set to at click
+time, then live-replays it; also stops cleanly if unchecked mid-run, and
+re-runs automatically if you nudge a gain or arm slider while it's playing.
+Three **presets** (Sluggish / Oscillatory / Tuned) set gains and run
+immediately, chosen by grid-searching the model (not guessed) — see the
+file's docstring for the exact gains and measured metrics (measured at
+default arm settings; they'll drift if the arm sliders are moved far from
+default). UI text runs a size larger than Qt's small default (app font,
+chart titles/labels/ticks, status readout) for on-screen readability.
 
 ## Known issues / platform notes
 

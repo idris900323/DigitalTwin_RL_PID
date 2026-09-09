@@ -10,12 +10,19 @@ Scope (per current project decisions -- see conversation / README):
   - Not yet included: PyBullet visualization (Phase 10), real arm/payload
     (Phase 6 proper), RL (Phase 13+). This is Phases 5-9 minimally combined.
 
-Run:
-    PYTHONPATH=. python simulation/interactive_pid_twin.py
+Run: just open this file and hit Run (VS Code's play button, F5, etc.) --
+no PYTHONPATH setup needed, see the sys.path bootstrap below. Equivalent
+from a terminal: PYTHONPATH=. python simulation/interactive_pid_twin.py
 """
 
-import math
 import pathlib
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))  # lets `python simulation/this_file.py` find controllers/models/simulation
+
+import math
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,7 +37,6 @@ from models.gearbox import Gearbox, GearboxParams
 from models.joint import Joint
 from simulation.metrics import overshoot_pct, rise_time, rmse, settling_time, steady_state_error
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "config" / "motor_parameters.yaml"
 
 
@@ -39,13 +45,17 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
-def build_twin(cfg: dict, Kp: float, Ki: float, Kd: float) -> DigitalTwin:
+def build_twin(cfg: dict, Kp: float, Ki: float, Kd: float, extra_Jm_kgm2: float = 0.0) -> DigitalTwin:
+    """extra_Jm_kgm2: additional motor-side inertia (e.g. an arm/payload's
+    point-mass inertia m*L^2 reflected through the gearbox as /ratio^2),
+    added on top of the base motor's own estimated inertia. Zero by default
+    (bare shaft, this module's normal scope)."""
     scenario = cfg["simulation"]["active_electrical_scenario"]
     d = cfg["base_motor"]["derived"][scenario]
     e = cfg["base_motor"]["estimated"]
     motor = DCMotor(DCMotorParams(
         R=d["R_ohm"], L=e["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
-        Jm=e["Jm_kgm2"], Bm=e["Bm_Nms_per_rad"],
+        Jm=e["Jm_kgm2"] + extra_Jm_kgm2, Bm=e["Bm_Nms_per_rad"],
     ))
     gearbox = Gearbox(GearboxParams(ratio=cfg["gearbox"]["ratio"], efficiency=cfg["gearbox"]["efficiency"]))
     joint = Joint()  # no arm, zero external torque -- see module docstring
