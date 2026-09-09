@@ -11,6 +11,8 @@ validates methodology only.
 before contributing.** It's the canonical project spec — architecture,
 hard engineering rules (§20), and the phase order (§21) that must not be
 skipped. This README is an onboarding summary, not a replacement for it.
+See [`FILES.md`](FILES.md) for a description of what every tracked file
+in the repo actually is and does.
 
 ## Software stack
 
