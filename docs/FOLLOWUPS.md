@@ -13,7 +13,32 @@
 11. **Torque margin ignores back-EMF** (and any driver current limit), so it is an upper bound on available torque while moving; now documented in `models/feasibility.py` and in the browser banner/tooltip. A moving-state margin would need the speed profile.
 12. **Marginal band (margin 1.0-1.2) is outside the training distribution** (about 3 % of raw draws). The policy is weaker there; options: include the band in training, or add the margin as a policy feature (changes `FEATURE_VERSION`).
 
-## Proposal (not executed): the 15 MB self-contained HTML
+## Investigation: why the HTML is 15 MB (no packaging decision taken yet)
+
+The 15.76 MB page is not "a 0.5 MB GLB plus libraries". Measured by decoding the file:
+
+| Part | Size |
+|---|---|
+| Embedded CAD (`GLB_B64`, base64 of an 11.08 MB GLB) | **14.77 MB (94 %)** |
+| three.js r128 | 0.60 MB |
+| Chart.js 4.4.4 | 0.21 MB |
+| GLTFLoader + OrbitControls | 0.13 MB |
+| Application script (physics, UI, policy weights) | about 0.05 MB |
+
+The embedded GLB is **not** `cad/JGB37-520_converted.glb`: it is a different tessellation of the same STEP and the same bounding box, with **517,684 triangles versus 23,480** (22x denser). Three screws account for about 83k triangles (27.6k each versus 1.1k in the repo GLB). The repo GLB is `cascadio.step_to_glb` at its defaults (`tol_linear=0.01`, `tol_angular=0.5`), which also explains the faceted look of the Qt demo.
+
+`cascadio.step_to_glb` size by tolerance (same STEP):
+
+| tol_linear / tol_angular | GLB size | triangles | page size if embedded (about 1.0 MB for the rest) |
+|---|---|---|---|
+| 0.01 / 0.5 (repo default) | 0.54 MB | 23,480 | about 1.7 MB |
+| 0.003 / 0.2 | 1.64 MB | 82,828 | about 3.2 MB |
+| 0.001 / 0.1 | 4.69 MB | 255,506 | about 7.2 MB |
+| (current embedded, roughly 0.0005) | 11.08 MB | 517,684 | 15.8 MB |
+
+A 37 mm motor drawn in a viewport a few hundred pixels wide cannot show more than tens of thousands of triangles, so the extra 10 MB buys no visible detail. Packaging options (Git LFS, release asset, sibling files) are worth choosing only after deciding the mesh density: with the 0.003/0.2 mesh the single-file page is about 3 MB and may not need any of them.
+
+## Earlier proposal (superseded by the measurements above): packaging options
 
 | Option | Pros | Cons |
 |---|---|---|
