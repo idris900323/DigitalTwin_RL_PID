@@ -8,11 +8,15 @@ on every scenario the base supports (bare shaft, payload point mass, gravity, sp
 encoder noise in the trainer). Features that did not exist in the base (driver current limit, arm mass, friction,
 method_a/b switching, feasibility sampling) are covered by tests/test_cross_implementation.py instead.
 
-If `html/` is absent the base is read from git history (commit ffd4835); if that is unavailable the tests skip.
+The oracle is read from GIT HISTORY (`git show ffd4835:<path>`), never from the working tree, so it works on a clean
+clone and cannot be altered by editing files. `html/` (git-ignored) is only a local convenience copy that one guard
+test checks against history. If history is unavailable the tests SKIP locally but FAIL when the `CI` environment
+variable is set (CI must check out with fetch-depth: 0).
 """
 
 import importlib.util
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -35,15 +39,22 @@ SCENARIOS = json.loads((pathlib.Path(__file__).parent / "scenarios.json").read_t
 BASE_JS_SCENARIOS = [s for s in SCENARIOS if not {"current_limit_A", "params", "noise_counts"} & set(s)]
 
 
-def base_text(kind: str) -> str:
-    local, in_git = BASE_FILES[kind]
-    p = ROOT / local
-    if p.exists():
-        return p.read_text(encoding="utf-8")
-    res = subprocess.run(["git", "show", f"{BASE_COMMIT}:{in_git}"], cwd=ROOT, capture_output=True)
+def _unavailable(msg: str):
+    """Missing base history: fail on CI (misconfigured checkout), skip locally."""
+    if os.environ.get("CI"):
+        pytest.fail(msg + " -- CI must check out with fetch-depth: 0")
+    pytest.skip(msg)
+
+
+def git_show(path: str) -> bytes:
+    res = subprocess.run(["git", "show", f"{BASE_COMMIT}:{path}"], cwd=ROOT, capture_output=True)
     if res.returncode != 0:
-        pytest.skip("base code not available (no html/ folder and no git history)")
-    return res.stdout.decode("utf-8")
+        _unavailable(f"base commit {BASE_COMMIT} is not available in git history")
+    return res.stdout
+
+
+def base_text(kind: str) -> str:
+    return git_show(BASE_FILES[kind][1]).decode("utf-8")
 
 
 @pytest.fixture(scope="module")
@@ -62,12 +73,9 @@ def test_base_files_in_html_folder_are_the_originals():
     for kind, (local, in_git) in BASE_FILES.items():
         p = ROOT / local
         if not p.exists():
-            pytest.skip("html/ folder not present")
-        res = subprocess.run(["git", "show", f"{BASE_COMMIT}:{in_git}"], cwd=ROOT, capture_output=True)
-        if res.returncode != 0:
-            pytest.skip("git history not available")
+            pytest.skip("html/ folder not present (it is git-ignored and optional)")
         norm = lambda b: b.replace(b"\r\n", b"\n")
-        assert norm(p.read_bytes()) == norm(res.stdout), f"{local} differs from the base commit"
+        assert norm(p.read_bytes()) == norm(git_show(in_git)), f"{local} differs from the base commit"
 
 
 # ------------------------------------------------------------------ trainer: base vs refactored
@@ -102,9 +110,7 @@ def test_base_simulate_batch_matches_refactored(base_trainer):
 
 def test_base_policy_json_still_loads_and_gives_same_features_contract(base_trainer):
     """The base policy has the same architecture/inputs, so it still runs through the refactored forward pass."""
-    d = json.loads((ROOT / "html" / "autotune_policy_360.json").read_text()) if (ROOT / "html").exists() else None
-    if d is None:
-        pytest.skip("html/ folder not present")
+    d = json.loads(git_show("autotune_360/autotune_policy_360.json").decode("utf-8"))
     pol = T.Policy(np.random.default_rng(0))
     for k in ("W1", "b1", "W2", "b2", "W3", "b3"):
         pol.p[k] = np.array(d[k])

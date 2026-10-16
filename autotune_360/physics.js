@@ -16,6 +16,8 @@ function makeCFG(gen, scenario) {
   const name = scenario || gen.activeScenario;
   const motor = gen.scenarios[name];
   if (!motor) throw new Error('unknown or non-simulatable parameter set: ' + name);
+  // Explicit RK4 is unstable once dt exceeds ~2.8*L/R. The Python twin sub-steps; this port does not (yet), so refuse.
+  if (motor.L > 0) throw new Error('physics.js does not sub-step the electrical dynamics, so it refuses L > 0 (L = ' + motor.L + ' H); use the Python twin');
   return {
     scenario: name,
     V_rated: gen.supply.V_rated,

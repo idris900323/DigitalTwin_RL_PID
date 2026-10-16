@@ -46,6 +46,9 @@ def load_cfg(scenario=None, yaml_path=YAML_PATH):
         y = yaml.safe_load(f)
     d = y["base_motor"]["derived"][scenario or y["simulation"]["active_electrical_scenario"]]
     e = y["base_motor"]["estimated"]
+    if e["L_H"] > 0:
+        # simulate_batch uses plain RK4 with the algebraic (L = 0) current; the Python twin sub-steps for L > 0.
+        raise ValueError(f"train_autotune_360 does not model armature inductance (L_H = {e['L_H']}); set L_H: 0 or extend simulate_batch")
     return dict(V_rated=y["supply"]["V_rated"], ratio=y["gearbox"]["ratio"], eff=y["gearbox"]["efficiency"],
                 cpr=y["encoder"]["output_cpr"], R=d["R_ohm"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
                 Jm=e["Jm_kgm2"], Bm=e["Bm_Nms_per_rad"], dt=y["simulation"]["control_loop_dt_s"],

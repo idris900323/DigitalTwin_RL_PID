@@ -48,6 +48,9 @@ htmlcov/
 results/tmp/
 *.tmp
 
+# Local reference copies of the original files (the oracle reads them from git history instead)
+html/
+
 # OS
 .DS_Store
 Thumbs.db
