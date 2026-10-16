@@ -18,6 +18,33 @@ const DTRL_CONFIG = {
       "Ke": 0.006366,
       "Jm": 5e-07,
       "Bm": 1e-06
+    },
+    "method_d": {
+      "R": 1.6,
+      "L": 0.0,
+      "Kt": 0.005687137,
+      "Ke": 0.005687137,
+      "Jm": 5e-07,
+      "Bm": 2.413696e-06,
+      "eff": 0.34717
+    },
+    "method_d2": {
+      "R": 1.6,
+      "L": 0.0,
+      "Kt": 0.005687137,
+      "Ke": 0.005687137,
+      "Jm": 5e-07,
+      "Bm": 2.413696e-06,
+      "eff": 0.8
+    },
+    "method_d3": {
+      "R": 1.6,
+      "L": 0.0,
+      "Kt": 0.005687137,
+      "Ke": 0.005687137,
+      "Jm": 5e-07,
+      "Bm": 2.413696e-06,
+      "eff": 0.319325
     }
   },
   "supply": {
@@ -118,6 +145,6 @@ const DTRL_CONFIG = {
     "sensitivity_ranges.calculated_rel": "CALCULATED",
     "sensitivity_ranges.assumed_rel": "ESTIMATED"
   },
-  "yamlSha256": "688a622a465232f407f4cfaf83cc563fb86fc217c736747adaed956965036872"
+  "yamlSha256": "eeb76c687588d95e81d82ce4fcc1f6f8af4d1904d317937ebca3ee51d7cbcb27"
 };
 if (typeof module !== 'undefined' && module.exports) module.exports = DTRL_CONFIG;

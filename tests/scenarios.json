@@ -16,6 +16,8 @@
     {"id": "infeasible_2kg_15cm_gravity_90", "kp": 26.1, "ki": 191.0, "kd": 0.93, "target_deg": 90, "mass": 2.0, "length": 0.15, "gravity": true},
     {"id": "current_limit_2A", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "current_limit_A": 2.0},
     {"id": "gravity_current_limit", "kp": 30, "ki": 100, "kd": 1.0, "target_deg": 120, "mass": 0.8, "length": 0.10, "gravity": true, "current_limit_A": 4.0},
+    {"id": "method_d_tuned", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "params": "method_d"},
+    {"id": "method_d2_gravity", "kp": 30, "ki": 100, "kd": 1.0, "target_deg": 90, "mass": 0.8, "length": 0.10, "gravity": true, "params": "method_d2"},
     {"id": "method_a_legacy", "kp": 5, "ki": 20, "kd": 0.05, "target_deg": 90, "params": "method_a"}
   ]
 }

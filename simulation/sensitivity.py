@@ -93,7 +93,8 @@ def nominal(cfg: dict) -> dict:
     sc = cfg["simulation"]["active_electrical_scenario"]
     d, e = cfg["base_motor"]["derived"][sc], cfg["base_motor"]["estimated"]
     return {"V_supply": cfg["supply"]["V_rated"], "R": d["R_ohm"], "Kt": d["Kt_Nm_per_A"], "Ke": d["Ke_V_s_per_rad"],
-            "Jm": e["Jm_kgm2"], "Bm": e["Bm_Nms_per_rad"], "eta": cfg["gearbox"]["efficiency"], "L": e["L_H"],
+            "Jm": e["Jm_kgm2"], "Bm": d.get("Bm_Nms_per_rad", e["Bm_Nms_per_rad"]),
+            "eta": d.get("gearbox_efficiency", cfg["gearbox"]["efficiency"]), "L": e["L_H"],
             "delay_steps": cfg.get("driver", {}).get("delay_steps", 0)}
 
 
@@ -115,8 +116,12 @@ def perturbed_cfg(cfg: dict, values: dict) -> dict:
             e["Jm_kgm2"] = float(v)
         elif k == "Bm":
             e["Bm_Nms_per_rad"] = float(v)
+            if "Bm_Nms_per_rad" in d:
+                d["Bm_Nms_per_rad"] = float(v)
         elif k == "eta":
             c["gearbox"]["efficiency"] = float(v)
+            if "gearbox_efficiency" in d:
+                d["gearbox_efficiency"] = float(v)
         elif k == "L":
             e["L_H"] = float(v)
         elif k == "delay_steps":
