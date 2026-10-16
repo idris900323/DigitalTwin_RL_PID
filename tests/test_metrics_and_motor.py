@@ -166,3 +166,16 @@ def test_well_resolved_inductance_takes_a_single_step(monkeypatch):
     monkeypatch.setattr(m, "_rk4", lambda *a, **k: (calls.append(1), orig(*a, **k))[1])
     m.step(np.zeros(3), 1e-3, 12.0, 0.0)
     assert len(calls) == 1
+
+
+def test_too_stiff_inductance_raises_instead_of_returning_garbage():
+    m = _motor(L=1e-9)                                              # L/R = 6e-10 s -> needs far more than MAX_SUBSTEPS
+    with pytest.raises(RuntimeError, match="MAX_SUBSTEPS"):
+        m.step(np.zeros(3), 1e-3, 12.0, 0.0)
+
+
+def test_substep_cap_boundary():
+    from models.dc_motor import MAX_SUBSTEPS
+    tau_e = 1e-3 / (2.0 * MAX_SUBSTEPS)                              # exactly MAX_SUBSTEPS sub-steps at dt = 1 ms
+    ok = _motor(L=tau_e * 1.6 * 1.0001)
+    assert np.all(np.isfinite(ok.step(np.zeros(3), 1e-3, 12.0, 0.0)))
