@@ -9,13 +9,15 @@ Run from the repository root:
     python tools/generate_js_config.py --check    # exit 1 if either is out of date (used by tests/test_config_sync.py)
 
 The HTML page is a single self-contained file, so the generated config and ``physics.js`` are also copied
-between ``// <<BEGIN name>>`` / ``// <<END name>>`` markers inside it. The standalone files are the source;
-the copy inside the HTML is a build product kept in sync by this tool and checked by the tests.
+between ``// <<BEGIN name>>`` / ``// <<END name>>`` markers inside it, and ``cad/JGB37-520_converted.glb`` is embedded
+as base64 (``const GLB_B64``). The standalone files are the source; the copies inside the HTML are build products kept
+in sync by this tool and checked by the tests. (One mesh for every demo: the 83k-triangle GLB, ~3 MB page.)
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import pathlib
@@ -30,6 +32,7 @@ OUT_DIR = ROOT / "autotune_360"
 HTML_PATH = OUT_DIR / "servo_pid_visualizer_360.html"
 GENERATED = OUT_DIR / "config.generated.js"
 PHYSICS = OUT_DIR / "physics.js"
+GLB_PATH = ROOT / "cad" / "JGB37-520_converted.glb"
 
 TAGS = ("DATASHEET", "CALCULATED", "ESTIMATED", "ASSUMED", "CAD", "EXPERIMENTAL", "UNKNOWN")
 HEADER = "// GENERATED - do not edit; run `python tools/generate_js_config.py`"
@@ -109,6 +112,14 @@ def splice(html: str, name: str, content: str) -> str:
     return pat.sub(lambda m: block(name, content), html, count=1)
 
 
+def splice_glb(html: str) -> str:
+    b64 = base64.b64encode(GLB_PATH.read_bytes()).decode("ascii")
+    pat = re.compile(r'const GLB_B64 = "[A-Za-z0-9+/=]*";')
+    if not pat.search(html):
+        raise SystemExit(f"'const GLB_B64' not found in {HTML_PATH.name}")
+    return pat.sub(lambda m: f'const GLB_B64 = "{b64}";', html, count=1)
+
+
 def norm(s: str) -> str:
     return s.replace("\r\n", "\n")
 
@@ -124,7 +135,7 @@ def main(argv=None) -> int:
     with open(HTML_PATH, encoding="utf-8", newline="") as fh:
         html_old = fh.read()
     crlf = "\r\n" in html_old
-    html = splice(splice(norm(html_old), "config.generated.js", gen), "physics.js", physics)
+    html = splice_glb(splice(splice(norm(html_old), "config.generated.js", gen), "physics.js", physics))
     if crlf:
         html = html.replace("\n", "\r\n")
 

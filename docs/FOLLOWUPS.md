@@ -38,7 +38,9 @@ The embedded GLB is **not** `cad/JGB37-520_converted.glb`: it is a different tes
 
 A 37 mm motor drawn in a viewport a few hundred pixels wide cannot show more than tens of thousands of triangles, so the extra 10 MB buys no visible detail. Packaging options (Git LFS, release asset, sibling files) are worth choosing only after deciding the mesh density: with the 0.003/0.2 mesh the single-file page is about 3 MB and may not need any of them.
 
-## Earlier proposal (superseded by the measurements above): packaging options
+**Decision (Group 2 review): use the 83k-triangle mesh (`tol_linear=0.003`, `tol_angular=0.2`) everywhere.** `cad/JGB37-520_converted.glb` is regenerated at those tolerances (1.6 MB, same 11 parts and bounds), the Qt demo uses it, and `tools/generate_js_config.py` embeds the same file in the browser page, so there is one mesh and one source. The page drops from 15.8 MB to 3.2 MB, which makes Git LFS, release assets and sibling-file loading unnecessary. (The old 15 MB blobs stay in git history.) `tests/test_cad_mesh.py` pins the density, part names and bounds.
+
+## Earlier proposal (superseded by the measurements and the decision above): packaging options
 
 | Option | Pros | Cons |
 |---|---|---|
@@ -54,6 +56,9 @@ Recommendation: **C for development plus B for sharing**. C removes the embedded
 14. **PID is not bumpless for Ki changes** (integral state is the plain integral of e). Changing Ki mid-run steps the output by dKi * integral. Fine for fixed gains; the step-wise RL environment (G4) must rate-limit Ki changes or switch to storing the integral of Ki*e. Documented in `tests/test_pid.py`.
 15. **`simulation/metrics.py` mishandled negative steps** (overshoot always 0, rise time wrong). Fixed by mirroring the response; the JS metrics still assume a positive target (the page only uses 0-360 deg).
 16. **Noise is not modelled in the browser physics.** The noise scenario is Python + trainer only (documented in `tests/test_cross_implementation.py`).
+18. **Toolchain-specific reproducibility:** policy weights are byte-identical only on the same numpy/Python (see `autotune_360/README.md`); cross-platform tolerance 7.3e-4 measured by the maintainer.
+19. **Inductance:** `DCMotor.step` raises beyond `MAX_SUBSTEPS`; `physics.js` and the trainer refuse L > 0 until they sub-step.
+
 17. **Deviations from the base code in `html/`** that you may want to revisit: default gains now Tuned (base: 5/20/0.05, kept as "Legacy default"); trainer samples feasible contexts only (base: all contexts; `--include-infeasible` restores it) and uses derived child RNG streams (so retrained weights differ from the base policy, which is kept in `html/`); the HTML physics is now inlined from `physics.js` and `config.generated.js` instead of hand-written constants; the arm-length slider default is 3.0 cm (base 2.8, snapped by the browser). On every scenario the base supports, the refactored code reproduces the base to 1e-9 (`tests/test_base_code_oracle.py`).
 
 ## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)

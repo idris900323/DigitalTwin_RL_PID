@@ -122,3 +122,27 @@ def test_noise_scenario_actually_differs_from_ideal(cfg):
 def test_infeasible_scenario_really_stalls(cfg):
     sc = next(s for s in SCENARIOS if s["id"] == "infeasible_2kg_15cm_gravity_90")
     assert run_python(cfg, sc)["theta"][-1] < 60.0                       # cannot reach 90 deg: torque margin 0.72
+
+
+def test_browser_physics_and_trainer_refuse_inductance(cfg):
+    """Neither the browser physics nor the trainer sub-steps, so both must refuse L > 0 instead of going unstable."""
+    import copy
+    import tempfile
+
+    import yaml
+
+    bad = copy.deepcopy(cfg)
+    bad["base_motor"]["estimated"]["L_H"] = 1e-3
+    with tempfile.TemporaryDirectory() as d:
+        p = pathlib.Path(d) / "bad.yaml"
+        p.write_text(yaml.safe_dump(bad))
+        with pytest.raises(ValueError, match="inductance"):
+            T.load_cfg(yaml_path=p)
+    node = shutil.which("node")
+    if node:
+        gen_text = (ROOT / "autotune_360" / "config.generated.js").read_text()
+        script = ("const gen = require(%s); gen.scenarios[gen.activeScenario].L = 1e-3;"
+                  "const phys = require(%s); try { phys.makeCFG(gen); process.exit(1); } catch (e) { console.log(e.message); }"
+                  % (json.dumps(str(ROOT / "autotune_360" / "config.generated.js")), json.dumps(str(ROOT / "autotune_360" / "physics.js"))))
+        res = subprocess.run([node, "-e", script], capture_output=True, text=True)
+        assert res.returncode == 0 and "refuses L > 0" in res.stdout
