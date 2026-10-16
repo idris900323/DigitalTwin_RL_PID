@@ -1,0 +1,38 @@
+{
+  "args": {
+    "loaded": false,
+    "mc_n": 100,
+    "morris_r": 30,
+    "no_raw": false,
+    "out_dir": "results/sensitivity",
+    "seed": 0,
+    "smoke": false,
+    "stamp": false,
+    "t_end": 2.0
+  },
+  "commit": "9835824e517ef4c3bd0f813ac0b3eb8f8bc39aec",
+  "config_sha256": "688a622a465232f407f4cfaf83cc563fb86fc217c736747adaed956965036872",
+  "files_sha256": {
+    "oat_raw.csv": "142945a44c4c6f75e27b1d430a3c30a1001f7e52e2ac489162f4e60042c39842",
+    "sensitivity_keKt.csv": "c5ef77626e10382a8321695a68d208b6ee3157716bf649f7a9280240c2d30e14",
+    "sensitivity_morris.csv": "9ec4a1ada6477e3ae5b32b7c2693a768dbbedb02285e8deea63dee9617c057ae",
+    "sensitivity_morris.png": "dd657b319310ef4fb302ff2d18416148d558c871a1899fed2a09b02ae6b636f0",
+    "sensitivity_morris_samples.csv": "75c9744dd3223c272afa30c069dc7ca7ec9968276ff95bd89859e4727d74132d",
+    "sensitivity_oat.csv": "37b66f40e2927289897da4d7676b56c42561ef310b73fc55792aa18bb859a674",
+    "sensitivity_ranking.md": "641e99dd35e1e40fd405e922245f57a00dedd486f789681d7a87c997a61c96d4",
+    "sensitivity_rl_robustness.csv": "df2b79cbeec5eec89fed370b1d515b48855869fa045124845a344b0022d10e5a",
+    "sensitivity_table.md": "e704b4e74c24264a06749d0b4dea780be16cb1d81b1fd3190587257d33460cb2",
+    "sensitivity_tornado.png": "2cefea335cb5d71b4c107abb5aed4b342183df7b64a7734fb8210ed2f430966a"
+  },
+  "script": "simulation/sensitivity.py",
+  "seeds": [
+    0
+  ],
+  "software": {
+    "numpy": "2.4.2",
+    "platform": "Windows AMD64",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}

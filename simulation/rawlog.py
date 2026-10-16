@@ -125,7 +125,7 @@ def write_manifest(out_dir, *, script: str, args: dict, seeds, files: Iterable, 
         "script": script, "args": args, "seeds": list(seeds) if not isinstance(seeds, int) else [seeds],
         "commit": git_commit(), "config_sha256": config_sha256(),
         "software": {"python": platform.python_version(), "numpy": numpy.__version__, "scipy": scipy.__version__,
-                     "pyyaml": yaml.__version__},
+                     "pyyaml": yaml.__version__, "platform": platform.system() + " " + platform.machine()},
         "files_sha256": entries,
     }
     if stamp:

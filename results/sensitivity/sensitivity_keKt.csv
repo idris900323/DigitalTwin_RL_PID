@@ -1,0 +1,7 @@
+case,overshoot_pct,settle_s,iae_deg_s,peak_current_A,sse_deg
+nominal (Ke/Kt = 3.22),1.72753,0.292,13.0016,7.5,0.0105789
+Ke = Kt = Kt,23.7049,0.602,13.7928,7.5,0.00547873
+Ke = Kt = Ke,0,0.369,10.7384,7.5,0.0190973
+Ke = Kt = geometric mean,4.86548,0.322,9.03712,7.5,0.0189997
+"MC independent Ke, Kt (each +-20 %)",mean 2.251 sd 1.985,mean 0.3767 sd 0.07959,mean 13.14 sd 0.9503,mean 7.679 sd 0.9097,mean 0.009467 sd 0.006502
+"MC single shared K in [Kt, Ke] (log-uniform)",mean 7.234 sd 7.77,mean 0.3694 sd 0.117,mean 10.18 sd 1.403,mean 7.587 sd 0.9342,mean 0.01368 sd 0.005544
