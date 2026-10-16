@@ -15,6 +15,7 @@ encoder:
   quadrature_multiplier: 4  # DATASHEET
   base_cpr: 52  # DATASHEET (13 * 4)
   output_cpr: 9360  # DATASHEET (52 * 180), confirmed exact
+  noise_counts_rms: 0.0  # ASSUMED ideal encoder by default; RMS jitter in counts (the tuner trains with 1 count)
 
 base_motor:
   # Datasheet-stated operating points (base motor = before gearbox)
@@ -102,6 +103,26 @@ pid_defaults:
   Kp_max: 50.0
   Ki_max: 200.0
   Kd_max: 1.0
+
+controller:
+  derivative_filter_tau_s: 0.01  # ASSUMED, first-order filter on the PID derivative term
+
+driver:
+  # Optional motor-driver current limit. ASSUMED absent (null) because the real driver is not chosen yet.
+  # L = 0: limits the armature current exactly. L > 0: steady-state approximation (documented in digital_twin.py).
+  current_limit_A: null
+
+joint:
+  # Load model, output-shaft side. All terms ASSUMED OFF: the real values are unknown. See models/joint.py
+  # for the conventions (0 deg = hanging, thin-rod arm, point-mass payload, smooth Coulomb friction).
+  payload_mass_kg: 0.0
+  arm_length_m: 0.0
+  arm_mass_kg: 0.0          # uniform thin rod, centre of gravity at L/2
+  gravity_on: false
+  B_joint_Nms_per_rad: 0.0  # viscous friction, UNKNOWN
+  tau_coulomb_Nm: 0.0       # Coulomb friction, UNKNOWN
+  omega_eps_rad_s: 0.01     # width of the smooth sign function
+  # TODO (not implemented, no parameters yet): gearbox backlash (dead zone) and torsional compliance.
 
 feasibility:
   # Margin = available output stall torque / peak gravity holding torque on the path.

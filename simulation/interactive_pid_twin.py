@@ -29,12 +29,8 @@ import numpy as np
 import yaml
 from matplotlib.widgets import Slider
 
-from controllers.pid import PID, PIDParams
-from models.dc_motor import DCMotor, DCMotorParams
 from models.digital_twin import DigitalTwin
-from models.encoder import Encoder, EncoderParams
-from models.gearbox import Gearbox, GearboxParams
-from models.joint import Joint
+from models.factory import build_twin_from_config
 from simulation.metrics import overshoot_pct, rise_time, rmse, settling_time, steady_state_error
 
 CONFIG_PATH = ROOT / "config" / "motor_parameters.yaml"
@@ -45,24 +41,13 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
-def build_twin(cfg: dict, Kp: float, Ki: float, Kd: float, extra_Jm_kgm2: float = 0.0) -> DigitalTwin:
-    """extra_Jm_kgm2: additional motor-side inertia (e.g. an arm/payload's
-    point-mass inertia m*L^2 reflected through the gearbox as /ratio^2),
-    added on top of the base motor's own estimated inertia. Zero by default
-    (bare shaft, this module's normal scope)."""
-    scenario = cfg["simulation"]["active_electrical_scenario"]
-    d = cfg["base_motor"]["derived"][scenario]
-    e = cfg["base_motor"]["estimated"]
-    motor = DCMotor(DCMotorParams(
-        R=d["R_ohm"], L=e["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
-        Jm=e["Jm_kgm2"] + extra_Jm_kgm2, Bm=e["Bm_Nms_per_rad"],
-    ))
-    gearbox = Gearbox(GearboxParams(ratio=cfg["gearbox"]["ratio"], efficiency=cfg["gearbox"]["efficiency"]))
-    joint = Joint()  # no arm, zero external torque -- see module docstring
-    encoder = Encoder(EncoderParams(counts_per_rev=cfg["encoder"]["output_cpr"], noise_std_rad=0.0))
-    dt = cfg["simulation"]["control_loop_dt_s"]
-    pid = PID(PIDParams(Kp=Kp, Ki=Ki, Kd=Kd, dt=dt, output_min=-cfg["supply"]["V_rated"], output_max=cfg["supply"]["V_rated"]))
-    return DigitalTwin(motor=motor, gearbox=gearbox, joint=joint, encoder=encoder, pid=pid, dt=dt)
+def build_twin(cfg: dict, Kp: float, Ki: float, Kd: float, extra_Jm_kgm2: float = 0.0, **kwargs) -> DigitalTwin:
+    """Closed-loop twin from the YAML (see models/factory.py for the keyword options).
+
+    extra_Jm_kgm2: additional motor-side inertia (e.g. an arm/payload's point-mass inertia m*L^2 reflected
+    through the gearbox as /ratio^2), added on top of the base motor's own estimated inertia. Zero by default
+    (bare shaft). Prefer passing a ``joint=`` for arm/payload/gravity/friction."""
+    return build_twin_from_config(cfg, Kp, Ki, Kd, extra_Jm_kgm2=extra_Jm_kgm2, **kwargs)
 
 
 def build_figure(cfg: dict, figsize=(8, 8)):
