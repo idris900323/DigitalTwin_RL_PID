@@ -30,7 +30,7 @@ from models.motor_profile import Profile
 
 KGCM = 0.0980665
 INFLUENCE = {"Jm": 1.0, "R": 0.8, "K": 0.8, "eta": 0.5, "Bm": 0.35, "L": 0.1, "tau_c": 0.1}   # from results/sensitivity (bare + loaded)
-TIER_REL = {"datasheet": 0.05, "calculated": 0.10, "assumed": 0.30}
+TIER_REL = {"datasheet": 0.05, "calculated": 0.10, "assumed": 0.30, "measured": 0.03}
 
 
 @dataclass
@@ -108,9 +108,16 @@ def derive_model(profile: Profile, answers: Optional[Dict[str, str]] = None) -> 
     tau_s_meaning = answers.get("stall_torque") or (tau_s_f or {}).get("meaning", "unknown")
     params: Dict[str, Interval] = {}
 
+    def tier_of(path, default="datasheet"):
+        """Interval tier from the field's provenance ('measured' fields are narrower) and its own ``uncertainty_rel`` if given."""
+        f = P.field(path) or {}
+        prov = f.get("provenance", default)
+        return (prov if prov in TIER_REL else ("assumed" if prov == "user" else default)), f.get("uncertainty_rel")
+
     # ---------------- R
     if Rw is not None:
-        params["R"] = _iv(Rw, "datasheet", "stated winding resistance", "high")
+        t, r_rel = tier_of("electrical.winding_resistance")
+        params["R"] = _iv(Rw, t, "stated winding resistance" if t != "measured" else "measured winding resistance", "high", rel=r_rel)
         log.append(f"R = {Rw:.4g} ohm (stated)")
         if Is is not None and Is_meaning in ("stall", "unknown"):
             r_is = V / Is
@@ -157,8 +164,18 @@ def derive_model(profile: Profile, answers: Optional[Dict[str, str]] = None) -> 
     lo, hi = min(vals) * 0.95, max(vals) * 1.05
     spread = max(vals) / min(vals)
     tier = "datasheet" if explicit else "calculated"
-    params["K"] = Interval(K, min(K * 0.92, lo), max(K * 1.08, hi), tier, "medium" if spread < 1.15 else "low",
-                           "; ".join(f"{k} = {v:.4g}" for k, v in sources.items()))
+    measured_k = [p for p in ("constants.torque_constant", "constants.back_emf_constant") if (P.field(p) or {}).get("provenance") == "measured"]
+    if len(measured_k) == 2 and Kt_s is not None and Ke_s is not None:
+        # both constants MEASURED: keep them separate (an identified motor need not satisfy Ke = Kt exactly) and trust them over the datasheet
+        rel_t, rel_e = tier_of("constants.torque_constant")[1], tier_of("constants.back_emf_constant")[1]
+        params["Kt"] = _iv(Kt_s, "measured", "measured torque constant", "high", rel=rel_t)
+        params["Ke"] = _iv(Ke_s, "measured", "measured back-EMF constant", "high", rel=rel_e)
+        params["K"] = Interval(Kt_s, min(params["Kt"].lo, params["Ke"].lo), max(params["Kt"].hi, params["Ke"].hi), "measured", "high", "measured Kt and Ke")
+        lo, hi, spread = K * 0.99, K * 1.01, 1.0
+        K = Kt_s
+    else:
+        params["K"] = Interval(K, min(K * 0.92, lo), max(K * 1.08, hi), tier, "medium" if spread < 1.15 else "low",
+                               "; ".join(f"{k} = {v:.4g}" for k, v in sources.items()))
     for k, v in sources.items():
         log.append(f"K from {k}: {v:.5g} V.s/rad")
     if spread > 1.15:
@@ -199,7 +216,8 @@ def derive_model(profile: Profile, answers: Optional[Dict[str, str]] = None) -> 
     Bm_s = P.si("mechanical.viscous_friction")
     tc_s = P.si("mechanical.coulomb_friction")
     if Bm_s is not None:
-        params["Bm"] = _iv(Bm_s, "datasheet" if P.field("mechanical.viscous_friction")["provenance"] == "datasheet" else "assumed", "stated", rel=0.3)
+        t, b_rel = tier_of("mechanical.viscous_friction", "assumed")
+        params["Bm"] = _iv(Bm_s, t, "stated" if t != "measured" else "measured", rel=b_rel if b_rel is not None else (0.3 if t != "measured" else None))
     elif I0 is not None:
         Bm = K * I0 / w0
         params["Bm"] = Interval(Bm, 0.1 * Bm, Bm, "calculated", "low", "K*I0/w0: all of the no-load current as viscous friction (upper bound)")
@@ -214,10 +232,13 @@ def derive_model(profile: Profile, answers: Optional[Dict[str, str]] = None) -> 
     Jm_s = P.si("mechanical.rotor_inertia")
     mass = P.si("mechanical.mass")
     if Jm_s is not None:
-        tier = "datasheet" if P.field("mechanical.rotor_inertia")["provenance"] == "datasheet" else "assumed"
-        params["Jm"] = _iv(Jm_s, tier, "stated rotor inertia", "medium" if tier == "datasheet" else "low", rel=0.1 if tier == "datasheet" else 2.0 / 3.0)
-        if tier == "assumed":
-            params["Jm"].lo, params["Jm"].hi = Jm_s / 3.0, Jm_s * 3.0
+        tier, j_rel = tier_of("mechanical.rotor_inertia", "assumed")
+        if tier == "measured":
+            params["Jm"] = _iv(Jm_s, "measured", "measured rotor inertia", "high", rel=j_rel)
+        else:
+            params["Jm"] = _iv(Jm_s, tier, "stated rotor inertia", "medium" if tier == "datasheet" else "low", rel=0.1 if tier == "datasheet" else 2.0 / 3.0)
+            if tier == "assumed":
+                params["Jm"].lo, params["Jm"].hi = Jm_s / 3.0, Jm_s * 3.0
     elif mass is not None:
         D = (mass / 6000.0 / 1.178) ** (1.0 / 3.0)                      # motor body as a cylinder, L = 1.5 D, mean density 6000 kg/m3
         Jm = 0.5 * (0.3 * mass) * (0.6 * D / 2.0) ** 2                  # rotor: 30 % of the mass at 60 % of the body radius
@@ -262,7 +283,8 @@ def to_config(model: DerivedModel, base_cfg: dict) -> dict:
     if model.out_counts_per_rev:
         c["encoder"]["output_cpr"] = model.out_counts_per_rev
     c["base_motor"]["derived"]["derived"] = {"description": f"derived from motor profile {model.motor_id}", "R_ohm": p["R"].value,
-                                              "Kt_Nm_per_A": p["K"].value, "Ke_V_s_per_rad": p["K"].value}
+                                              "Kt_Nm_per_A": (p["Kt"] if "Kt" in p else p["K"]).value,
+                                              "Ke_V_s_per_rad": (p["Ke"] if "Ke" in p else p["K"]).value}
     est = c["base_motor"]["estimated"]
     est["L_H"], est["Jm_kgm2"], est["Bm_Nms_per_rad"] = p["L"].value, p["Jm"].value, p["Bm"].value
     c["simulation"]["active_electrical_scenario"] = "derived"
