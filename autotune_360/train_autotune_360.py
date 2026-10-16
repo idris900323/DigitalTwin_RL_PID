@@ -106,7 +106,7 @@ class Policy:
         s = lambda a, b: rng.normal(0, np.sqrt(1.0 / a), (a, b))
         self.p = dict(W1=s(8, hidden), b1=np.zeros(hidden), W2=s(hidden, hidden), b2=np.zeros(hidden),
                       W3=s(hidden, 3) * 0.1,
-                      b3=np.array([0.0, 0.83, -0.69]),                     # start near the default gains (5, 20, 0.05)
+                      b3=np.array([0.0, 0.83, -0.69]),                     # start near the legacy default gains (5, 20, 0.05)
                       logstd=np.full(3, np.log(0.5)))
         self.m = {k: np.zeros_like(v) for k, v in self.p.items()}; self.v = {k: np.zeros_like(v) for k, v in self.p.items()}; self.t = 0
 
@@ -168,7 +168,7 @@ def evaluate(pol, n=1000, seed=123):
         th, V = simulate_batch(G[:, 0], G[:, 1], G[:, 2], m, L, g, v, R)
         return step_cost(th, V, v, R), th
     rows = {"RL auto-tune": policy_gains(pol, m, L, g, v, R),
-            "default 5/20/0.05": np.tile([5, 20, 0.05], (n, 1)),
+            "Legacy default 5/20/0.05": np.tile([5, 20, 0.05], (n, 1)),
             "'Tuned' preset 15/0/0.3": np.tile([15, 0, 0.3], (n, 1))}
     print(f"\nHeld-out payloads + random targets 5-360 deg (n={n}):  mean cost | share within 2% of target at the end")
     for name, G in rows.items():

@@ -139,6 +139,7 @@ PRESETS = {
     "sluggish": dict(Kp=1.5, Ki=0.0, Kd=0.0),
     "oscillatory": dict(Kp=45.0, Ki=0.0, Kd=0.0),
     "tuned": dict(Kp=15.0, Ki=0.0, Kd=0.3),
+    "legacy_default": dict(Kp=5.0, Ki=20.0, Kd=0.05),  # old default: ~42 % overshoot, kept for comparison
 }
 
 
@@ -408,7 +409,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addWidget(preset_label)
         preset_row = QtWidgets.QHBoxLayout()
         preset_row.setSpacing(8)
-        for name, label in (("sluggish", "Sluggish"), ("oscillatory", "Oscillatory"), ("tuned", "Tuned")):
+        for name, label in (("sluggish", "Sluggish"), ("oscillatory", "Oscillatory"), ("tuned", "Tuned"), ("legacy_default", "Legacy default")):
             b = QtWidgets.QPushButton(label)
             b.setMinimumHeight(30)
             b.clicked.connect(lambda _checked=False, n=name: self._apply_preset(n))
