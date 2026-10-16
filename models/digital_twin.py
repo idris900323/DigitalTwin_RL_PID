@@ -15,6 +15,7 @@ No PyBullet in this loop (Phase 10, not yet implemented) -- pure Python ODE
 stepping; visualization is matplotlib-based (see simulation/).
 """
 
+from collections import deque
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -35,11 +36,15 @@ class TwinState:
 
 class DigitalTwin:
     def __init__(self, motor: DCMotor, gearbox: Gearbox, joint: Joint, encoder: Encoder, pid: PID, dt: float,
-                 current_limit_A: Optional[float] = None):
+                 current_limit_A: Optional[float] = None, delay_steps: int = 0):
         """``current_limit_A``: optional driver current limit [A] (None = no limit, the default).
         The voltage actually applied is clamped to [Ke*omega - R*I_lim, Ke*omega + R*I_lim], which limits the
         armature current exactly when L = 0 and approximately (steady-state bound) when L > 0."""
         self.current_limit_A = current_limit_A
+        # Pure command latency (driver/communication dead time) in control samples: the voltage computed at step k
+        # reaches the motor at step k + delay_steps (the buffer starts at 0 V). 0 = none (the default).
+        self.delay_steps = int(delay_steps)
+        self._v_buffer = deque([0.0] * self.delay_steps)
         self.motor = motor
         self.gearbox = gearbox
         self.joint = joint
@@ -51,6 +56,7 @@ class DigitalTwin:
     def reset(self):
         self.state = TwinState()
         self.pid.reset()
+        self._v_buffer = deque([0.0] * self.delay_steps)
 
     def step(self, theta_ref: float) -> dict:
         t = self.state.t
@@ -64,10 +70,13 @@ class DigitalTwin:
         V_cmd = self.pid.step(error)
 
         V_applied = V_cmd
+        if self.delay_steps > 0:
+            self._v_buffer.append(V_cmd)
+            V_applied = self._v_buffer.popleft()
         if self.current_limit_A is not None:
             p = self.motor.p
             lo, hi = p.Ke * omega_m - p.R * self.current_limit_A, p.Ke * omega_m + p.R * self.current_limit_A
-            V_applied = min(max(V_cmd, lo), hi)
+            V_applied = min(max(V_applied, lo), hi)
 
         tau_out = self.joint.external_torque(t, theta_out_true, omega_out_true)
         tau_load_motor = self.gearbox.reflect_load_torque_to_motor(tau_out)

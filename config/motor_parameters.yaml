@@ -111,6 +111,7 @@ driver:
   # Optional motor-driver current limit. ASSUMED absent (null) because the real driver is not chosen yet.
   # L = 0: limits the armature current exactly. L > 0: steady-state approximation (documented in digital_twin.py).
   current_limit_A: null
+  delay_steps: 0  # ASSUMED none; command latency in control samples (driver/communication dead time)
 
 joint:
   # Load model, output-shaft side. All terms ASSUMED OFF: the real values are unknown. See models/joint.py
@@ -128,6 +129,23 @@ feasibility:
   # Margin = available output stall torque / peak gravity holding torque on the path.
   # Below 1.0 the payload cannot be driven to the target; below this value it is "marginal".
   marginal_margin: 1.2  # ASSUMED, design choice
+
+# Parameter ranges for the sensitivity study (simulation/sensitivity.py), set by provenance confidence.
+sensitivity_ranges:
+  datasheet_rel: 0.05             # DATASHEET values: +-5 %
+  calculated_rel: 0.20            # CALCULATED values: +-20 %
+  assumed_rel: 0.50               # ASSUMED / ESTIMATED values: +-50 %
+  order_of_magnitude_factor: 3.0  # Jm, Bm are order-of-magnitude placeholders: [nominal/3, nominal*3], log-uniform
+  parameters:
+    V_supply: {tier: datasheet}
+    R: {tier: calculated}
+    Kt: {tier: calculated}
+    Ke: {tier: calculated}
+    Jm: {tier: order_of_magnitude}
+    Bm: {tier: order_of_magnitude}
+    eta: {tier: assumed, clip: [0.2, 1.0]}
+    L: {tier: absolute, min: 1.0e-4, max: 5.0e-3}   # H; nominal is 0 (neglected), so an absolute range is used
+    delay_steps: {tier: integer, min: 0, max: 3}     # control samples
 
 # Master prompt s15 test sequence (simulation/simulate_pid.py): low P -> higher P -> P+D -> P+I -> full PID,
 # plus the legacy default for context. Gains are CALCULATED/preliminary (found on the method_c twin).
