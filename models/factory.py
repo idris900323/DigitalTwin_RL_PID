@@ -31,6 +31,7 @@ def build_twin_from_config(
     dt: Optional[float] = None,
     extra_Jm_kgm2: float = 0.0,
     current_limit_A=_UNSET,
+    delay_steps=_UNSET,
 ) -> DigitalTwin:
     """Closed-loop twin for one scenario.
 
@@ -40,6 +41,7 @@ def build_twin_from_config(
     noise_counts    RMS encoder jitter in counts; default = YAML ``encoder.noise_counts_rms`` (0)
     extra_Jm_kgm2   additional motor-side inertia, on top of the joint's reflected inertia
     current_limit_A optional driver current limit; default = YAML ``driver.current_limit_A`` (None)
+    delay_steps     command latency in control samples; default = YAML ``driver.delay_steps`` (0)
     """
     scenario = scenario or cfg["simulation"]["active_electrical_scenario"]
     d = cfg["base_motor"]["derived"][scenario]
@@ -52,6 +54,9 @@ def build_twin_from_config(
     if current_limit_A is _UNSET:
         current_limit_A = cfg.get("driver", {}).get("current_limit_A")
 
+    if delay_steps is _UNSET:
+        delay_steps = cfg.get("driver", {}).get("delay_steps", 0)
+
     motor = DCMotor(DCMotorParams(
         R=d["R_ohm"], L=e["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
         Jm=e["Jm_kgm2"] + extra_Jm_kgm2 + joint.reflected_inertia(ratio), Bm=e["Bm_Nms_per_rad"]))
@@ -62,4 +67,4 @@ def build_twin_from_config(
     pid = PID(PIDParams(Kp=Kp, Ki=Ki, Kd=Kd, dt=dt, output_min=-vmax, output_max=vmax,
                         derivative_filter_tau=cfg.get("controller", {}).get("derivative_filter_tau_s", 0.01)))
     return DigitalTwin(motor=motor, gearbox=gearbox, joint=joint, encoder=encoder, pid=pid, dt=dt,
-                       current_limit_A=current_limit_A)
+                       current_limit_A=current_limit_A, delay_steps=delay_steps)
