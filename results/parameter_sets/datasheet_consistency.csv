@@ -1,0 +1,6 @@
+set,no_load_rpm,no_load_current_A,stall_current_A,stall_torque_out_kgcm,rated_torque_out_kgcm,Ke_over_Kt,eta,Bm
+method_a,41152.8,2.18314,7.5,21.7395,10.8698,1,0.8,1e-06
+method_c,15967.5,0.84707,7.5,21.7395,10.8698,3.22492,0.8,1e-06
+method_d,18000,0.8,7.5,27.18,13.59,1,0.34717,2.4137e-06
+method_d2,18000,0.8,7.5,62.6321,31.316,1,0.8,2.4137e-06
+method_d3,18000,0.8,7.5,25,12.5,1,0.319325,2.4137e-06

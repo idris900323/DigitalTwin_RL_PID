@@ -1,0 +1,6 @@
+set,overshoot_pct,settle_s,sse_deg,peak_current_A,torque_margin,status
+method_a,6.19736,,-19.7758,7.5,2.17321,ok
+method_c,0,,-19.8271,7.5,2.17321,ok
+method_d,0,,-16.2115,7.5,2.71707,ok
+method_d2,0,,-7.2502,7.5,6.26107,ok
+method_d3,0,,-17.4811,7.5,2.49914,ok

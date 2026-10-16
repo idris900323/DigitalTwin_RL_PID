@@ -21,7 +21,7 @@ function makeCFG(gen, scenario) {
   return {
     scenario: name,
     V_rated: gen.supply.V_rated,
-    gearboxRatio: gen.gearbox.ratio, gearboxEff: gen.gearbox.efficiency,
+    gearboxRatio: gen.gearbox.ratio, gearboxEff: motor.eff !== undefined ? motor.eff : gen.gearbox.efficiency,
     encoderCPR: gen.encoder.cpr,
     motor: Object.assign({}, motor),
     dt: gen.simulation.dt, duration: gen.simulation.durationS, thetaRefDeg: gen.simulation.thetaRefDefaultDeg,

@@ -74,8 +74,9 @@ def feasibility(cfg: dict, payload_mass_kg: float, arm_length_m: float, target_d
     """Feasibility for one case from the YAML config (active scenario by default)."""
     scenario = scenario or cfg["simulation"]["active_electrical_scenario"]
     d = cfg["base_motor"]["derived"][scenario]
+    eta = d.get("gearbox_efficiency", cfg["gearbox"]["efficiency"])
     tau_avail = available_torque(d["Kt_Nm_per_A"], d["R_ohm"], cfg["gearbox"]["ratio"],
-                                 cfg["gearbox"]["efficiency"], cfg["supply"]["V_rated"], v_pct,
+                                 eta, cfg["supply"]["V_rated"], v_pct,
                                  cfg.get("driver", {}).get("current_limit_A"))
     marginal = cfg.get("feasibility", {}).get("marginal_margin", 1.2)
     out = feasibility_arrays(tau_avail, payload_mass_kg, arm_length_m, target_deg, 1.0 if gravity else 0.0,

@@ -59,8 +59,9 @@ def build_twin_from_config(
 
     motor = DCMotor(DCMotorParams(
         R=d["R_ohm"], L=e["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
-        Jm=e["Jm_kgm2"] + extra_Jm_kgm2 + joint.reflected_inertia(ratio), Bm=e["Bm_Nms_per_rad"]))
-    gearbox = Gearbox(GearboxParams(ratio=ratio, efficiency=cfg["gearbox"]["efficiency"]))
+        Jm=e["Jm_kgm2"] + extra_Jm_kgm2 + joint.reflected_inertia(ratio), Bm=d.get("Bm_Nms_per_rad", e["Bm_Nms_per_rad"])))
+    # an alternative parameter set may carry its own Bm and gearbox efficiency (method_d*); the active sets use the global ones
+    gearbox = Gearbox(GearboxParams(ratio=ratio, efficiency=d.get("gearbox_efficiency", cfg["gearbox"]["efficiency"])))
     encoder = Encoder(EncoderParams(counts_per_rev=cpr, noise_std_rad=noise * 2.0 * math.pi / cpr),
                       np.random.default_rng(seed))
     vmax = cfg["supply"]["V_rated"] * v_pct / 100.0

@@ -68,8 +68,11 @@ def build_config(yaml_text: str) -> dict:
         d = scen[s]
         if d.get("R_ohm") is None or d.get("Kt_Nm_per_A") is None:
             return None  # method_b cannot be simulated (no R, Kt); keep it out of the browser
-        return dict(R=d["R_ohm"], L=est["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
-                    Jm=est["Jm_kgm2"], Bm=est["Bm_Nms_per_rad"])
+        out = dict(R=d["R_ohm"], L=est["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
+                   Jm=est["Jm_kgm2"], Bm=d.get("Bm_Nms_per_rad", est["Bm_Nms_per_rad"]))
+        if "gearbox_efficiency" in d:
+            out["eff"] = d["gearbox_efficiency"]          # alternative sets carry their own efficiency
+        return out
 
     j = cfg.get("joint", {})
     return {

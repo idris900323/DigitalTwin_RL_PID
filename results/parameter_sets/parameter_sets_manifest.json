@@ -1,0 +1,26 @@
+{
+  "args": {
+    "out_dir": "parameter_sets"
+  },
+  "commit": "1b2740e9b2d61d506dc8c2a67db5e8d17a9b639d",
+  "config_sha256": "eeb76c687588d95e81d82ce4fcc1f6f8af4d1904d317937ebca3ee51d7cbcb27",
+  "files_sha256": {
+    "closed_loop_by_set.csv": "1825f1280d0d4c1ca0048c735562b541ac00319b0b1049c660c3318834847153",
+    "closed_loop_by_set.md": "6b6371f2986cae9ad40f072a38f4287d9310e20d08c7bf312bfec0be53aaaf34",
+    "closed_loop_loaded_by_set.csv": "09c70b4c8e8858626029906ce25fb265f302c21a4977c8a2376251e29cf66a21",
+    "datasheet_consistency.csv": "b09e9cd7953c66e99d4d309cc97eff32ca85b8dbcd4d8de161dd3c59e545269d",
+    "fig_closed_loop_by_set.png": "390baedd03c7bdcb04910351c216ab7906fd633eb0c0d930c6734bde525ef47a",
+    "fig_datasheet_consistency.png": "1c48171727709a4323d9e0a51c017e6265d72cda3d518b52b3d4a8b47ce1477a"
+  },
+  "script": "simulation/compare_parameter_sets.py",
+  "seeds": [
+    0
+  ],
+  "software": {
+    "numpy": "2.4.2",
+    "platform": "Windows AMD64",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}
