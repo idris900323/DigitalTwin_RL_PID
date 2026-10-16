@@ -40,15 +40,25 @@ class DCMotor:
     def __init__(self, params: DCMotorParams):
         self.p = params
 
+    def current(self, state: np.ndarray, V: float) -> float:
+        """Armature current [A] at ``state`` under applied voltage ``V``.
+
+        L > 0: the current is a state variable, so this returns ``state[0]``.
+        L = 0 (ASSUMED, see config): electrical dynamics collapse to the
+        algebraic relation ``i = (V - Ke*omega_m) / R``, which is *not* stored
+        in the state vector -- use this method to read it.
+        """
+        if self.p.L > 0.0:
+            return float(state[0])
+        return float((V - self.p.Ke * state[1]) / self.p.R)
+
     def derivatives(self, t: float, state: np.ndarray, V: float, tau_load: float) -> np.ndarray:
-        i, omega_m, _theta_m = state
+        _i, omega_m, _theta_m = state
         p = self.p
+        i = self.current(state, V)
         if p.L > 0.0:
             di_dt = (V - p.R * i - p.Ke * omega_m) / p.L
         else:
-            # L assumed negligible (ASSUMED, see config): electrical dynamics
-            # collapse to the algebraic relation i = (V - Ke*omega_m) / R.
-            i = (V - p.Ke * omega_m) / p.R
             di_dt = 0.0
         domega_dt = (p.Kt * i - p.Bm * omega_m - tau_load) / p.Jm
         dtheta_dt = omega_m
