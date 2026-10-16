@@ -68,8 +68,8 @@ FIELDS: Dict[str, tuple] = {
     "electrical.stall_current": ("current", False, (1e-3, 1000.0)),
     "electrical.current_limit": ("current", False, (1e-3, 1000.0)),
     "mechanical.no_load_speed": ("speed", True, (1e-3, 2000.0 * 1000 * RPM)),
-    "mechanical.stall_torque": ("torque", True, (1e-6, 1e4)),
-    "mechanical.rated_torque": ("torque", True, (1e-6, 1e4)),
+    "mechanical.stall_torque": ("torque", True, (1e-6, 1e3)),
+    "mechanical.rated_torque": ("torque", True, (1e-6, 1e3)),
     "mechanical.motor_rated_torque": ("torque", True, (1e-6, 1e4)),
     "mechanical.rated_speed": ("speed", True, (1e-3, 2000.0 * 1000 * RPM)),
     "mechanical.rotor_inertia": ("inertia", False, (1e-12, 10.0)),
@@ -195,6 +195,11 @@ def validate_profile(data: dict) -> None:
         for k in ("mounted_on", "quadrature_included"):
             if _get(data, f"feedback.{k}") is None:
                 raise ProfileError(f"feedback.{k}: required when counts_per_rev is given")
+    ts, ms = _get(data, "mechanical.stall_torque"), _get(data, "mechanical.mass")
+    if ts and ms and ts.get("shaft") == "output":
+        density = to_si("mechanical.stall_torque", ts) / to_si("mechanical.mass", ms)
+        if density > 100.0:
+            raise ProfileError(f"mechanical.stall_torque: {density:.0f} N.m per kg of motor mass is implausible; check the torque unit (g.cm versus kg.cm?)")
     vmin, vmax = to_si("electrical.voltage_min", _get(data, "electrical.voltage_min")) if _get(data, "electrical.voltage_min") else None, \
         to_si("electrical.voltage_max", _get(data, "electrical.voltage_max")) if _get(data, "electrical.voltage_max") else None
     if vmin is not None and vmax is not None and vmin > vmax:

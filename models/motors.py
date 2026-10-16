@@ -8,7 +8,6 @@ the twin factory and the trainer's batch simulator work unchanged.
 
 from __future__ import annotations
 
-import pathlib
 from typing import Optional
 
 import yaml
@@ -39,6 +38,15 @@ def get_cfg(motor_id: str = DEFAULT_MOTOR, answers: Optional[dict] = None, base_
         cfg["motor_id"] = motor_id
         return cfg
     return to_config(derive_model(prof, answers), base)
+
+
+def motor_from_argv(argv=None) -> str:
+    """Peek at ``--motor`` before the full parser runs (some defaults come from the config, which depends on the motor)."""
+    import argparse
+
+    pre = argparse.ArgumentParser(add_help=False)
+    pre.add_argument("--motor", default=DEFAULT_MOTOR)
+    return pre.parse_known_args(argv)[0].motor
 
 
 def add_motor_argument(parser) -> None:

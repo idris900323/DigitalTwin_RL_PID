@@ -146,8 +146,10 @@ def build_figure(cfg: dict, figsize=(8, 8)):
     return fig, (s_kp, s_ki, s_kd), axes, metrics_text
 
 
-def main():
-    cfg = load_config()
+def main(argv=None):
+    from models.motors import get_cfg, motor_from_argv
+
+    cfg = get_cfg(motor_from_argv(argv))
     build_figure(cfg)
     plt.show()
 

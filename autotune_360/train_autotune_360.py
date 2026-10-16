@@ -42,6 +42,7 @@ ROOT = HERE.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from models.feasibility import available_torque, feasibility_arrays  # noqa: E402
+from models.motors import DEFAULT_MOTOR, get_cfg  # noqa: E402
 
 FEATURE_VERSION = 1      # bump if features() changes: the browser page must be updated to match
 
@@ -217,6 +218,21 @@ class Policy:
 # ------------------------------------------------------------------ training
 ADAM = dict(beta1=0.9, beta2=0.999, eps=1e-8)   # as hard-coded in Policy.adam_ascent
 
+def use_motor(motor_id):
+    """Re-point the batch simulator at another motor profile (mutates CFG and the gain bounds in place)."""
+    cfg = get_cfg(motor_id)
+    d = cfg["base_motor"]["derived"][cfg["simulation"]["active_electrical_scenario"]]
+    e = cfg["base_motor"]["estimated"]
+    if e["L_H"] > 0:
+        raise ValueError("train_autotune_360 does not model armature inductance")
+    scale = cfg["supply"]["V_rated"] / 12.0
+    CFG.update(V_rated=cfg["supply"]["V_rated"], ratio=cfg["gearbox"]["ratio"], eff=cfg["gearbox"]["efficiency"],
+               cpr=cfg["encoder"]["output_cpr"], R=d["R_ohm"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"], Jm=e["Jm_kgm2"],
+               Bm=e["Bm_Nms_per_rad"])
+    LO[:] = np.array([0.5, 0.1, 0.005]) * scale
+    HI[:] = np.array([50.0, 200.0, 5.0]) * scale
+
+
 def child_rngs(seed, names=("init", "context", "action", "noise")):
     """One independent Generator per purpose, derived from a single seed (results don't depend on call order)."""
     kids = np.random.SeedSequence(seed).spawn(len(names))
@@ -325,8 +341,14 @@ def main(argv=None):
     ap.add_argument("--samples", type=int, default=8, help="gain samples per context")
     ap.add_argument("--lr", type=float, default=3e-3)
     ap.add_argument("--include-infeasible", action="store_true", help="also train on torque-infeasible contexts (not recommended)")
-    ap.add_argument("--out", default=str(HERE / "autotune_policy_360.json"), help="policy JSON path (meta goes next to it)")
+    ap.add_argument("--out", default=None, help="policy JSON path (meta goes next to it); default autotune_policy_360.json, or autotune_policy_<motor>.json")
+    ap.add_argument("--motor", default=DEFAULT_MOTOR, help="motor profile in motors/ (default: the reference RMCS-3070). "
+                    "Gain bounds are scaled by V_rated/12 V; payload ranges stay those of the reference arm")
     a = ap.parse_args(argv)
+    if a.motor != DEFAULT_MOTOR:
+        use_motor(a.motor)
+    if a.out is None:
+        a.out = str(HERE / ("autotune_policy_360.json" if a.motor == DEFAULT_MOTOR else f"autotune_policy_{a.motor}.json"))
     t0 = time.time()
     print(f"seed={a.seed} iters={a.iters} contexts={a.contexts} samples={a.samples} lr={a.lr} "
           f"feasible_only={not a.include_infeasible}")

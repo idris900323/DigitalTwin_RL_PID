@@ -39,6 +39,7 @@ import yaml  # noqa: E402
 
 from models.factory import build_twin_from_config  # noqa: E402
 from models.joint import Joint, JointParams  # noqa: E402
+from models.motors import add_motor_argument, get_cfg, motor_from_argv  # noqa: E402
 from simulation import plotstyle, rawlog  # noqa: E402
 from simulation.metrics import METRIC_NAMES, all_metrics  # noqa: E402
 
@@ -177,6 +178,7 @@ def write_outputs(out_dir, cases, results, logs, args, cfg):
 
 def build_parser(cfg):
     ap = argparse.ArgumentParser(description="Fixed-PID test sequence on the preliminary digital twin.")
+    add_motor_argument(ap)
     ap.add_argument("--target-deg", type=float, default=cfg["simulation"]["theta_ref_default_deg"])
     ap.add_argument("--t-end", type=float, default=cfg["simulation"]["run_duration_s"])
     ap.add_argument("--dt", type=float, default=cfg["simulation"]["control_loop_dt_s"])
@@ -192,7 +194,7 @@ def build_parser(cfg):
 
 
 def main(argv=None):
-    cfg = load_config()
+    cfg = get_cfg(motor_from_argv(argv))
     args = build_parser(cfg).parse_args(argv)
     cases = [(c["name"], (c["Kp"], c["Ki"], c["Kd"])) for c in cfg["pid_test_sequence"]]
     joint = Joint(JointParams(payload_mass_kg=args.arm_mass, arm_length_m=args.arm_length, gravity_on=args.gravity))

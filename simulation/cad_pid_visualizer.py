@@ -95,7 +95,7 @@ from pyvistaqt import QtInteractor
 
 from models.feasibility import describe, feasibility, warn_if_infeasible
 from models.joint import Joint, JointParams
-from simulation.interactive_pid_twin import build_twin, load_config
+from simulation.interactive_pid_twin import build_twin
 from simulation.metrics import overshoot_pct, rise_time, settling_time, steady_state_error
 
 matplotlib.rcParams.update({
@@ -575,8 +575,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.run_idx += PLAYBACK_STRIDE
 
 
-def main():
-    cfg = load_config()
+def main(argv=None):
+    from models.motors import get_cfg, motor_from_argv
+
+    cfg = get_cfg(motor_from_argv(argv))
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
     font = app.font()
     font.setPointSizeF(10.5)

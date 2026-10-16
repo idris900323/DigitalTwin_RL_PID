@@ -53,8 +53,8 @@ class DerivedModel:
     params: Dict[str, Interval]
     conflicts: List[dict] = field(default_factory=list)
     trail: List[str] = field(default_factory=list)
-    ratio: float = 1.0
-    output_cpr: int = 0
+    gear_ratio: float = 1.0
+    out_counts_per_rev: int = 0
     V: float = 0.0
     notes: List[str] = field(default_factory=list)
 
@@ -72,7 +72,7 @@ class DerivedModel:
         return "\n".join(lines)
 
     def to_dict(self) -> dict:
-        return {"motor_id": self.motor_id, "ratio": self.ratio, "output_cpr": self.output_cpr, "V": self.V,
+        return {"motor_id": self.motor_id, "gear_ratio": self.gear_ratio, "out_counts_per_rev": self.out_counts_per_rev, "V": self.V,
                 "params": {k: vars(v) for k, v in self.params.items()}, "conflicts": self.conflicts, "trail": self.trail,
                 "least_certain": self.least_certain(), "notes": self.notes}
 
@@ -224,7 +224,7 @@ def derive_model(profile: Profile, answers: Optional[Dict[str, str]] = None) -> 
         params["Jm"] = Interval(Jm, Jm / 3.0, Jm * 3.0, "assumed", "low", "rotor-cylinder approximation from the motor mass")
         log.append(f"Jm = 0.5*(0.3 m)*(0.6 r)^2 = {Jm:.3g} kg.m^2 from mass {mass:g} kg (documented approximation, x/ divided by 3)")
     else:
-        params["Jm"] = Interval(5e-7, 5e-8, 5e-5, "assumed", "low", "class prior (no inertia or mass given)")
+        params["Jm"] = Interval(1e-6, 1e-7, 1e-4, "assumed", "low", "class prior (no inertia or mass given)")
 
     # ---------------- L
     L_s = P.si("electrical.inductance")
@@ -257,10 +257,10 @@ def to_config(model: DerivedModel, base_cfg: dict) -> dict:
     c = copy.deepcopy(base_cfg)
     p = model.params
     c["supply"]["V_rated"] = model.V
-    c["gearbox"]["ratio"] = model.ratio
+    c["gearbox"]["ratio"] = model.gear_ratio
     c["gearbox"]["efficiency"] = p["eta"].value
-    if model.output_cpr:
-        c["encoder"]["output_cpr"] = model.output_cpr
+    if model.out_counts_per_rev:
+        c["encoder"]["output_cpr"] = model.out_counts_per_rev
     c["base_motor"]["derived"]["derived"] = {"description": f"derived from motor profile {model.motor_id}", "R_ohm": p["R"].value,
                                               "Kt_Nm_per_A": p["K"].value, "Ke_V_s_per_rad": p["K"].value}
     est = c["base_motor"]["estimated"]
