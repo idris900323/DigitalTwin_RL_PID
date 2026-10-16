@@ -93,6 +93,8 @@ from matplotlib.figure import Figure
 from PyQt5 import QtCore, QtWidgets
 from pyvistaqt import QtInteractor
 
+from models.feasibility import describe, feasibility, warn_if_infeasible
+from models.joint import Joint, JointParams
 from simulation.interactive_pid_twin import build_twin, load_config
 from simulation.metrics import overshoot_pct, rise_time, settling_time, steady_state_error
 
@@ -141,6 +143,15 @@ PRESETS = {
     "tuned": dict(Kp=15.0, Ki=0.0, Kd=0.3),
     "legacy_default": dict(Kp=5.0, Ki=20.0, Kd=0.05),  # old default: ~42 % overshoot, kept for comparison
 }
+
+
+def compute_run(cfg, Kp, Ki, Kd, arm_mass_kg, arm_length_m, gravity, ref_deg, n_steps):
+    """The demo's physics path, with no GUI: shared Joint model (point-mass arm tip, optional gravity) + twin.
+
+    Returns the twin's log dict. Tested against the plain Python twin in tests/test_cross_implementation.py."""
+    joint = Joint(JointParams(payload_mass_kg=arm_mass_kg, arm_length_m=arm_length_m, gravity_on=bool(gravity)))
+    twin = build_twin(cfg, Kp, Ki, Kd, joint=joint)
+    return twin.run(math.radians(ref_deg), n_steps)
 
 
 def load_cad_parts():
@@ -381,6 +392,9 @@ class MainWindow(QtWidgets.QMainWindow):
                                       SPIN_SPEED_DEFAULT_DPS, decimals=0, suffix=" deg/s")
         for w in (self.length_ctrl, self.mass_ctrl, self.speed_ctrl):
             arm_layout.addWidget(w)
+        self.gravity_chk = QtWidgets.QCheckBox("Gravity (vertical plane, 0 deg = hanging)")
+        arm_layout.addWidget(self.gravity_chk)
+        self.gravity_chk.toggled.connect(self._on_arm_changed)
         self.length_ctrl.valueChanged.connect(self._on_arm_changed)
         self.mass_ctrl.valueChanged.connect(self._on_arm_changed)
         self.speed_ctrl.valueChanged.connect(self._on_speed_changed)
@@ -484,11 +498,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # --- simulate + push a run into the charts/animation state -------
     def _do_run(self):
-        ratio = self.cfg["gearbox"]["ratio"]
-        extra_Jm = self.arm_mass_kg * self.arm_length_m ** 2 / (ratio ** 2)
         Kp, Ki, Kd = self.kp_ctrl.value(), self.ki_ctrl.value(), self.kd_ctrl.value()
-        twin = build_twin(self.cfg, Kp, Ki, Kd, extra_Jm_kgm2=extra_Jm)
-        log = twin.run(self.theta_ref, self.n_steps)
+        gravity = self.gravity_chk.isChecked()
+        log = compute_run(self.cfg, Kp, Ki, Kd, self.arm_mass_kg, self.arm_length_m, gravity, self.ref_deg, self.n_steps)
         t = log["t"]
         theta = np.degrees(log["theta_out"])
         err = np.degrees(log["error"])
@@ -508,11 +520,16 @@ class MainWindow(QtWidgets.QMainWindow):
         os_ = overshoot_pct(theta, self.ref_deg)
         st = settling_time(t, theta, self.ref_deg)
         sse = steady_state_error(theta, self.ref_deg)
-        # No torque-margin line: this demo has no gravity yet, so the margin would always be infinite.
-        # G2.3 adds gravity and brings the line back.
+        # Torque margin is only meaningful with gravity on (it is the margin against gravity holding torque).
+        feas_line = ""
+        if gravity:
+            feas = feasibility(self.cfg, self.arm_mass_kg, self.arm_length_m, self.ref_deg, gravity=True)
+            warn_if_infeasible(feas)
+            feas_line = "\n" + describe(feas) + " (upper bound: stall torque, ignores back-EMF)"
         self.status_label.setText(
             f"Kp={Kp:.2f} Ki={Ki:.2f} Kd={Kd:.3f}  |  arm={self.arm_length_m*1000:.0f}mm {self.arm_mass_kg*1000:.0f}g\n"
             f"rise={rt:.2f}s  overshoot={os_:.1f}%  settle={st:.2f}s  sse={sse:.2f}deg"
+            + feas_line
         )
         self.canvas.draw_idle()
 
