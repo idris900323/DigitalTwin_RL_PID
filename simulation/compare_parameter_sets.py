@@ -40,8 +40,13 @@ from simulation import rawlog  # noqa: E402
 from simulation.simulate_pid import load_config, run_case, simulatable_sets  # noqa: E402
 
 KGCM = 0.0980665
-DATASHEET = {"no_load_rpm": 18000.0, "no_load_current_A": 0.8, "stall_current_A": 7.5, "stall_torque_out_kgcm": 27.18,
-             "rated_torque_out_kgcm": 12.5}
+
+
+def datasheet_targets(cfg: dict) -> dict:
+    """The datasheet figures the parameter sets are compared with, read from the YAML (no copies here)."""
+    return {"no_load_rpm": cfg["base_motor"]["no_load_speed_rpm"], "no_load_current_A": cfg["base_motor"]["no_load_current_A"],
+            "stall_current_A": cfg["base_motor"]["load_current_max_A"], "stall_torque_out_kgcm": cfg["output"]["stall_torque_kgcm"],
+            "rated_torque_out_kgcm": cfg["output"]["rated_torque_kgcm"]}
 
 
 def derive_alternative(cfg: dict) -> dict:
@@ -146,6 +151,7 @@ def main(argv=None):
     p = out / "closed_loop_by_set.md"; p.write_text("\n".join(md) + "\n", encoding="utf-8", newline="\n"); files.append(p)
 
     # figure: predicted / datasheet for each headline quantity
+    DATASHEET = datasheet_targets(cfg)
     keys = list(DATASHEET)
     labels = ["no-load speed", "no-load current", "stall current", "stall torque (out)", "rated torque (out)"]
     fig, ax = plt.subplots(figsize=(9, 4.2))

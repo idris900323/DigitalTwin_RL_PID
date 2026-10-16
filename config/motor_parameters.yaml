@@ -162,6 +162,20 @@ feasibility:
   # Below 1.0 the payload cannot be driven to the target; below this value it is "marginal".
   marginal_margin: 1.2  # ASSUMED, design choice
 
+# PROPOSED acceptance thresholds for calling the twin "validated" for a tested condition (validation/compare.py).
+# Reasoning and what to do on failure: docs/validation_plan.md section 7. Until bench data passes them the twin is "preliminary".
+validation_thresholds:
+  step_nrmse_max: 0.05          # angle RMSE / peak-to-peak of the measured angle (5 % of the step)
+  step_fit_min_pct: 90.0        # FIT = 100*(1 - ||e|| / ||y - mean(y)||)
+  overshoot_abs_pp_max: 3.0     # |simulated - measured| overshoot, percentage points
+  settling_rel_max: 0.15        # |settling difference| <= 15 % of measured ...
+  settling_abs_min_s: 0.05      # ... or 50 ms, whichever is larger (settling is quantised by ringing and noise)
+  rise_rel_max: 0.10            # 10-90 % rise time within 10 %
+  sse_abs_deg_max: 0.5          # steady-state error difference (about 2 encoder resolutions of slack per degree)
+  current_nrmse_max: 0.10       # armature current NRMSE
+  peak_current_rel_max: 0.15    # peak current within 15 % (sensor accuracy + supply sag)
+  ljung_box_p_min: 0.01         # residual whiteness: REPORTED only, never a pass criterion
+
 # Parameter ranges for the sensitivity study (simulation/sensitivity.py), set by provenance confidence.
 sensitivity_ranges:
   datasheet_rel: 0.05             # DATASHEET values: +-5 %
