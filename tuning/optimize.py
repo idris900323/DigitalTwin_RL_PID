@@ -156,10 +156,10 @@ def margin_violation(plant: LinearPlant, g, min_pm: float, min_gm: float) -> flo
 
 def optimize(cfg: dict, load: Load, ref_gains: Sequence[float], ctxs, plants, lin_plants: Sequence[LinearPlant], *, seed: int = 0,
              popsize: int = 10, maxiter: int = 25, restarts: int = 2, min_pm: float = 45.0, min_gm: float = 6.0,
-             noise_limit_v: Optional[float] = None) -> Dict[str, object]:
+             noise_limit_v: Optional[float] = None, kd_floor: float = 1e-6) -> Dict[str, object]:
     """Differential evolution on (log Kp, log Kd, log10 of Ki / (Kp0*wn0)). Returns gains and the evaluation of the best."""
     kp0, ki0, kd0 = ref_gains
-    kp0, kd0 = max(kp0, 1e-6), max(kd0, 1e-6)
+    kp0, kd0 = max(kp0, 1e-6), max(kd0, kd_floor)
     ki_scale = kp0 * 8.0                                           # Ki = ki_scale * 10**u with u in [-3, 0]
     bounds = [(math.log10(kp0 / 10.0), math.log10(kp0 * 10.0)), (math.log10(kd0 / 30.0), math.log10(kd0 * 10.0)), (-3.0, 0.0)]
 
@@ -183,4 +183,7 @@ def optimize(cfg: dict, load: Load, ref_gains: Sequence[float], ctxs, plants, li
             best = res
     g = to_gains(np.atleast_2d(best.x))[0]
     return {"gains": tuple(float(v) for v in g), "objective": float(best.fun), "bounds_log10": bounds, "ki_scale": ki_scale,
-            "at_bound": [bool(abs(best.x[i] - b[0]) < 0.02 * (b[1] - b[0]) or abs(best.x[i] - b[1]) < 0.02 * (b[1] - b[0])) for i, b in enumerate(bounds)]}
+            # Ki at its LOWER bound just means "no integral action wanted" (legitimate without gravity), so only the other edges count
+            "at_bound": [bool(best.x[0] < bounds[0][0] + 0.02 * (bounds[0][1] - bounds[0][0]) or best.x[0] > bounds[0][1] - 0.02 * (bounds[0][1] - bounds[0][0])),
+                         bool(best.x[1] > bounds[1][1] - 0.02 * (bounds[1][1] - bounds[1][0])),
+                         bool(best.x[2] > bounds[2][1] - 0.02 * (bounds[2][1] - bounds[2][0]))]}

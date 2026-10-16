@@ -11,9 +11,7 @@ PRELIMINARY: computed on a datasheet-derived (Tier 1) or identified model, not v
 
 from __future__ import annotations
 
-import copy
 import hashlib
-import json
 import math
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
@@ -26,7 +24,7 @@ from models.motors import get_cfg
 from tuning import analytic, optimize
 from tuning.linear import LinearPlant, noise_voltage_rms
 from tuning.loads import Load, check_drivable, load_load
-from tuning.tiers import TIER_LABELS, Tier
+from tuning.tiers import Tier
 
 Gains = Tuple[float, float, float]
 
@@ -43,6 +41,9 @@ class Method:
     delay_margin_s: float = float("nan")
     stable: bool = True
     info: str = ""
+
+    def __post_init__(self):
+        self.gains = tuple(float(x) for x in self.gains)       # plain floats (numpy scalars would break code export)
 
 
 @dataclass
@@ -73,7 +74,7 @@ class Recommendation:
         kp, ki, kd = self.gains
         def width(k):
             p = self.model.params[k]
-            return f"{k} x/÷{p.hi / p.lo:.1f}" if p.lo > 0 else f"{k} in [0, {p.hi:.3g}]"
+            return f"{k} in [{p.lo:.3g}, {p.hi:.3g}]"
         wid = ", ".join(width(k) for k in self.model.least_certain())
         lines = [f"{self.tier.label}", f"motor {self.motor_id}, load {self.load_id}",
                  f"recommended gains: Kp {kp:.4g}, Ki {ki:.4g}, Kd {kd:.4g}  (method: {self.winner}; PRELIMINARY)",
@@ -192,11 +193,12 @@ def recommend(motor_id: str, load_id: str, *, tier: Tier = Tier.ESTIMATE, seed: 
     except Exception:                                       # noqa: BLE001 - no ultimate gain found
         pass
     ref = d["gains"]
+    kd_floor = 0.1 * max(ref[0], 1e-6) / d["wn"]          # when the plant is already damped enough the analytic Kd is 0: give the search a scale
     opt_nom = optimize.optimize(cfg, load, ref, ctxs, nominal, [nominal_lin], seed=seed, popsize=popsize, maxiter=maxiter, restarts=restarts,
-                                min_pm=min_pm, min_gm=min_gm, noise_limit_v=load.max_noise_V_rms)
+                                min_pm=min_pm, min_gm=min_gm, noise_limit_v=load.max_noise_V_rms, kd_floor=kd_floor)
     methods.append(Method("optimised (nominal model)", opt_nom["gains"]))
     opt_rob = optimize.optimize(cfg, load, ref, ctxs, train, lin_all, seed=seed + 1, popsize=popsize, maxiter=maxiter, restarts=restarts,
-                                min_pm=min_pm, min_gm=min_gm, noise_limit_v=load.max_noise_V_rms)
+                                min_pm=min_pm, min_gm=min_gm, noise_limit_v=load.max_noise_V_rms, kd_floor=kd_floor)
     methods.append(Method("optimised (robust)", opt_rob["gains"]))
 
     # ---- compare all on the same held-out plants
@@ -213,8 +215,11 @@ def recommend(motor_id: str, load_id: str, *, tier: Tier = Tier.ESTIMATE, seed: 
         r.cost, r.mean_cost, r.p_ok = float(ev["cost"][0]), float(ev["mean_cost"][0]), float(ev["p_ok"][0])
         r.pm_deg, r.gm_db, r.delay_margin_s, r.stable = mg["phase_margin_deg"], mg["gain_margin_db"], mg["delay_margin_s"], bool(mg["stable"])
         references.append(r)
-    ok = [m for m in methods if m.stable and m.pm_deg >= 0.5 * min_pm and m.gm_db >= 0.5 * min_gm and m.name != "Ziegler-Nichols (reference)"]
-    pool = ok or [m for m in methods if m.stable] or methods
+    eligible = [m for m in methods if m.name != "Ziegler-Nichols (reference)"]
+    strict = [m for m in eligible if m.stable and m.pm_deg >= min_pm and m.gm_db >= min_gm]
+    relaxed = [m for m in eligible if m.stable and m.pm_deg >= 0.5 * min_pm and m.gm_db >= 0.5 * min_gm]
+    pool = strict or relaxed or [m for m in methods if m.stable] or methods
+    margin_note = None if strict else "no method met the requested stability margins; the least bad stable one is returned"
     pool = sorted(pool, key=lambda m: (-(m.p_ok > 0.9), m.cost))
     win, runner = pool[0], (pool[1] if len(pool) > 1 else None)
 
@@ -239,6 +244,8 @@ def recommend(motor_id: str, load_id: str, *, tier: Tier = Tier.ESTIMATE, seed: 
     nominal_settle = float(np.median(finite_settle))
     warnings = sanity_check(cfg, load, win.gains, nominal_lin, opt_rob, margins, nominal_settle,
                             opt_rob["at_bound"] if win.name == "optimised (robust)" else (opt_nom["at_bound"] if win.name == "optimised (nominal model)" else None))
+    if margin_note:
+        warnings.append(margin_note)
     for c in model.conflicts:
         warnings.append("datasheet conflict unresolved: " + c["what"])
     rated = prof.si("electrical.stall_current")
