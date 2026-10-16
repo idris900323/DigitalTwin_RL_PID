@@ -43,7 +43,7 @@ DigitalTwin_RL_PID/
 ├── README.md
 ├── master_prompt_digital_twin_rl_pid.md   # canonical spec — read first
 ├── requirements.txt
-├── data/                  # (empty so far)
+├── data/                  # planned, not created yet
 ├── datasheet/              # source datasheet PDF + parameter_table.md
 ├── cad/                    # reference CAD (see caveat below) + converted mesh
 ├── config/
@@ -52,10 +52,10 @@ DigitalTwin_RL_PID/
 ├── controllers/
 │   └── pid.py               # fixed-gain PID: saturation, anti-windup, filtered D
 ├── simulation/              # phase-by-phase check scripts + demos (see below)
-├── pybullet/                # (empty so far — Phase 10 proper)
-├── environments/            # (empty so far — Phase 13, Gymnasium env)
-├── rl/                      # (empty so far — Phase 14+)
-├── validation/              # (empty so far — Phase 11)
+├── pybullet/                # planned, not created yet — Phase 10 proper
+├── environments/            # planned, not created yet — Phase 13, Gymnasium env
+├── rl/                      # planned, not created yet — Phase 14+
+├── validation/              # planned, not created yet — Phase 11
 ├── results/                 # generated plots/data — gitignored, not source of truth
 └── reference/
     └── legacy_demo/          # pid_demo.pdf/.sch/.ino — see note below

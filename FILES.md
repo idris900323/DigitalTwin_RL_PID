@@ -73,6 +73,14 @@ for the governing spec.
 | `autotune_policy_360.json` | Trained tiny-MLP policy weights produced by the script above, evaluated in plain JS by the visualizer page. |
 | `servo_pid_visualizer_360.html` | Self-contained (~15 MB) browser page: servo PID digital twin with the learned auto-tune policy embedded. Open directly in a browser. |
 
+## `models/feasibility.py` and `tests/` — added in the improvement pass (Task 0, G1)
+
+| File | What it is |
+|---|---|
+| `models/feasibility.py` | Torque feasibility check: gravity holding torque (vertical plane, 0 deg = hanging) versus the motor's available output stall torque at the voltage cap. Reports `margin_target`, `margin_path` and an `ok` / `marginal` / `infeasible` status (marginal threshold in `config/motor_parameters.yaml`). Mirrored in the browser page and used by the trainer to reject impossible contexts. |
+| `tests/` | pytest suite: `test_baseline.py` pins the numbers measured in the overview; `test_motor_current.py` (algebraic armature current is logged), `test_defaults.py`, `test_demo_layout.py`, `test_feasibility.py`, `test_policy_artifacts.py`; `browser/` holds Playwright tests that drive the HTML page; `fixtures/feature_vectors.json` is the Python-to-JS feature contract. `baseline_numbers.md` documents the pinned values. |
+| `requirements-dev.txt` | `pytest`, `pytest-cov`, `ruff`, `playwright`. Browser tests also need `playwright install chromium`; they skip if Playwright is missing. |
+
 ## `reference/legacy_demo/` — historical inspiration, not project hardware
 
 | File | What it is |
