@@ -21,3 +21,16 @@
 | C. Page loads `JGB37-520_converted.glb` and `autotune_policy_360.json` from sibling files when served over HTTP | Smallest repo, no build step, no duplication of the policy (removes the "embedded vs committed" drift) | Needs a local web server (already needed because `file:` is blocked); not a single portable file |
 
 Recommendation: **C for development plus B for sharing**. C removes the embedded-policy duplication that the parity test currently guards, and B produces the one-file version when someone wants to email it. Waiting for a decision before changing anything.
+
+## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)
+
+The paper effort needs the software to produce auditable, regenerable data. Keep these in mind while building the improvement work, so nothing has to be retrofitted:
+
+1. **Raw-log schema.** Per-tick runs should be writable in the paper's schema (`t_s, step_idx, target_deg, theta_deg, theta_counts, omega_rad_s, error_deg, v_cmd_V, v_applied_V, i_A, temp_C, vsupply_V, kp, ki, kd, gain_update_flag, payload_kg, arm_len_m, gravity_on, run_id, experiment_id, seed, session_id, unit_id, method`, plus `true_params_hash` for simulation). `DigitalTwin.step()` already returns most of these; `simulate_pid.py` (G3.1) and the RL env (G4) should emit them. Note `i_A` only became real with G1.1.
+2. **Run provenance.** Every script that produces data takes a seed, logs it, and writes a manifest with commit, config hash, seeds, versions and file checksums (the trainer's `meta.json` is the first example).
+3. **Single-command regeneration.** Figures and tables come from scripts reading `data/` and `config/` only; a top-level `make` (`data-sim`, `analyze`, `figures`, `tables`, `smoke`) is wanted. G3.1/G3.2 outputs should already be regenerable by one command.
+4. **Wording.** "Preliminary" until validation thresholds pass; RL results labelled pre-validation. The trainer, browser page and docs already follow this.
+5. **Fair baselines and budgets.** `simulation/compare_controllers.py` (G4.3) should log the evaluation budget of each tuning method and use paired scenarios with disjoint training/test seeds.
+6. **One colour and marker per method across all figures** (define it once in a shared plotting module when the first comparison figure is written).
+7. **No local paths in artefacts.** Keep absolute paths (`C:\Users\...`) out of committed metadata, figures and logs (relevant for later double-blind submission).
+8. **Licences.** The JGB37-520 CAD and the Johnson datasheet PDF are in the repo; record their terms (open question 9 in the improvement prompt) before any public release.
