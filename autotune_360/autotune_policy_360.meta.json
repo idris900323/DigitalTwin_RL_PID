@@ -1,0 +1,100 @@
+{
+  "script": "autotune_360/train_autotune_360.py",
+  "pre_validation_prototype": true,
+  "seed": 0,
+  "child_generators": [
+    "init",
+    "context",
+    "action",
+    "noise"
+  ],
+  "eval_seed": 123,
+  "iterations": 300,
+  "contexts_per_iteration": 128,
+  "samples_per_context": 8,
+  "learning_rate": 0.003,
+  "adam": {
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "eps": 1e-08
+  },
+  "gain_bounds": {
+    "lo": [
+      0.5,
+      0.1,
+      0.005
+    ],
+    "hi": [
+      50.0,
+      200.0,
+      5.0
+    ],
+    "scale": "log"
+  },
+  "payload_ranges": {
+    "mass_max_kg": 2.0,
+    "len_min_m": 0.02,
+    "len_max_m": 0.15,
+    "v_min_pct": 10.0,
+    "ref_min_deg": 5.0,
+    "ref_max_deg": 360.0
+  },
+  "feature_function_version": 1,
+  "marginal_margin": 1.2,
+  "training": {
+    "feasible_only": true,
+    "raw_draws": 76800,
+    "raw_infeasible_fraction": 0.15622395833333333
+  },
+  "config_sha256": "3a261f74716cf57b9b991b0081809e19a21e50b550f541d8a8d0a78d5f6b03d5",
+  "git_commit": "02bf6fda610f51e7390cba837a97c10962261ac6",
+  "date_utc": "2026-10-16T15:27:05Z",
+  "runtime_s": 255.2,
+  "numpy": "2.4.2",
+  "python": "3.12.10",
+  "policy_sha256": "d70181c5708a05b7d1b6e0dd345e4e23c35673359aa9b8c282db22e1d51cde85",
+  "held_out": {
+    "feasible-only": {
+      "n": 1000,
+      "infeasible_fraction": 0.0,
+      "rows": {
+        "RL auto-tune": {
+          "mean_cost": 0.538999046532357,
+          "within_2pct": 0.947
+        },
+        "Legacy default 5/20/0.05": {
+          "mean_cost": 1.7120974294399072,
+          "within_2pct": 0.449
+        },
+        "'Tuned' preset 15/0/0.3": {
+          "mean_cost": 0.9251211776923611,
+          "within_2pct": 0.722
+        }
+      }
+    },
+    "full (incl. infeasible)": {
+      "n": 1000,
+      "infeasible_fraction": 0.153,
+      "rows": {
+        "RL auto-tune": {
+          "mean_cost": 1.2630927051336462,
+          "within_2pct": 0.808
+        },
+        "Legacy default 5/20/0.05": {
+          "mean_cost": 2.2449239313056606,
+          "within_2pct": 0.38
+        },
+        "'Tuned' preset 15/0/0.3": {
+          "mean_cost": 1.6315011157449868,
+          "within_2pct": 0.608
+        }
+      }
+    },
+    "brute_force": {
+      "cases": 12,
+      "candidates": 400,
+      "best_of_n": 0.7064420471348236,
+      "policy": 0.7112465519250765
+    }
+  }
+}

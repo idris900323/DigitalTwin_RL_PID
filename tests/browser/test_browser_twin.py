@@ -104,3 +104,75 @@ def test_screenshot_12cm(page):
     set_slider(page, "plMass", 1.5)
     page.wait_for_timeout(800)
     page.screenshot(path=str(SHOTS / "09_browser_12cm_after.png"))
+
+
+# ---------------------------------------------------------------- G1.5 feasibility
+
+def set_gravity(pg, on):
+    pg.evaluate("(on) => { const c = document.getElementById('plG'); c.checked = on; c.dispatchEvent(new Event('change', {bubbles: true})); }", on)
+
+
+def test_infeasible_payload_shows_warning_with_margin(page):
+    set_slider(page, "plMass", 2)
+    set_slider(page, "plLen", 15)
+    set_gravity(page, True)
+    set_slider(page, "thetaRef", 90)
+    banner = page.locator("#feasBanner")
+    assert banner.is_visible()
+    text = banner.inner_text()
+    assert "INFEASIBLE" in text and "0.72" in text
+    assert page.evaluate("document.getElementById('autoBtn').disabled") is True
+    assert "disabled" in page.evaluate("document.getElementById('autoBtn').title")
+    page.wait_for_timeout(300)
+    SHOTS.mkdir(parents=True, exist_ok=True)
+    page.screenshot(path=str(SHOTS / "10_browser_infeasible_banner.png"))
+
+
+def test_feasible_payload_hides_warning(page):
+    set_gravity(page, False)
+    set_slider(page, "plMass", 2)
+    assert not page.locator("#feasBanner").is_visible()
+    assert page.evaluate("document.getElementById('autoBtn').disabled") is False
+
+
+def test_feasibility_js_matches_python(page):
+    import yaml
+    from models.feasibility import feasibility
+    cfg = yaml.safe_load(open(ROOT.parent / "config" / "motor_parameters.yaml"))
+    cases = [(2.0, 0.15, 90, True, 100), (1.5, 0.12, 180, True, 100), (1.0, 0.10, 90, True, 50),
+             (0.5, 0.08, 270, True, 100), (2.0, 0.15, 30, True, 100), (1.8, 0.12, 90, True, 100),
+             (2.0, 0.15, 90, False, 100), (0.0, 0.10, 90, True, 100), (1.0, 0.05, 360, True, 25)]
+    for m, L, tgt, g, v in cases:
+        js = page.evaluate("([m, L, t, g, v]) => feasibilityJS(m, L, t, g, v)", [m, L, tgt, g, v])
+        py = feasibility(cfg, m, L, tgt, gravity=g, v_pct=v)
+        assert js["status"] == py["status"], (m, L, tgt, g, v)
+        for key in ("tau_avail", "tau_hold_target", "tau_hold_peak"):
+            assert js[key] == pytest.approx(py[key], rel=1e-9, abs=1e-12), key
+        for key in ("margin_target", "margin_path"):
+            if py[key] == float("inf"):
+                assert js[key] is None or js[key] == float("inf")  # JSON turns Infinity into null
+            else:
+                assert js[key] == pytest.approx(py[key], rel=1e-9)
+
+
+# ---------------------------------------------------------------- G1.6 feature / policy parity
+import json  # noqa: E402
+
+FIXTURE = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "feature_vectors.json"
+
+
+def test_js_features_and_gains_match_python(page):
+    fx = json.loads(FIXTURE.read_text())
+    assert fx["feature_version"] == 1
+    for c in fx["cases"]:
+        pl = {"mass": c["mass"], "len": c["len"], "gravity": c["gravity"], "vPct": c["vPct"]}
+        feats = page.evaluate("([pl, t]) => rlFeatures(pl, t)", [pl, c["target"]])
+        assert feats == pytest.approx(c["features"], abs=1e-9, rel=1e-9)
+        gains = page.evaluate("([pl, t]) => { CFG.thetaRefDeg = t; return rlGains(pl); }", [pl, c["target"]])
+        assert gains == pytest.approx(c["gains"], rel=1e-9)
+
+
+def test_embedded_policy_equals_committed_json(page):
+    committed = json.loads((ROOT / "autotune_policy_360.json").read_text())
+    embedded = page.evaluate("RL_POLICY")
+    assert embedded == committed
