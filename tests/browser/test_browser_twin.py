@@ -149,7 +149,7 @@ def test_feasibility_js_matches_python(page):
              (0.5, 0.08, 270, True, 100), (2.0, 0.15, 30, True, 100), (1.8, 0.12, 90, True, 100),
              (2.0, 0.15, 90, False, 100), (0.0, 0.10, 90, True, 100), (1.0, 0.05, 360, True, 25)]
     for m, L, tgt, g, v in cases:
-        js = page.evaluate("([m, L, t, g, v]) => feasibilityJS(m, L, t, g, v)", [m, L, tgt, g, v])
+        js = page.evaluate("([m, L, t, g, v]) => feasibilityJS(CFG, m, L, t, g, v)", [m, L, tgt, g, v])
         py = feasibility(cfg, m, L, tgt, gravity=g, v_pct=v)
         assert js["status"] == py["status"], (m, L, tgt, g, v)
         for key in ("tau_avail", "tau_hold_target", "tau_hold_peak"):

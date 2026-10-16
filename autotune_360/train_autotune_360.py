@@ -1,4 +1,5 @@
-"""RL auto-tuner for the servo PID twin (numpy only -- no PyTorch / Stable-Baselines needed).
+"""RL auto-tuner for the servo PID twin (numpy + PyYAML only -- no PyTorch / Stable-Baselines needed).
+All plant and controller constants are read from config/motor_parameters.yaml (no copies in this file).
 
 PRE-VALIDATION PROTOTYPE: trained on the unvalidated, datasheet-derived twin (method_c). Its gains are only
 as good as that model; nothing here has been validated against real hardware.
@@ -26,6 +27,7 @@ Reproduce the committed weights (same machine, same numpy):
 """
 import argparse, hashlib, json, pathlib, platform, subprocess, sys, time
 import numpy as np
+import yaml
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -34,16 +36,37 @@ if str(ROOT) not in sys.path:
 from models.feasibility import available_torque, feasibility_arrays   # noqa: E402
 
 FEATURE_VERSION = 1      # bump if features() changes: the browser page must be updated to match
-MARGINAL_MARGIN = 1.2    # keep equal to config/motor_parameters.yaml feasibility.marginal_margin (checked by a test)
 
-# ------------------------------------------------------------------ plant (mirrors the JS / Python twin, method_c)
-CFG = dict(V_rated=12.0, ratio=180.0, eff=0.80, cpr=9360,
-           R=1.6, Kt=1.974e-3, Ke=6.366e-3, Jm=5.0e-7, Bm=1.0e-6,
-           dt=0.001, duration=2.0, ref_deg=90.0, tau_f=0.01)
+# ------------------------------------------------------------------ plant: read from the YAML (single source of truth)
+YAML_PATH = ROOT / "config" / "motor_parameters.yaml"
 
-NOISE_COUNTS = 1.0   # RMS encoder jitter in counts (0 = ideal encoder)
+def load_cfg(scenario=None, yaml_path=YAML_PATH):
+    """Plant/controller constants for the batch simulator, from the YAML (active scenario unless ``scenario`` is given)."""
+    with open(yaml_path, "r", encoding="utf-8") as f:
+        y = yaml.safe_load(f)
+    d = y["base_motor"]["derived"][scenario or y["simulation"]["active_electrical_scenario"]]
+    e = y["base_motor"]["estimated"]
+    if e["L_H"] > 0:
+        # simulate_batch uses plain RK4 with the algebraic (L = 0) current; the Python twin sub-steps for L > 0.
+        raise ValueError(f"train_autotune_360 does not model armature inductance (L_H = {e['L_H']}); set L_H: 0 or extend simulate_batch")
+    return dict(V_rated=y["supply"]["V_rated"], ratio=y["gearbox"]["ratio"], eff=y["gearbox"]["efficiency"],
+                cpr=y["encoder"]["output_cpr"], R=d["R_ohm"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"],
+                Jm=e["Jm_kgm2"], Bm=e["Bm_Nms_per_rad"], dt=y["simulation"]["control_loop_dt_s"],
+                duration=y["simulation"]["run_duration_s"], ref_deg=y["simulation"]["theta_ref_default_deg"],
+                tau_f=y.get("controller", {}).get("derivative_filter_tau_s", 0.01),
+                current_limit=y.get("driver", {}).get("current_limit_A"),
+                marginal=y.get("feasibility", {}).get("marginal_margin", 1.2))
 
-def simulate_batch(Kp, Ki, Kd, mass, length, gravity, vpct, ref_deg=None, cfg=CFG, noise=None, nrng=None):
+CFG = load_cfg()
+MARGINAL_MARGIN = CFG["marginal"]
+
+# Training-only design choice (not a motor constant): RMS encoder jitter in counts the tuner trains and evaluates with.
+NOISE_COUNTS = 1.0   # 0 = ideal encoder
+# Supported subset of the twin: payload point mass + gravity, speed cap, optional driver current limit, encoder noise.
+# Not modelled here: arm mass, joint friction, disturbances (use the Python twin for those).
+
+def simulate_batch(Kp, Ki, Kd, mass, length, gravity, vpct, ref_deg=None, cfg=CFG, noise=None, nrng=None,
+                   current_limit="cfg", return_current=False):
     """Vectorised closed loop (encoder quantisation, filtered D, anti-windup, +-V saturation, RK4).
     Arguments are arrays of shape (B,). Returns true output angle [rad] (N,B) and voltage (N,B)."""
     Kp, Ki, Kd, mass, length, gravity, vpct = (np.asarray(x, float) for x in (Kp, Ki, Kd, mass, length, gravity, vpct))
@@ -54,10 +77,11 @@ def simulate_batch(Kp, Ki, Kd, mass, length, gravity, vpct, ref_deg=None, cfg=CF
     R, Kt, Ke, Bm = cfg['R'], cfg['Kt'], cfg['Ke'], cfg['Bm']
     Jm = cfg['Jm'] + mass * length ** 2 / ratio ** 2          # payload inertia reflected to the motor shaft
     vmax = cfg['V_rated'] * vpct / 100.0                        # "motor speed limit" = voltage cap
+    i_lim = cfg.get('current_limit') if current_limit == "cfg" else current_limit   # optional driver current limit [A]
     alpha = dt / (cfg['tau_f'] + dt)
     w = np.zeros(B); th = np.zeros(B)
     integ = np.zeros(B); prev = np.zeros(B); fd = np.zeros(B)
-    th_log = np.empty((N, B)); v_log = np.empty((N, B))
+    th_log = np.empty((N, B)); v_log = np.empty((N, B)); i_log = np.empty((N, B)) if return_current else None
     noise = NOISE_COUNTS if noise is None else noise
     nrng = nrng if nrng is not None else np.random.default_rng(0)
     for n in range(N):
@@ -69,8 +93,13 @@ def simulate_batch(Kp, Ki, Kd, mass, length, gravity, vpct, ref_deg=None, cfg=CF
         u = Kp * err + Ki * tent + Kd * fd
         hi, lo = u > vmax, u < -vmax
         V = np.clip(u, -vmax, vmax)
+        if i_lim is not None:
+            V = np.clip(V, Ke * w - R * i_lim, Ke * w + R * i_lim)   # driver current limit (exact for L = 0)
+            # anti-windup below keys off the PID saturation (hi/lo), as in the Python twin
         integ = np.where((hi & (err > 0)) | (lo & (err < 0)), integ, tent)   # conditional anti-windup
         prev = err
+        if return_current:
+            i_log[n] = (V - Ke * w) / R                              # current at the instant V is applied
         tau = gravity * mass * 9.81 * length * np.sin(th_true) / (ratio * eff)  # arm gravity, 0 deg = hanging
         f = lambda ww: (Kt * (V - Ke * ww) / R - Bm * ww - tau) / Jm
         k1w = f(w);             k1t = w
@@ -80,7 +109,7 @@ def simulate_batch(Kp, Ki, Kd, mass, length, gravity, vpct, ref_deg=None, cfg=CF
         w = w + dt/6 * (k1w + 2*k2w + 2*k3w + k4w)
         th = th + dt/6 * (k1t + 2*k2t + 2*k3t + k4t)
         th_log[n] = th / ratio; v_log[n] = V
-    return th_log, v_log
+    return (th_log, v_log, i_log) if return_current else (th_log, v_log)
 
 def step_cost(th_log, v_log, vpct, ref_deg, cfg=CFG):
     """Lower is better. Tracking (time-weighted) + overshoot + steady-state error + voltage chatter."""
@@ -108,7 +137,7 @@ def _raw_context(n, rng):
 
 def context_margin(mass, length, gravity, vpct, ref, cfg=CFG):
     """Feasibility margin (available stall torque / peak gravity holding torque on the path)."""
-    ta = available_torque(cfg['Kt'], cfg['R'], cfg['ratio'], cfg['eff'], cfg['V_rated'], vpct)
+    ta = available_torque(cfg['Kt'], cfg['R'], cfg['ratio'], cfg['eff'], cfg['V_rated'], vpct, cfg.get('current_limit'))
     return feasibility_arrays(ta, mass, length, ref, gravity, marginal_margin=MARGINAL_MARGIN)['margin_path']
 
 def sample_context(n, rng, feasible_only=True, stats=None):

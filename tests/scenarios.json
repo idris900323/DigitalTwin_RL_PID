@@ -1,0 +1,21 @@
+{
+  "_comment": "Canonical scenarios run through every implementation (Python twin, trainer batch simulator, browser JS physics, Qt demo compute path). All 90 deg unless stated, 2 s, dt 1 ms, method_c. Supported by all four: payload point mass, gravity, speed cap, driver current limit. 'noise_counts' (encoder jitter) is Python + trainer only; the JS physics has no noise, so JS is skipped there (documented loose spot).",
+  "scenarios": [
+    {"id": "bare_tuned", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90},
+    {"id": "bare_sluggish", "kp": 1.5, "ki": 0, "kd": 0, "target_deg": 90},
+    {"id": "bare_oscillatory", "kp": 45, "ki": 0, "kd": 0, "target_deg": 90},
+    {"id": "bare_legacy", "kp": 5, "ki": 20, "kd": 0.05, "target_deg": 90},
+    {"id": "bare_pi", "kp": 15, "ki": 20, "kd": 0, "target_deg": 90},
+    {"id": "arm_0p5kg_10cm", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "mass": 0.5, "length": 0.10},
+    {"id": "arm_2kg_15cm", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "mass": 2.0, "length": 0.15},
+    {"id": "gravity_1p5kg_12cm_180", "kp": 49.2, "ki": 168.1, "kd": 2.845, "target_deg": 180, "mass": 1.5, "length": 0.12, "gravity": true},
+    {"id": "gravity_1kg_10cm_halfV_90", "kp": 49.0, "ki": 170.0, "kd": 1.31, "target_deg": 90, "mass": 1.0, "length": 0.10, "gravity": true, "v_pct": 50},
+    {"id": "speedcap_25pct", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "v_pct": 25},
+    {"id": "target_360", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 360},
+    {"id": "noise_1count", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "noise_counts": 1.0, "skip_js": true},
+    {"id": "infeasible_2kg_15cm_gravity_90", "kp": 26.1, "ki": 191.0, "kd": 0.93, "target_deg": 90, "mass": 2.0, "length": 0.15, "gravity": true},
+    {"id": "current_limit_2A", "kp": 15, "ki": 0, "kd": 0.3, "target_deg": 90, "current_limit_A": 2.0},
+    {"id": "gravity_current_limit", "kp": 30, "ki": 100, "kd": 1.0, "target_deg": 120, "mass": 0.8, "length": 0.10, "gravity": true, "current_limit_A": 4.0},
+    {"id": "method_a_legacy", "kp": 5, "ki": 20, "kd": 0.05, "target_deg": 90, "params": "method_a"}
+  ]
+}

@@ -14,8 +14,8 @@ moves, the back-EMF Ke*omega_m reduces the armature current, so the torque the m
 can actually deliver falls with speed (tau = Kt*(V - Ke*omega_m)/R * N * eta). A case
 reported as "ok" or "marginal" can therefore still stall mid-motion; "infeasible" is
 reliable (it fails even at stall). A moving-state margin would need the speed profile and
-is not computed. The driver's current limit (if any) would also lower the stall figure;
-it is not included here yet.
+is not computed. An optional driver current limit I_lim (config ``driver.current_limit_A``) caps the
+stall current: tau_avail = Kt * min(V_cap / R, I_lim) * N * eta.
 
 Two margins are reported because both matter:
   * ``margin_target`` -- can the joint *hold* the target? (torque at the target angle)
@@ -43,9 +43,12 @@ def _peak_sin(target_deg):
     return np.where(t >= 90.0, 1.0, np.sin(np.radians(t)))
 
 
-def available_torque(Kt, R, ratio, eta, V_rated, v_pct=100.0):
-    """Output-side stall torque [N*m] at the voltage cap V_rated*v_pct/100."""
-    return Kt * (V_rated * np.asarray(v_pct, dtype=float) / 100.0 / R) * ratio * eta
+def available_torque(Kt, R, ratio, eta, V_rated, v_pct=100.0, current_limit_A=None):
+    """Output-side stall torque [N*m] at the voltage cap V_rated*v_pct/100 (and driver current limit, if any)."""
+    i_stall = V_rated * np.asarray(v_pct, dtype=float) / 100.0 / R
+    if current_limit_A is not None:
+        i_stall = np.minimum(i_stall, current_limit_A)
+    return Kt * i_stall * ratio * eta
 
 
 def feasibility_arrays(tau_avail, mass, length, target_deg, gravity=1.0, arm_mass=0.0, arm_cg=0.0,
@@ -72,7 +75,8 @@ def feasibility(cfg: dict, payload_mass_kg: float, arm_length_m: float, target_d
     scenario = scenario or cfg["simulation"]["active_electrical_scenario"]
     d = cfg["base_motor"]["derived"][scenario]
     tau_avail = available_torque(d["Kt_Nm_per_A"], d["R_ohm"], cfg["gearbox"]["ratio"],
-                                 cfg["gearbox"]["efficiency"], cfg["supply"]["V_rated"], v_pct)
+                                 cfg["gearbox"]["efficiency"], cfg["supply"]["V_rated"], v_pct,
+                                 cfg.get("driver", {}).get("current_limit_A"))
     marginal = cfg.get("feasibility", {}).get("marginal_margin", 1.2)
     out = feasibility_arrays(tau_avail, payload_mass_kg, arm_length_m, target_deg, 1.0 if gravity else 0.0,
                              arm_mass_kg, arm_cg_m, marginal)

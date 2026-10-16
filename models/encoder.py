@@ -15,8 +15,8 @@ import numpy as np
 
 @dataclass
 class EncoderParams:
-    counts_per_rev: int = 9360    # DATASHEET (52 base CPR x 180 gear ratio)
-    noise_std_rad: float = 0.0    # ASSUMED zero for this build; configurable
+    counts_per_rev: int          # DATASHEET 9360 (52 base CPR x 180 gear ratio): comes from the YAML, no default
+    noise_std_rad: float = 0.0   # ASSUMED zero by default; configurable
 
 
 class Encoder:

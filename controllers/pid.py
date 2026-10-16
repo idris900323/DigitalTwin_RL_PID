@@ -12,8 +12,8 @@ class PIDParams:
     Ki: float
     Kd: float
     dt: float
-    output_min: float = -12.0            # V, physical supply limit (\xa715)
-    output_max: float = 12.0
+    output_min: float                    # V, physical supply limit: from the YAML (supply.V_rated), no default
+    output_max: float
     derivative_filter_tau: float = 0.01  # s, ASSUMED, first-order filter on D term
 
 

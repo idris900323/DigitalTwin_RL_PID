@@ -17,11 +17,15 @@ Equations (all SI):
     dtheta_m/dt = omega_m
 """
 
+import math
 from dataclasses import dataclass
 from typing import Callable
 
 import numpy as np
 from scipy.integrate import solve_ivp
+
+
+MAX_SUBSTEPS = 20000  # electrical sub-steps allowed per control step; beyond this DCMotor.step raises (see there)
 
 
 @dataclass
@@ -103,7 +107,28 @@ class DCMotor:
         V and tau_load are held constant only within a single dt and the
         electrical/mechanical time constants are not known to be large
         relative to dt.
+
+        Stability: with L > 0 the electrical pole sits at -R/L, and explicit RK4 is unstable once dt exceeds about
+        2.8*L/R. For plausible small-motor inductances (0.1-5 mH, L/R = 60 us - 3 ms) that is *below* the 1 ms control
+        period, so ``step`` automatically sub-steps (h <= 2*L/R; more than MAX_SUBSTEPS raises RuntimeError) with V and tau_load held
+        constant. With L = 0 (the default) or a well-resolved L there is exactly one RK4 step, as before.
         """
+        n = 1
+        if self.p.L > 0.0:
+            tau_e = self.p.L / self.p.R
+            if dt > 2.0 * tau_e:
+                n = int(math.ceil(dt / (2.0 * tau_e)))
+                if n > MAX_SUBSTEPS:
+                    raise RuntimeError(
+                        f"DCMotor.step needs {n} electrical sub-steps (L/R = {tau_e:.3g} s, dt = {dt:.3g} s), more than "
+                        f"MAX_SUBSTEPS = {MAX_SUBSTEPS}; the result would be numerically unstable. Use a larger L, a "
+                        "smaller dt, or L = 0 (electrical dynamics neglected).")
+        h = dt / n
+        for _ in range(n):
+            state = self._rk4(state, h, V, tau_load)
+        return state
+
+    def _rk4(self, state: np.ndarray, dt: float, V: float, tau_load: float) -> np.ndarray:
         k1 = self.derivatives(0.0, state, V, tau_load)
         k2 = self.derivatives(0.0, state + 0.5 * dt * k1, V, tau_load)
         k3 = self.derivatives(0.0, state + 0.5 * dt * k2, V, tau_load)

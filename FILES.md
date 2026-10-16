@@ -73,6 +73,19 @@ for the governing spec.
 | `autotune_policy_360.json` | Trained tiny-MLP policy weights produced by the script above, evaluated in plain JS by the visualizer page. |
 | `servo_pid_visualizer_360.html` | Self-contained (~15 MB) browser page: servo PID digital twin with the learned auto-tune policy embedded. Open directly in a browser. |
 
+## Group 2 additions: shared plant, joint model, generated config
+
+| File | What it is |
+|---|---|
+| `models/joint.py`, `models/disturbances.py` | Joint load model (point-mass payload + optional thin-rod arm inertia, gravity in a vertical plane with 0 deg = hanging, viscous + smooth Coulomb friction, disturbance hook). Every term defaults to OFF. Backlash/compliance are marked TODO. |
+| `models/factory.py` | `build_twin_from_config`: the one place that wires motor, gearbox, joint, encoder, PID and the optional driver current limit from the YAML. |
+| `tools/generate_js_config.py` | Generates `autotune_360/config.generated.js` from the YAML and keeps the copies of it and of `physics.js` inlined in the HTML in sync (`--check` for tests). |
+| `autotune_360/physics.js`, `config.generated.js` | Browser physics core and its generated constants; also loaded headlessly by `tools/run_scenarios.js` for the cross-implementation tests. |
+| `tests/scenarios.json` | 16 canonical scenarios run through the Python twin, the trainer's batch simulator, the browser JS physics and the Qt compute path. |
+| `tests/test_base_code_oracle.py` | Runs the ORIGINAL (base) code from `html/` (or git commit ffd4835) as an oracle: the refactored physics and trainer must reproduce it. |
+| `tests/gui/` | Qt demo regression on a real display (`DTRL_QT_GUI=1`). |
+| `html/` | Untracked, frozen copies of the original files (byte-identical to commit ffd4835). Kept as the reference base code; not edited and not scanned by the constant-hardcoding test. |
+
 ## `models/feasibility.py` and `tests/` — added in the improvement pass (Task 0, G1)
 
 | File | What it is |

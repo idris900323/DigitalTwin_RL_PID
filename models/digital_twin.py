@@ -3,8 +3,10 @@ encoder + PID, stepped at a fixed discrete sample time.
 
 Per-step data flow:
   encoder reads theta_out (quantized, from the PREVIOUS step's true state)
-  -> PID computes voltage command (saturated +-12V)
-  -> joint's external torque (0 in this build) reflected through the
+  -> PID computes voltage command (saturated to the supply limit)
+  -> optional driver current limit clamps the voltage actually applied
+  -> joint's external torque (gravity + friction + disturbance, all output
+     side, evaluated at the true output state) reflected through the
      gearbox into the motor ODE's tau_load term
   -> motor.step() advances [i, omega_m, theta_m] one dt via discrete RK4
   -> gearbox converts the new motor state to omega_out/theta_out
@@ -14,6 +16,7 @@ stepping; visualization is matplotlib-based (see simulation/).
 """
 
 from dataclasses import dataclass, field
+from typing import Optional
 
 import numpy as np
 
@@ -31,7 +34,12 @@ class TwinState:
 
 
 class DigitalTwin:
-    def __init__(self, motor: DCMotor, gearbox: Gearbox, joint: Joint, encoder: Encoder, pid: PID, dt: float):
+    def __init__(self, motor: DCMotor, gearbox: Gearbox, joint: Joint, encoder: Encoder, pid: PID, dt: float,
+                 current_limit_A: Optional[float] = None):
+        """``current_limit_A``: optional driver current limit [A] (None = no limit, the default).
+        The voltage actually applied is clamped to [Ke*omega - R*I_lim, Ke*omega + R*I_lim], which limits the
+        armature current exactly when L = 0 and approximately (steady-state bound) when L > 0."""
+        self.current_limit_A = current_limit_A
         self.motor = motor
         self.gearbox = gearbox
         self.joint = joint
@@ -47,22 +55,30 @@ class DigitalTwin:
     def step(self, theta_ref: float) -> dict:
         t = self.state.t
         theta_m = self.state.motor_state[2]
+        omega_m = self.state.motor_state[1]
         theta_out_true = self.gearbox.output_position(theta_m)
+        omega_out_true = self.gearbox.output_speed(omega_m)
 
         theta_out_meas = self.encoder.read(theta_out_true)
         error = theta_ref - theta_out_meas
         V_cmd = self.pid.step(error)
 
-        tau_out = self.joint.external_torque(t)
+        V_applied = V_cmd
+        if self.current_limit_A is not None:
+            p = self.motor.p
+            lo, hi = p.Ke * omega_m - p.R * self.current_limit_A, p.Ke * omega_m + p.R * self.current_limit_A
+            V_applied = min(max(V_cmd, lo), hi)
+
+        tau_out = self.joint.external_torque(t, theta_out_true, omega_out_true)
         tau_load_motor = self.gearbox.reflect_load_torque_to_motor(tau_out)
 
         # Armature current at the instant V_cmd is applied, i.e. from the
         # motor state at the START of this step (before the RK4 update). It is
         # consistent with V_cmd: V_cmd*i = R*i^2 + Ke*omega_m*i. For L = 0 this
         # is algebraic and not part of the state vector (see DCMotor.current).
-        i_motor = self.motor.current(self.state.motor_state, V_cmd)
+        i_motor = self.motor.current(self.state.motor_state, V_applied)
 
-        new_motor_state = self.motor.step(self.state.motor_state, self.dt, V_cmd, tau_load_motor)
+        new_motor_state = self.motor.step(self.state.motor_state, self.dt, V_applied, tau_load_motor)
         self.state = TwinState(t=t + self.dt, motor_state=new_motor_state)
 
         return {
@@ -72,12 +88,15 @@ class DigitalTwin:
             "omega_out": self.gearbox.output_speed(new_motor_state[1]),
             "error": error,
             "V_cmd": V_cmd,
+            "V_applied": V_applied,
+            "tau_load_out": tau_out,
             "i_motor": i_motor,
         }
 
     def run(self, theta_ref: float, n_steps: int) -> dict:
         """Run n_steps from the current state and return stacked arrays."""
-        log = {"t": [], "theta_out": [], "theta_out_meas": [], "omega_out": [], "error": [], "V_cmd": [], "i_motor": []}
+        log = {"t": [], "theta_out": [], "theta_out_meas": [], "omega_out": [], "error": [], "V_cmd": [], "V_applied": [],
+               "tau_load_out": [], "i_motor": []}
         for _ in range(n_steps):
             row = self.step(theta_ref)
             for k, v in row.items():
