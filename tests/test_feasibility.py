@@ -79,6 +79,7 @@ def test_trainer_threshold_matches_config(cfg):
 
 def test_trainer_context_sampling_is_feasible_by_default():
     import numpy as np
+
     import autotune_360.train_autotune_360 as T
     stats = {}
     ctx = T.sample_context(2000, np.random.default_rng(0), feasible_only=True, stats=stats)

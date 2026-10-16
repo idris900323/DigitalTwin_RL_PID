@@ -61,6 +61,13 @@ Recommendation: **C for development plus B for sharing**. C removes the embedded
 
 17. **Deviations from the base code in `html/`** that you may want to revisit: default gains now Tuned (base: 5/20/0.05, kept as "Legacy default"); trainer samples feasible contexts only (base: all contexts; `--include-infeasible` restores it) and uses derived child RNG streams (so retrained weights differ from the base policy, which is kept in `html/`); the HTML physics is now inlined from `physics.js` and `config.generated.js` instead of hand-written constants; the arm-length slider default is 3.0 cm (base 2.8, snapped by the browser). On every scenario the base supports, the refactored code reproduces the base to 1e-9 (`tests/test_base_code_oracle.py`).
 
+## Found during Group 3
+
+20. **mypy (lenient) still reports about 13 annotation issues** (mostly `Optional` handling in `validation/identify.py`, matplotlib `add_axes` list-vs-tuple, a few missing variable annotations). Config in `pyproject.toml`; ruff passes clean.
+21. **Identification bounds and noise levels are generic**: real data will need `sigma_theta_deg`, `sigma_i` and bounds set from the instrument check (T1). Confidence intervals assume white residuals; bootstrap over repeats is recommended.
+22. **Sensitivity study recommends different first measurements for bare and loaded conditions** (Jm, R, Kt versus eta, R, Ke); the loaded run uses 1 kg x 10 cm with gravity. Ke and Kt are ranked separately although an ideal motor has Ke = Kt: measure them as one constant K first.
+23. **Method_d family are all inactive**; the single decisive measurement is the low-voltage locked-rotor test with a torque arm (`docs/parameter_derivation.md`, `docs/validation_plan.md` T2).
+
 ## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)
 
 The paper effort needs the software to produce auditable, regenerable data. Keep these in mind while building the improvement work, so nothing has to be retrofitted:

@@ -25,7 +25,15 @@ autotune_policy_360.meta.json (seeds, hyperparameters, config hash, git commit, 
 Reproduce the committed weights (same machine, same numpy):
     python autotune_360/train_autotune_360.py --seed 0          (about 3-4 minutes on a laptop)
 """
-import argparse, hashlib, json, pathlib, platform, subprocess, sys, time
+import argparse
+import hashlib
+import json
+import pathlib
+import platform
+import subprocess
+import sys
+import time
+
 import numpy as np
 import yaml
 
@@ -33,7 +41,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-from models.feasibility import available_torque, feasibility_arrays   # noqa: E402
+from models.feasibility import available_torque, feasibility_arrays  # noqa: E402
 
 FEATURE_VERSION = 1      # bump if features() changes: the browser page must be updated to match
 

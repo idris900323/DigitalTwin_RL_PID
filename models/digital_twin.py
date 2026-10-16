@@ -30,11 +30,13 @@ from models.joint import Joint
 
 @dataclass
 class TwinState:
+    """Simulation time and motor state [i, omega_m, theta_m]."""
     t: float = 0.0
     motor_state: np.ndarray = field(default_factory=lambda: np.zeros(3))  # [i, omega_m, theta_m]
 
 
 class DigitalTwin:
+    """Closed loop: encoder -> PID -> (delay, current limit) -> motor -> gearbox -> joint, at a fixed sample time."""
     def __init__(self, motor: DCMotor, gearbox: Gearbox, joint: Joint, encoder: Encoder, pid: PID, dt: float,
                  current_limit_A: Optional[float] = None, delay_steps: int = 0):
         """``current_limit_A``: optional driver current limit [A] (None = no limit, the default).
@@ -54,11 +56,13 @@ class DigitalTwin:
         self.state = TwinState()
 
     def reset(self):
+        """Return the twin, its PID and the command-delay buffer to the initial state."""
         self.state = TwinState()
         self.pid.reset()
         self._v_buffer = deque([0.0] * self.delay_steps)
 
     def step(self, theta_ref: float) -> dict:
+        """Advance one control period toward ``theta_ref`` [rad]; returns the logged quantities of that step."""
         t = self.state.t
         theta_m = self.state.motor_state[2]
         omega_m = self.state.motor_state[1]

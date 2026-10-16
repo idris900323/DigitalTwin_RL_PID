@@ -143,6 +143,7 @@ def test_feasible_payload_hides_warning(page):
 
 def test_feasibility_js_matches_python(page):
     import yaml
+
     from models.feasibility import feasibility
     cfg = yaml.safe_load(open(ROOT.parent / "config" / "motor_parameters.yaml"))
     cases = [(2.0, 0.15, 90, True, 100), (1.5, 0.12, 180, True, 100), (1.0, 0.10, 90, True, 50),

@@ -73,6 +73,19 @@ for the governing spec.
 | `autotune_policy_360.json` | Trained tiny-MLP policy weights produced by the script above, evaluated in plain JS by the visualizer page. |
 | `servo_pid_visualizer_360.html` | Self-contained (~15 MB) browser page: servo PID digital twin with the learned auto-tune policy embedded. Open directly in a browser. |
 
+## Group 3 additions: simulation programme and validation tooling
+
+| File | What it is |
+|---|---|
+| `simulation/simulate_pid.py` | Fixed-PID test sequence; writes CSV/MD tables, raw logs in the project schema, four figures and a manifest. |
+| `simulation/sensitivity.py` | One-at-a-time, Morris and Ke/Kt sensitivity study plus an RL robustness preview. |
+| `simulation/compare_parameter_sets.py` | Datasheet consistency and closed-loop effect of every parameter set; regenerates the numbers in `docs/parameter_derivation.md`. |
+| `simulation/rawlog.py`, `simulation/plotstyle.py` | Raw-log schema + manifests; one fixed colour/style per method. |
+| `validation/` | `load_bench_csv.py` (loader + sanity checks), `identify.py` (identifiability-aware fit), `compare.py` (metrics, pass/fail), `synthetic.py` (known-truth test data), `report_template.md`. |
+| `docs/` | `validation_plan.md`, `parameter_derivation.md`, `ARCHITECTURE.md`, `GLOSSARY.md`, `FOLLOWUPS.md`. |
+| `results/` | Committed outputs of the scripts above (large raw logs are git-ignored and regenerable). |
+| `pyproject.toml` | ruff and mypy configuration (lenient). |
+
 ## Group 2 additions: shared plant, joint model, generated config
 
 | File | What it is |

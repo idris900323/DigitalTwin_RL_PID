@@ -140,7 +140,6 @@ def test_browser_physics_and_trainer_refuse_inductance(cfg):
             T.load_cfg(yaml_path=p)
     node = shutil.which("node")
     if node:
-        gen_text = (ROOT / "autotune_360" / "config.generated.js").read_text()
         script = ("const gen = require(%s); gen.scenarios[gen.activeScenario].L = 1e-3;"
                   "const phys = require(%s); try { phys.makeCFG(gen); process.exit(1); } catch (e) { console.log(e.message); }"
                   % (json.dumps(str(ROOT / "autotune_360" / "config.generated.js")), json.dumps(str(ROOT / "autotune_360" / "physics.js"))))

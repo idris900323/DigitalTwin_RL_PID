@@ -29,6 +29,7 @@ G = 9.81  # m/s^2
 
 @dataclass
 class JointParams:
+    """Payload, arm, gravity and friction parameters of the joint (all default to off)."""
     payload_mass_kg: float = 0.0
     arm_length_m: float = 0.0
     arm_mass_kg: float = 0.0
@@ -52,6 +53,7 @@ class JointParams:
 
 
 class Joint:
+    """Output-side load model: arm/payload inertia, gravity, friction and a disturbance hook."""
     def __init__(self, params: Optional[JointParams] = None,
                  disturbance: Optional[Callable[[float], float]] = None,
                  external_torque_func: Optional[Callable[[float], float]] = None):
@@ -63,6 +65,7 @@ class Joint:
     # --- geometry ----------------------------------------------------------------------------
     @property
     def arm_cg(self) -> float:
+        """Arm centre-of-gravity distance from the pivot [m]."""
         p = self.p
         return p.arm_length_m / 2.0 if p.arm_cg_m is None else p.arm_cg_m
 
@@ -84,9 +87,11 @@ class Joint:
 
     # --- torques -----------------------------------------------------------------------------
     def gravity_torque(self, theta_out: float) -> float:
+        """Gravity torque [N*m] on the output shaft at angle theta_out [rad] (0 = hanging)."""
         return self.gravity_moment() * G * math.sin(theta_out)
 
     def friction_torque(self, omega_out: float) -> float:
+        """Viscous + smooth Coulomb friction torque [N*m] at output speed omega_out [rad/s]."""
         p = self.p
         tau = p.B_joint * omega_out
         if p.tau_coulomb != 0.0:

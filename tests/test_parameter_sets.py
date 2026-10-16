@@ -1,7 +1,6 @@
 """G3.3: alternative parameter sets are consistent with their derivation, inactive, and documented with true numbers."""
 
 import csv
-import math
 import pathlib
 import re
 
