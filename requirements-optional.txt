@@ -1,0 +1,2 @@
+pypdf        # optional: text extraction from PDF datasheets (models/ingest.py)
+# optional OCR for scanned datasheets: pytesseract + a Tesseract install (models/ingest.py degrades gracefully without it)
