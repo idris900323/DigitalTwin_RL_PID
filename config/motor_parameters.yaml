@@ -103,6 +103,11 @@ pid_defaults:
   Ki_max: 200.0
   Kd_max: 1.0
 
+feasibility:
+  # Margin = available output stall torque / peak gravity holding torque on the path.
+  # Below 1.0 the payload cannot be driven to the target; below this value it is "marginal".
+  marginal_margin: 1.2  # ASSUMED, design choice
+
 # Named presets, for comparisons. All measured on the method_c twin, 90 deg step.
 pid_presets:
   legacy_default: {Kp: 5.0, Ki: 20.0, Kd: 0.05}  # old demo default: 42 % overshoot, 1.8 s settling
