@@ -1,0 +1,23 @@
+# SYNTHETIC example: a larger 48 V brushed gearmotor with a motor-shaft encoder quoted in PPR (quadrature NOT included),
+# speed in rad/s and torque in oz.in. Generated, not copied from a real datasheet.
+id: synthetic_brushed_48v
+synthetic: true
+identity: {manufacturer: Synthetic, model: BR-48-30, variant: "30:1, motor-shaft encoder", datasheet_revision: n/a, notes: "generated for tests"}
+electrical:
+  nominal_voltage: {value: 48, unit: V, provenance: datasheet, source: "synthetic", confidence: high}
+  no_load_current: {value: 0.45, unit: A, provenance: datasheet, source: "synthetic", confidence: high}
+  stall_current: {value: 20, unit: A, provenance: datasheet, source: "synthetic", confidence: high, meaning: stall}
+mechanical:
+  no_load_speed: {value: 314, unit: rad/s, shaft: motor, provenance: datasheet, source: "synthetic", confidence: high}
+  stall_torque: {value: 423, unit: oz.in, shaft: motor, provenance: datasheet, source: "synthetic", confidence: high, meaning: theoretical}
+  mass: {value: 2.2, unit: kg, provenance: datasheet, source: "synthetic", confidence: high}
+constants: {}
+gearbox:
+  ratio: {value: 30, unit: "", provenance: datasheet, source: "synthetic", confidence: high}
+  efficiency: {value: 0.85, unit: "", provenance: datasheet, source: "synthetic", confidence: medium}
+  stated_figures_at: motor
+feedback:
+  counts_per_rev: {value: 2000, unit: ppr, provenance: datasheet, source: "synthetic", confidence: high}
+  mounted_on: motor
+  quadrature_included: false
+drive: {}
