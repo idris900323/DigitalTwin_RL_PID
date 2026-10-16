@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import copy
 import hashlib
 import json
 import pathlib
@@ -59,6 +60,39 @@ def read_provenance(text: str) -> dict:
     return out
 
 
+RECOMMENDATIONS = OUT_DIR / "recommendations.json"
+
+
+def motor_library(base_cfg: dict) -> dict:
+    """Every motor profile as the browser needs it: the plant used for simulation, derived parameters with intervals, conflicts."""
+    sys.path.insert(0, str(ROOT))
+    from models.derive import derive_model
+    from models.motor_profile import list_motors, load_profile
+    from models.motors import get_cfg
+
+    lib = {}
+    for mid in list_motors():
+        prof = load_profile(mid)
+        cfg = get_cfg(mid, base_cfg=copy.deepcopy(base_cfg))
+        sc = cfg["simulation"]["active_electrical_scenario"]
+        d, e = cfg["base_motor"]["derived"][sc], cfg["base_motor"]["estimated"]
+        model = derive_model(prof)
+        lib[mid] = {
+            "name": prof.name, "synthetic": prof.synthetic, "scenario": sc,
+            "supply": {"V_rated": cfg["supply"]["V_rated"]},
+            "gearbox": {"ratio": cfg["gearbox"]["ratio"], "efficiency": d.get("gearbox_efficiency", cfg["gearbox"]["efficiency"])},
+            "encoder": {"cpr": cfg["encoder"]["output_cpr"]},
+            "motor": dict(R=d["R_ohm"], L=e["L_H"], Kt=d["Kt_Nm_per_A"], Ke=d["Ke_V_s_per_rad"], Jm=e["Jm_kgm2"],
+                          Bm=d.get("Bm_Nms_per_rad", e["Bm_Nms_per_rad"])),
+            "params": {k: {"value": v.value, "lo": v.lo, "hi": v.hi, "provenance": v.provenance, "confidence": v.confidence, "method": v.method}
+                       for k, v in model.params.items()},
+            "conflicts": [c["what"] for c in model.conflicts],
+            "leastCertain": model.least_certain(),
+            "hasPolicy": mid == "rmcs_3070",
+        }
+    return lib
+
+
 def build_config(yaml_text: str) -> dict:
     cfg = yaml.safe_load(yaml_text)
     scen = cfg["base_motor"]["derived"]
@@ -94,6 +128,11 @@ def build_config(yaml_text: str) -> dict:
         "pidPresets": cfg.get("pid_presets", {}),
         "provenance": read_provenance(yaml_text),
         "yamlSha256": hashlib.sha256(yaml_text.encode("utf-8")).hexdigest(),
+        "defaultMotor": "rmcs_3070",
+        "motors": motor_library(cfg),
+        "recommendations": json.loads(RECOMMENDATIONS.read_text(encoding="utf-8")) if RECOMMENDATIONS.exists() else {},
+        "tierLabels": {1: "TIER 1 - datasheet estimate: safe starting point, expect to re-tune",
+                       2: "TIER 2 - identified from bench data", 3: "TIER 3 - refined on hardware"},
     }
 
 

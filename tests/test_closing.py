@@ -12,8 +12,15 @@ from models.motor_profile import load_profile
 from models.motors import get_cfg, load_base_config
 from simulation.metrics import overshoot_pct, settling_time
 from tuning import optimize
-from tuning.closing import (RelayController, profile_with_identification, refine_with_relay, relay_analysis, save_profile, simulate_relay,
-                            tier_after_identification)
+from tuning.closing import (
+    RelayController,
+    profile_with_identification,
+    refine_with_relay,
+    relay_analysis,
+    save_profile,
+    simulate_relay,
+    tier_after_identification,
+)
 from tuning.loads import load_load
 from tuning.recommend import recommend, verify_in_twin
 from tuning.tiers import Tier

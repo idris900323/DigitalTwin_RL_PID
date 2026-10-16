@@ -92,8 +92,8 @@ class Recommendation:
 
 
 def profile_hash(motor_id: str) -> str:
-    from models.motor_profile import MOTORS_DIR
-    return hashlib.sha256((MOTORS_DIR / motor_id / "profile.yaml").read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16]
+    from models.motor_profile import library_dir
+    return hashlib.sha256((library_dir() / motor_id / "profile.yaml").read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16]
 
 
 NEXT_MEASUREMENT = {
