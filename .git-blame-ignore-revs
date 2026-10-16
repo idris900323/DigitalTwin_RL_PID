@@ -1,0 +1,8 @@
+# Commits listed here are skipped by `git blame` when you run:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# (GitHub's blame view reads this file automatically.)
+#
+# `git add --renormalize .` against this .gitattributes found nothing to rewrite in the repository:
+# every text file was already stored with LF endings (the CRLF seen on Windows comes from
+# core.autocrlf in the working tree, not from the repository). So there is no line-ending
+# commit to list. If a future commit does mass-normalise line endings, add its full hash below.
