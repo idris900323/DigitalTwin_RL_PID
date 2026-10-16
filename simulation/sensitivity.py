@@ -154,7 +154,7 @@ def finite(m: dict, t_end=2.0) -> dict:
 def oat_cases(cfg: dict) -> list:
     """List of (parameter, level label, parameter values dict) around the nominal set."""
     nom = nominal(cfg)
-    cases = [("nominal", "nominal", {})]
+    cases: list = [("nominal", "nominal", {})]
     for p in ("R", "Kt", "Ke", "Jm", "Bm", "eta"):
         for lv in REL_LEVELS:
             v = nom[p] * (1.0 + lv)
@@ -483,7 +483,6 @@ def main(argv=None):
     p = out / "sensitivity_rl_robustness.csv"; write_csv(p, rl_rows); files.append(p)
 
     rank = ranking(mo, oat_rows)
-    nom = next(r for r in oat_rows if r["parameter"] == "nominal")
     top3 = [n for n, _ in rank[:3]]
     md = ["# Sensitivity analysis (preliminary twin, simulated)", "",
           f"Tuned gains {TUNED}, 90 deg step, {_COND['name']}, parameter set `{cfg['simulation']['active_electrical_scenario']}`, seed {a.seed}, "

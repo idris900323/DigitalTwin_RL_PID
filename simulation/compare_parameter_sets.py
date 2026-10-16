@@ -35,7 +35,7 @@ import numpy as np  # noqa: E402
 
 from models.feasibility import feasibility  # noqa: E402
 from models.joint import Joint, JointParams  # noqa: E402
-from models.units import kgcm_to_Nm, rad_s_to_rpm  # noqa: E402
+from models.units import rad_s_to_rpm  # noqa: E402
 from simulation import rawlog  # noqa: E402
 from simulation.simulate_pid import load_config, run_case, simulatable_sets  # noqa: E402
 

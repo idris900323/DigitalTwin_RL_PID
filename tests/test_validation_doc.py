@@ -1,7 +1,6 @@
 """G3.4: the validation plan is complete and its numbers agree with the YAML and the twin."""
 
 import pathlib
-import re
 
 import pytest
 
@@ -45,7 +44,6 @@ def test_expected_values_agree_with_the_twin(cfg):
 
 
 def test_no_overclaiming_and_template_wording():
-    flat = re.sub(r"never be called validated|may be called validated only|validated\b[^.]*?(only|until)", "", DOC, flags=re.I)
     assert "preliminary" in DOC.lower() and "preliminary" in TEMPLATE.lower()
     assert "never loosen a threshold" in DOC.lower()
     assert "ABB" in DOC and "methodology only" in DOC

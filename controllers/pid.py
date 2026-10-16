@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PIDParams:
+    """Gains, sample time, output limits [V] and derivative-filter time constant [s] of the PID."""
     Kp: float
     Ki: float
     Kd: float
@@ -18,6 +19,7 @@ class PIDParams:
 
 
 class PID:
+    """Fixed-gain PID with output saturation, conditional-integration anti-windup and a filtered derivative."""
     def __init__(self, params: PIDParams):
         self.p = params
         self.integral = 0.0
@@ -25,11 +27,13 @@ class PID:
         self.filtered_derivative = 0.0
 
     def reset(self):
+        """Clear the integral, previous error and filtered-derivative state."""
         self.integral = 0.0
         self.prev_error = 0.0
         self.filtered_derivative = 0.0
 
     def step(self, error: float) -> float:
+        """Return the saturated voltage command [V] for the current error [rad or deg, consistent with the gains]."""
         p = self.p
 
         raw_derivative = (error - self.prev_error) / p.dt

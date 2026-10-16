@@ -47,10 +47,12 @@ def settling_time(t: np.ndarray, y: np.ndarray, ref: float, tol: float = 0.02) -
 
 
 def steady_state_error(y: np.ndarray, ref: float) -> float:
+    """Final value minus target (same units as ``y``)."""
     return y[-1] - ref
 
 
 def rmse(y: np.ndarray, ref: float) -> float:
+    """Root-mean-square deviation of ``y`` from the constant target ``ref``."""
     return float(np.sqrt(np.mean((y - ref) ** 2)))
 
 

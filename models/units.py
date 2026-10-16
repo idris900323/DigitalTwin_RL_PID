@@ -9,16 +9,20 @@ GCM_TO_NM = KGCM_TO_NM * 1.0e-3
 
 
 def rpm_to_rad_s(rpm: float) -> float:
+    """Convert RPM to rad/s."""
     return rpm * RPM_TO_RAD_S
 
 
 def rad_s_to_rpm(rad_s: float) -> float:
+    """Convert rad/s to RPM."""
     return rad_s / RPM_TO_RAD_S
 
 
 def kgcm_to_Nm(kgcm: float) -> float:
+    """Convert kg*cm to N*m."""
     return kgcm * KGCM_TO_NM
 
 
 def gcm_to_Nm(gcm: float) -> float:
+    """Convert g*cm to N*m."""
     return gcm * GCM_TO_NM

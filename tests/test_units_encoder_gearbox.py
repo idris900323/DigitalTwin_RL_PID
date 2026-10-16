@@ -5,9 +5,9 @@ import math
 import numpy as np
 import pytest
 
+from models import units
 from models.encoder import Encoder, EncoderParams
 from models.gearbox import Gearbox, GearboxParams
-from models import units
 
 
 # ----------------------------------------------------------------------------- units

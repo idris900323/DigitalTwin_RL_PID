@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 130
+extend-exclude = ["html", "cad", "results", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E402", "E701", "E702", "E731", "E741", "W291", "W293"]   # long lines, late imports (sys.path bootstrap), compact one-line style of the original trainer, lambdas, ambiguous names
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+namespace_packages = true
+explicit_package_bases = true
+check_untyped_defs = false
+warn_unused_ignores = false
+exclude = ["html/", "tests/", "cad/"]

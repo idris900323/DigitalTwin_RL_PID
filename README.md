@@ -27,14 +27,56 @@ for a PyBullet installation caveat on some platforms.
 
 ## Current status
 
-**Phases 5–9 minimally combined** (gearbox, bare output shaft with no arm
-yet, encoder, fixed PID, closed-loop digital twin simulation), on top of
-**Phase 4** (DC motor ODE). Phase 10 (CAD visualization) brought forward in
-minimal, visualization-only form — see the demo section below. **Not yet
-implemented:** a real arm/payload (Phase 6 proper — needs physical specs),
-PyBullet-integrated physics (Phase 10's actual physics engine — the CAD demo
-is render-only, no PyBullet), Gymnasium environment / RL (Phase 13+). Full
-parameter provenance and open flags: [`datasheet/parameter_table.md`](datasheet/parameter_table.md).
+Everything below is a **preliminary** physics-based twin built from datasheet-derived parameters; **nothing has been validated on hardware**, and the RL tuner is a **pre-validation prototype**.
+
+| Phase (master prompt section 21) | Status |
+|---|---|
+| 1-3 Requirements, datasheet extraction, parameter derivation | Done. Three conflicting derivations are kept and analysed (`docs/parameter_derivation.md`); alternative sets `method_d*` are inactive |
+| 4 DC motor ODE | Done (RK4 with automatic sub-stepping for L > 0) |
+| 5 Gearbox | Done (ideal; backlash/compliance not modelled) |
+| 6 Joint / arm / payload | Done: inertia, gravity, friction, disturbances, optional driver current limit (all OFF by default) |
+| 7 Encoder | Done (quantisation, optional noise) |
+| 8 Fixed PID | Done (saturation, anti-windup, filtered D) |
+| 9 Closed-loop twin | Done, cross-checked across four implementations |
+| 10 PyBullet | See `docs/pybullet_install_windows.md`; render-only CAD demos exist |
+| 11 Validation | Plan, loader, identification and comparison tooling done (`docs/validation_plan.md`, `validation/`); **no real data yet** |
+| 12 Load / disturbance variation | Done in the twin (joint model, sensitivity study) |
+| 13-16 Gymnasium env, RL-PID, comparison | See the status notes in `CHANGELOG.md` (pre-validation prototype) |
+| 17-18 Sim-to-real prep, real-motor validation | Not started (needs hardware) |
+
+Open datasheet flags (model number, whether 7.5 A is stall current, whether 27.18 kg.cm is a theoretical or practical rating) are listed in [`datasheet/parameter_table.md`](datasheet/parameter_table.md) and decide which parameter set is plausible.
+
+## Quick start
+
+```bash
+python -m venv .venv && source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt -r requirements-dev.txt
+pytest tests                                              # about a minute
+PYTHONPATH=. python simulation/simulate_pid.py            # fixed-PID test sequence -> results/
+PYTHONPATH=. python simulation/sensitivity.py --smoke     # sensitivity study (drop --smoke for the full run)
+PYTHONPATH=. python simulation/compare_parameter_sets.py  # datasheet consistency of every parameter set
+PYTHONPATH=. python simulation/cad_pid_visualizer.py      # 3D demo (needs a display and PyQt5)
+python -m http.server --directory autotune_360 8000       # browser twin: http://127.0.0.1:8000/servo_pid_visualizer_360.html
+python tools/generate_js_config.py                        # after editing config/motor_parameters.yaml
+```
+
+## Results (all simulated, preliminary)
+
+![Fixed-PID test sequence](results/pid_sequence_angle.png)
+*Fixed-PID test sequence on the twin (`results/pid_test_sequence.md`): saturation-limited rise, D damps, I only adds overshoot on a bare shaft.*
+
+![Datasheet consistency](results/parameter_sets/fig_datasheet_consistency.png)
+*Predicted / datasheet for each parameter set: no set matches every datasheet figure (`docs/parameter_derivation.md`).*
+
+![Sensitivity](results/sensitivity/sensitivity_tornado.png)
+*One-at-a-time sensitivity; Morris ranking says measure Jm, R and Kt first for a bare shaft, and eta, R, Ke for a loaded arm (`results/sensitivity/sensitivity_table.md`).*
+
+## Limitations (read before trusting any number)
+
+- Plant parameters are derived from an incomplete, internally inconsistent datasheet; Jm and Bm are order-of-magnitude placeholders; L is neglected; the gearbox is ideal. The choice between the parameter sets moves bare-shaft overshoot from 0 to 24 percentage points.
+- No hardware data exists. "Validated" may be used only for quantities that pass the thresholds in `docs/validation_plan.md` on real data.
+- The RL tuner was trained on this unvalidated twin and is a pre-validation prototype.
+- The motor validates the **methodology only**; nothing here applies to an industrial (ABB-class) joint.
 
 ## Folder structure
 

@@ -24,12 +24,12 @@ from typing import Callable
 import numpy as np
 from scipy.integrate import solve_ivp
 
-
 MAX_SUBSTEPS = 20000  # electrical sub-steps allowed per control step; beyond this DCMotor.step raises (see there)
 
 
 @dataclass
 class DCMotorParams:
+    """Armature resistance R, inductance L, torque/back-EMF constants Kt/Ke, rotor inertia Jm and viscous friction Bm (SI)."""
     R: float          # ohm
     L: float           # H
     Kt: float          # N*m/A
@@ -57,6 +57,7 @@ class DCMotor:
         return float((V - self.p.Ke * state[1]) / self.p.R)
 
     def derivatives(self, t: float, state: np.ndarray, V: float, tau_load: float) -> np.ndarray:
+        """Time derivatives of the state [i, omega_m, theta_m] for voltage V and load torque tau_load."""
         _i, omega_m, _theta_m = state
         p = self.p
         i = self.current(state, V)

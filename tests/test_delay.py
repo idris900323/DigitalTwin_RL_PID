@@ -3,7 +3,6 @@
 import math
 
 import numpy as np
-import pytest
 
 from models.factory import build_twin_from_config
 

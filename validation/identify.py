@@ -21,7 +21,6 @@ The result never overwrites the active configuration: ``write_candidate_yaml`` w
 
 from __future__ import annotations
 
-import datetime as _dt
 import hashlib
 import math
 import pathlib
@@ -64,8 +63,8 @@ class IdentResult:
     null_space: List[str]              # human-readable null-space directions
     combinations: List[dict]           # well-determined log-parameter combinations
     theta_hat: Dict[str, float]        # the optimiser's full parameter vector (NOT to be reported for non-identifiable entries)
-    log_cov: np.ndarray = field(repr=False, default=None)
-    null_basis: np.ndarray = field(repr=False, default=None)    # columns span the undetermined log-parameter directions
+    log_cov: Optional[np.ndarray] = field(repr=False, default=None)
+    null_basis: Optional[np.ndarray] = field(repr=False, default=None)    # columns span the undetermined log-parameter directions
     free: Sequence[str] = ()
     notes: List[str] = field(default_factory=list)
 
@@ -134,11 +133,12 @@ def identify(runs: Sequence[Run], cfg: dict, *, free: Sequence[str] = PARAMS, fi
     for _ in range(max(n_starts - 1, 0)):
         x0s.append(np.clip(x0s[0] + rng.uniform(-1.5, 1.5, len(free)), lo, hi))
 
-    best = None
+    best = None  # least_squares result with the lowest cost
     for x0 in x0s:
         sol = least_squares(resid, x0, bounds=(lo, hi), x_scale=1.0, method="trf", max_nfev=200, xtol=1e-10, ftol=1e-10)
         if best is None or sol.cost < best.cost:
             best = sol
+    assert best is not None
     x = best.x
     J = best.jac
     n_obs = len(best.fun)
