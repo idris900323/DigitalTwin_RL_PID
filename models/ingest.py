@@ -193,7 +193,6 @@ def extract_candidates(text: str, *, source: str = "pasted text") -> List[Candid
 
 
 def _parse_tail(tail: str, fld: str, hint: str):
-    dim = FIELDS.get(fld, (hint,))[0]
     if hint == "ratio":
         r = RATIO_RE.search(tail) or re.search(rf"({NUM_RE})", tail)
         return (float(r.group(1).replace(",", "")), "", None) if r else None
@@ -271,6 +270,9 @@ def ambiguities(cands: List[Candidate]) -> List[dict]:
         if x.field == "mechanical.stall_torque":
             q.append({"key": "stall_torque", "question": f"Is {x.value:g} {x.unit} a theoretical (zero-speed) or a practical (current-limited) stall torque?",
                       "options": ["theoretical", "practical"], "candidate": x.id})
+        if x.field == "feedback.counts_per_rev":
+            q.append({"key": "encoder_mounted_on", "question": f"Is the {x.value:g} {x.unit} encoder on the motor shaft or on the gearbox output shaft?",
+                      "options": ["motor", "output"], "candidate": x.id})
         if FIELDS.get(x.field, (None, False))[1] and x.shaft is None:
             q.append({"key": f"shaft:{x.id}", "question": f"Is {x.label()} at the motor shaft or the gearbox output shaft?", "options": ["motor", "output"], "candidate": x.id})
     return q

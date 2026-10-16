@@ -88,7 +88,8 @@ def simulate(cfg: dict, load: Load, gains: np.ndarray, ctxs: List[Tuple[float, f
     vpct = np.full(B, 100.0 if load.max_voltage_V is None else 100.0 * load.max_voltage_V / cfg["supply"]["V_rated"])
     length = np.full(B, load.arm_length_m)
     grav = np.full(B, 1.0 if load.gravity else 0.0)
-    th, V, I = T.simulate_batch(kp, ki, kd, mass, length, grav, vpct, ref, cfg=batch_cfg(cfg, pl), noise=0.0, return_current=True)
+    with np.errstate(all="ignore"):                                   # absurd candidate gains may overflow: scored as very bad below
+        th, V, I = T.simulate_batch(kp, ki, kd, mass, length, grav, vpct, ref, cfg=batch_cfg(cfg, pl), noise=0.0, return_current=True)
     return np.degrees(th), V, I, ref, vpct, (M, C, S)
 
 
@@ -127,6 +128,8 @@ def scenario_cost(m: Dict[str, np.ndarray], load: Load, cfg: dict) -> Tuple[np.n
             + np.maximum(0.0, m["sse"] / load.accuracy_deg - 1.0).clip(max=5.0))
     if load.max_current_A is not None:
         viol = viol + np.maximum(0.0, m["peak_i"] / load.max_current_A - 1.0)
+    cost = np.nan_to_num(cost, nan=1e3, posinf=1e3, neginf=1e3).clip(max=1e3)          # diverged simulations are very bad, not NaN
+    viol = np.nan_to_num(viol, nan=50.0, posinf=50.0, neginf=50.0).clip(max=50.0)
     return cost, viol
 
 

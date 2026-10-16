@@ -1,6 +1,7 @@
 """Model-based starting points for PID gains on the linearised plant (see ``tuning.linear``).
 
-* ``pole_placement``: closed-loop poles s^2 + 2 zeta wn s + wn^2 for the PD part, optional small Ki.
+* ``pole_placement``: closed-loop poles s^2 + 2 zeta wn s + wn^2 for the PD part, optional small Ki. When the plant is already
+  overdamped at that bandwidth (large back-EMF damping) Kd = 0 and the dominant real pole is placed at -wn instead.
 * ``imc_lambda``: IMC/lambda tuning of the integrating second-order plant, equivalent to critically damped placement with
   wn = 1 / lambda.
 * ``ziegler_nichols``: classic ultimate-gain baseline, with Ku found on the loop *including* the digital delay (without a delay a
@@ -24,6 +25,12 @@ Gains = Tuple[float, float, float]
 
 def pole_placement(plant: LinearPlant, wn: float, zeta: float = 1.0, ki_ratio: float = 0.0) -> Gains:
     """(Kp, Ki, Kd) placing the PD closed-loop poles at wn, zeta; Ki = ki_ratio * Kp * wn (0 = none)."""
+    if 2.0 * zeta * wn < plant.a:
+        # The plant's own damping (a = (Kt Ke/R + Bm)/J) already exceeds what the requested poles need, so Kd would be negative.
+        # Use Kd = 0 and choose Kp so that the DOMINANT real pole sits at -wn: s^2 + a s + (c + b Kp/N) = (s + p)(s + a - p).
+        p = wn
+        kp = max(plant.N * (p * (plant.a - p) - plant.c) / plant.b, 0.0)
+        return kp, ki_ratio * kp * wn, 0.0
     kp = plant.N * (wn ** 2 - plant.c) / plant.b
     kd = plant.N * (2.0 * zeta * wn - plant.a) / plant.b
     kp, kd = max(kp, 0.0), max(kd, 0.0)

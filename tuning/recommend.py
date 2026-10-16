@@ -91,7 +91,10 @@ class Recommendation:
         return "\n".join(lines)
 
 
-def profile_hash(motor_id: str) -> str:
+def profile_hash(motor_id: str, profile=None) -> str:
+    if profile is not None and profile.path is None:                  # an in-memory profile (zoo, identified candidate): hash its content
+        import yaml
+        return hashlib.sha256(yaml.safe_dump(profile.data, sort_keys=True).encode()).hexdigest()[:16]
     from models.motor_profile import library_dir
     return hashlib.sha256((library_dir() / motor_id / "profile.yaml").read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16]
 
@@ -164,9 +167,9 @@ REFERENCE_GAINS = {"rmcs_3070": {"Tuned preset (reference)": (15.0, 0.0, 0.3)}}
 
 def recommend(motor_id: str, load_id: str, *, tier: Tier = Tier.ESTIMATE, seed: int = 0, n_train_plants: int = 12, n_test_plants: int = 48,
               popsize: int = 10, maxiter: int = 20, restarts: int = 2, min_pm: float = 45.0, min_gm: float = 6.0, answers: Optional[dict] = None,
-              model: Optional[DerivedModel] = None, cfg: Optional[dict] = None, load: Optional[Load] = None) -> Recommendation:
+              model: Optional[DerivedModel] = None, cfg: Optional[dict] = None, load: Optional[Load] = None, profile=None) -> Recommendation:
     """Run every tuning method, compare them on a held-out plant set, and return the best with its evidence."""
-    prof = load_profile(motor_id)
+    prof = profile or load_profile(motor_id)
     model = model or derive_model(prof, answers)
     cfg = cfg or get_cfg(motor_id, answers)
     load = load or load_load(load_id)
@@ -256,7 +259,7 @@ def recommend(motor_id: str, load_id: str, *, tier: Tier = Tier.ESTIMATE, seed: 
     settings = dict(seed=seed, n_train_plants=n_train_plants, n_test_plants=n_test_plants, popsize=popsize, maxiter=maxiter, restarts=restarts,
                     min_pm_deg=min_pm, min_gm_db=min_gm, cost_weights=optimize.COST_WEIGHTS, risk=f"mean + {optimize.RISK_WEIGHT} x mean of worst {optimize.RISK_FRACTION:.0%}")
     return Recommendation(tier, motor_id, load.id, win.gains, win.name, runner.name if runner else None, methods, model, margins, predictions, constraint,
-                          warnings, breakdown, NEXT_MEASUREMENT.get(next_key, next_key), drivable, settings, profile_hash(motor_id), cfg, load, references)
+                          warnings, breakdown, NEXT_MEASUREMENT.get(next_key, next_key), drivable, settings, profile_hash(motor_id, profile), cfg, load, references)
 
 
 def verify_in_twin(rec: Recommendation, payload_kg: Optional[float] = None, target_deg: Optional[float] = None) -> Dict[str, float]:

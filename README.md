@@ -60,6 +60,10 @@ python -m http.server --directory autotune_360 8000       # browser twin: http:/
 python tools/generate_js_config.py                        # after editing config/motor_parameters.yaml
 ```
 
+## Bring your own motor
+
+`python -m dtrl motor add --input datasheet.pdf --id my_motor` imports a datasheet (you confirm every value), `motor derive` shows the derived model with intervals and datasheet conflicts, `tune` recommends PID gains for a load (with tier label, uncertainty bands, margins and a report), `export` writes Python/C/Arduino controller code. The browser page has a motor dropdown. Details, tiers and limits: [`docs/motors.md`](docs/motors.md). Every recommendation is labelled **Tier 1 (datasheet estimate, preliminary)** until bench data exists.
+
 ## Results (all simulated, preliminary)
 
 ![Fixed-PID test sequence](results/pid_sequence_angle.png)
