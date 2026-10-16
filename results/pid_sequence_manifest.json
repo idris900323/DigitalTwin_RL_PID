@@ -1,0 +1,36 @@
+{
+  "args": {
+    "arm_length": 0.0,
+    "arm_mass": 0.0,
+    "dt": 0.001,
+    "gravity": false,
+    "noise_counts": 0.0,
+    "out_dir": "results",
+    "params": null,
+    "seed": 0,
+    "stamp": false,
+    "t_end": 2.0,
+    "target_deg": 90.0
+  },
+  "commit": "9265d89807da1f0048822e5c26606b4ceb64ed0e",
+  "config_sha256": "4a3b9d3e04c6903e33a960c1e6006d9e3c5ca045b6c121d57d20fa6a45ef6a4b",
+  "files_sha256": {
+    "pid_sequence_angle.png": "f58dc11aa21825bd0593244116f33a374a490057c031fc9ae6daf344832e3ecb",
+    "pid_sequence_current.png": "56ee8844faa27d9ae3981aa618bdb9bfb7cceab60e25f64941a0f3aa0c06fcc9",
+    "pid_sequence_error.png": "399acd8390fd415df52944cd17414597580465b833d5f117e2afe08b8177bca3",
+    "pid_sequence_voltage.png": "d54e4e3fdbeffdc4ccc4ba4b149a5a4434ae158510b743f3eeb43f3af10f8231",
+    "pid_test_sequence.csv": "13231eb69f30020a0a2694148b766c95e36d72e96a4e58761e867fc07cc1fa30",
+    "pid_test_sequence.md": "85a12ffc81288d8cef73109b6dc06a7a7ad04ce431ee0c94b207fad871d42194",
+    "pid_test_sequence_raw.csv": "234c3092a5e953ca3d9f92e604696556cfd55f213555a5b9d1ffe6bf4b50f455"
+  },
+  "script": "simulation/simulate_pid.py",
+  "seeds": [
+    0
+  ],
+  "software": {
+    "numpy": "2.4.2",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}

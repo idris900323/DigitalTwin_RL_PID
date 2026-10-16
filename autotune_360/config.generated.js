@@ -114,6 +114,6 @@ const DTRL_CONFIG = {
     "joint.tau_coulomb_Nm": "UNKNOWN",
     "feasibility.marginal_margin": "ASSUMED"
   },
-  "yamlSha256": "6218eb58b59f90c6d8bd65f2336e9093e9f02b7d1d664ab09527dc7a2350e571"
+  "yamlSha256": "4a3b9d3e04c6903e33a960c1e6006d9e3c5ca045b6c121d57d20fa6a45ef6a4b"
 };
 if (typeof module !== 'undefined' && module.exports) module.exports = DTRL_CONFIG;
