@@ -148,6 +148,8 @@ pytest tests                      # about 1 minute
 playwright install chromium       # one-time, ~120 MB; needed only for tests/browser
 ```
 
+`tools/generate_js_config.py` regenerates the browser config from `config/motor_parameters.yaml` (the single source of truth for motor constants); `tests/test_config_sync.py` fails if it is stale. The Qt demo regression (`tests/gui/`) needs a real display: set `DTRL_QT_GUI=1`.
+
 `tests/test_baseline.py` pins the step-response numbers measured for this twin, so any physics change that moves them fails loudly.
 The browser tests (`tests/browser/`) drive `autotune_360/servo_pid_visualizer_360.html` in Chromium via Playwright; if Playwright or its Chromium download is missing they are **skipped, not failed**.
 

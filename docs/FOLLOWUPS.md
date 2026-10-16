@@ -48,6 +48,14 @@ A 37 mm motor drawn in a viewport a few hundred pixels wide cannot show more tha
 
 Recommendation: **C for development plus B for sharing**. C removes the embedded-policy duplication that the parity test currently guards, and B produces the one-file version when someone wants to email it. Waiting for a decision before changing anything.
 
+## Found during Group 2
+
+13. **Explicit RK4 was unstable for L > 0 at realistic inductances** (L/R = 60 us - 3 ms versus a 1 ms control step). `DCMotor.step` now sub-steps automatically (h <= 2 L/R, capped at 20,000); L = 0 is unchanged. The browser physics (`physics.js`) and the trainer have no sub-stepping, but they only run L = 0 today. Needed before the L sweep in the sensitivity study (G3.2) is mirrored there.
+14. **PID is not bumpless for Ki changes** (integral state is the plain integral of e). Changing Ki mid-run steps the output by dKi * integral. Fine for fixed gains; the step-wise RL environment (G4) must rate-limit Ki changes or switch to storing the integral of Ki*e. Documented in `tests/test_pid.py`.
+15. **`simulation/metrics.py` mishandled negative steps** (overshoot always 0, rise time wrong). Fixed by mirroring the response; the JS metrics still assume a positive target (the page only uses 0-360 deg).
+16. **Noise is not modelled in the browser physics.** The noise scenario is Python + trainer only (documented in `tests/test_cross_implementation.py`).
+17. **Deviations from the base code in `html/`** that you may want to revisit: default gains now Tuned (base: 5/20/0.05, kept as "Legacy default"); trainer samples feasible contexts only (base: all contexts; `--include-infeasible` restores it) and uses derived child RNG streams (so retrained weights differ from the base policy, which is kept in `html/`); the HTML physics is now inlined from `physics.js` and `config.generated.js` instead of hand-written constants; the arm-length slider default is 3.0 cm (base 2.8, snapped by the browser). On every scenario the base supports, the refactored code reproduces the base to 1e-9 (`tests/test_base_code_oracle.py`).
+
 ## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)
 
 The paper effort needs the software to produce auditable, regenerable data. Keep these in mind while building the improvement work, so nothing has to be retrofitted:
