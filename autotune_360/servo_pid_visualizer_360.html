@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Servo PID Digital Twin</title>
+<link rel="icon" href="data:,">
 <script>/**
  * @license
  * Copyright 2010-2021 Three.js Authors
@@ -4770,7 +4771,7 @@
     </div>
     <div class="section">
       <h2>Payload &amp; motor</h2>
-      <div class="row"><label>Arm length</label><input id="plLen" type="range" min="2" max="15" step="0.5" value="2.8"><output id="plLenOut">2.8 cm</output></div>
+      <div class="row"><label>Arm length</label><input id="plLen" type="range" min="2" max="15" step="0.5" value="3"><output id="plLenOut">3.0 cm</output></div>
       <div class="row"><label>Payload mass</label><input id="plMass" type="range" min="0" max="2" step="0.05" value="0"><output id="plMassOut">0.00 kg</output></div>
       <div class="row"><label>Motor speed limit</label><input id="plV" type="range" min="10" max="100" step="5" value="100"><output id="plVOut">100 %</output></div>
       <div class="row"><label>Playback speed</label><input id="plS" type="range" min="0.2" max="4" step="0.1" value="1"><output id="plSOut">1.0x</output></div>
@@ -4947,22 +4948,44 @@ const playback = {active:false, idx:0, log:null};
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-function fitCameraToScene(){
+// Fit the camera to the static CAD plus the full circle the arm tip can sweep
+// (radius = current arm length around the shaft pivot), independent of the arm's
+// current rotation. keepDirection=true preserves the user's orbit direction and
+// changes only distance/target (used when the arm length changes).
+function fitCameraToScene(keepDirection){
+  const savedRot = shaftGroup.rotation.z;
+  shaftGroup.rotation.z = 0;
   scene.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(scene);
+  shaftGroup.rotation.z = savedRot;
+  scene.updateMatrixWorld(true);
+  const L = Math.max(armLenM(), 0.028), pivot = new THREE.Vector3();
+  shaftGroup.getWorldPosition(pivot);
+  const swept = new THREE.Box3(new THREE.Vector3(pivot.x-L, pivot.y-L, indBall.position.z-0.005),
+                               new THREE.Vector3(pivot.x+L, pivot.y+L, indBall.position.z+0.005));
+  box.union(swept);
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
   let maxDim = Math.max(size.x,size.y,size.z);
   if (!isFinite(maxDim) || maxDim <= 0) maxDim = 0.05; // fallback if bbox came out degenerate
   const dist = maxDim*2.8;
+  let dir = new THREE.Vector3(0.7, 0.55, 0.85);
+  if (keepDirection) {
+    const d = camera.position.clone().sub(controls.target);
+    if (d.lengthSq() > 1e-12) dir = d;
+  }
+  dir.normalize();
   camera.near = Math.max(maxDim/500, 0.0001);
   camera.far = maxDim*200;
-  camera.position.set(center.x+dist*0.7, center.y+dist*0.55, center.z+dist*0.85);
+  camera.position.copy(center).addScaledVector(dir, dist);
   camera.lookAt(center);
   camera.updateProjectionMatrix();
   controls.target.copy(center);
   controls.update();
 }
+let cadLoaded = false, lastFitLen = null;
+function armLenM(){ return +document.getElementById('plLen').value/100; }  // not plLen: that const is declared later
+let IDLE_TEXT = 'ready - loading CAD';
 
 function tintMaterial(mat, hex){
   const m = mat.clone();
@@ -4989,8 +5012,12 @@ try {
       (isRotating ? shaftGroup : staticGroup).attach(obj);
       if (isRotating) rotatingCount++; else staticCount++;
     });
+    cadLoaded = true; lastFitLen = armLenM();
     fitCameraToScene();
-    badgeEl.textContent = 'idle (' + staticCount + ' static / ' + rotatingCount + ' rotating parts loaded)';
+    IDLE_TEXT = 'ready - CAD loaded (arm rotates on Run)';
+    badgeEl.textContent = IDLE_TEXT;
+    badgeEl.title = staticCount + ' static / ' + rotatingCount + ' rotating CAD parts (the arm itself is not a CAD part)';
+    console.info('CAD parts: ' + staticCount + ' static / ' + rotatingCount + ' rotating');
   }, (err)=>{
     console.error('GLB parse error', err);
     badgeEl.textContent = 'CAD load failed: ' + (err && err.message ? err.message : err);
@@ -5042,6 +5069,7 @@ function updatePayloadUI(){
   indRod.scale.y = L/0.028; indRod.position.x = L/2;
   indBall.position.x = L;
   indBall.scale.setScalar(0.6 + 0.9*Math.cbrt(m/2));
+  if (cadLoaded && L !== lastFitLen) { lastFitLen = L; fitCameraToScene(true); }
   document.getElementById('plLenOut').textContent = (+plLen.value).toFixed(1)+' cm';
   document.getElementById('plMassOut').textContent = m.toFixed(2)+' kg';
   document.getElementById('plVOut').textContent = plV.value+' %';
@@ -5110,7 +5138,7 @@ let PLAYBACK_STRIDE = 5;
   setTimeout(tick, 33);
   if (!playback.active) return;
   const i = playback.idx;
-  if (i >= playback.log.theta.length){ playback.active=false; modeLabel.textContent='idle'; return; }
+  if (i >= playback.log.theta.length){ playback.active=false; modeLabel.textContent=IDLE_TEXT; return; }
   const angleDeg = playback.log.theta[i];
   shaftGroup.rotation.z = angleDeg * Math.PI/180;
   playback.idx += PLAYBACK_STRIDE;
