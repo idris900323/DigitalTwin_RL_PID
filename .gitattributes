@@ -1,0 +1,31 @@
+# Normalise line endings: text files are stored with LF in the repository.
+* text=auto
+
+# Source and docs: LF in the working tree on every platform, so files do not flip between CRLF and LF.
+*.py   text eol=lf
+*.md   text eol=lf
+*.yaml text eol=lf
+*.yml  text eol=lf
+*.json text eol=lf
+*.txt  text eol=lf
+*.ini  text eol=lf
+*.js   text eol=lf
+*.sh   text eol=lf
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+
+# Binary assets: never normalise, never diff, never merge textually.
+*.glb binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.JPG binary
+*.SLDPRT binary
+*.SLDASM binary
+*.x_b binary
+# The page contains hand-edited application code, so keep text diffs; -text only stops line-ending conversion.
+autotune_360/servo_pid_visualizer_360.html -text
+
+# STEP files are text but huge: keep normal text handling, just do not show diffs.
+*.STEP -diff
+*.step -diff
