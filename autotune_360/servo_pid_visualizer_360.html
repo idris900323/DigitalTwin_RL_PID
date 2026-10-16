@@ -5109,6 +5109,7 @@ function rlGains(pl){
 // Torque feasibility (mirror of models/feasibility.py; checked against it by tests/browser/test_feasibility_parity).
 // margin = available output stall torque / peak gravity holding torque on the path from 0 deg to the target.
 const FEAS_MARGINAL = 1.2;
+const FEAS_CAVEAT = ' Note: the margin is an upper bound. It uses stall torque; back-EMF reduces the torque available while the joint is moving, and a driver current limit would reduce it further.';
 function feasibilityJS(mass, len, thetaDeg, gravity, vPct){
   const m = CFG.motor;
   const tauAvail = m.Kt * (CFG.V_rated*vPct/100/m.R) * CFG.gearboxRatio * CFG.gearboxEff;
@@ -5125,12 +5126,12 @@ function updateFeasibility(){
   const banner = document.getElementById('feasBanner'), btn = document.getElementById('autoBtn');
   if (f.status === 'ok'){ banner.hidden = true; banner.textContent = ''; btn.disabled = false; btn.title = ''; return f; }
   const nums = 'peak hold torque '+f.tau_hold_peak.toFixed(2)+' N·m vs available '+f.tau_avail.toFixed(2)+' N·m at the '+pl.vPct+' % voltage cap';
-  banner.className = 'feas '+f.status; banner.hidden = false;
+  banner.className = 'feas '+f.status; banner.hidden = false; banner.title = FEAS_CAVEAT.trim();
   if (f.status === 'infeasible'){
-    banner.textContent = 'INFEASIBLE - torque margin '+f.margin_path.toFixed(2)+': '+nums+'. The arm cannot be driven to '+CFG.thetaRefDeg+'°; the response will stall short of the target.';
-    btn.disabled = true; btn.title = 'Auto-tune is disabled: this payload needs more torque than the motor can deliver (margin '+f.margin_path.toFixed(2)+'), so no gains can reach the target. Reduce mass/arm length, raise the speed limit, or turn gravity off.';
+    banner.textContent = 'INFEASIBLE - torque margin '+f.margin_path.toFixed(2)+' (upper bound): '+nums+'. The arm cannot be driven to '+CFG.thetaRefDeg+'°; the response will stall short of the target.';
+    btn.disabled = true; btn.title = 'Auto-tune is disabled: this payload needs more torque than the motor can deliver (margin '+f.margin_path.toFixed(2)+'), so no gains can reach the target. Reduce mass/arm length, raise the speed limit, or turn gravity off.'+FEAS_CAVEAT;
   } else {
-    banner.textContent = 'MARGINAL - torque margin '+f.margin_path.toFixed(2)+': '+nums+'. Expect slow, gravity-limited motion.';
+    banner.textContent = 'MARGINAL - torque margin '+f.margin_path.toFixed(2)+' (upper bound): '+nums+'. Expect slow, gravity-limited motion.';
     btn.disabled = false; btn.title = '';
   }
   return f;

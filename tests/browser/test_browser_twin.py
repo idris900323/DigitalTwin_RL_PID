@@ -1,6 +1,7 @@
 """G1.4: drive autotune_360/servo_pid_visualizer_360.html in Chromium via Playwright.
 
-Requires `pip install playwright` and an installed Chromium (`playwright install chromium`).
+Requires `pip install playwright` and a downloaded Chromium: run `playwright install chromium` once
+(about 120 MB). If either is missing the whole module is skipped, not failed.
 The page is served over local HTTP because `file:` URLs are blocked in this setup.
 Skips cleanly if Playwright is unavailable.
 """
@@ -31,7 +32,10 @@ def server():
 @pytest.fixture()
 def page(server):
     with pw.sync_playwright() as p:
-        browser = p.chromium.launch(args=["--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"])
+        try:
+            browser = p.chromium.launch(args=["--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"])
+        except Exception as exc:  # browser binaries not installed
+            pytest.skip(f"Chromium is not installed for Playwright ({type(exc).__name__}); run `playwright install chromium`")
         pg = browser.new_page(viewport={"width": 1500, "height": 1000})
         errors = []
         pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
@@ -120,9 +124,11 @@ def test_infeasible_payload_shows_warning_with_margin(page):
     banner = page.locator("#feasBanner")
     assert banner.is_visible()
     text = banner.inner_text()
-    assert "INFEASIBLE" in text and "0.72" in text
+    assert "INFEASIBLE" in text and "0.72" in text and "upper bound" in text
+    assert "back-EMF" in banner.get_attribute("title")
     assert page.evaluate("document.getElementById('autoBtn').disabled") is True
-    assert "disabled" in page.evaluate("document.getElementById('autoBtn').title")
+    tooltip = page.evaluate("document.getElementById('autoBtn').title")
+    assert "disabled" in tooltip and "back-EMF" in tooltip
     page.wait_for_timeout(300)
     SHOTS.mkdir(parents=True, exist_ok=True)
     page.screenshot(path=str(SHOTS / "10_browser_infeasible_banner.png"))

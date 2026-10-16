@@ -93,7 +93,6 @@ from matplotlib.figure import Figure
 from PyQt5 import QtCore, QtWidgets
 from pyvistaqt import QtInteractor
 
-from models.feasibility import describe, feasibility
 from simulation.interactive_pid_twin import build_twin, load_config
 from simulation.metrics import overshoot_pct, rise_time, settling_time, steady_state_error
 
@@ -509,13 +508,11 @@ class MainWindow(QtWidgets.QMainWindow):
         os_ = overshoot_pct(theta, self.ref_deg)
         st = settling_time(t, theta, self.ref_deg)
         sse = steady_state_error(theta, self.ref_deg)
-        # Gravity is not modelled in this demo yet (G2.3 adds it), so the margin is infinite here;
-        # the line is wired up so it shows real numbers as soon as gravity is enabled.
-        feas = feasibility(self.cfg, self.arm_mass_kg, self.arm_length_m, self.ref_deg, gravity=False)
+        # No torque-margin line: this demo has no gravity yet, so the margin would always be infinite.
+        # G2.3 adds gravity and brings the line back.
         self.status_label.setText(
             f"Kp={Kp:.2f} Ki={Ki:.2f} Kd={Kd:.3f}  |  arm={self.arm_length_m*1000:.0f}mm {self.arm_mass_kg*1000:.0f}g\n"
-            f"rise={rt:.2f}s  overshoot={os_:.1f}%  settle={st:.2f}s  sse={sse:.2f}deg\n"
-            f"{describe(feas)}"
+            f"rise={rt:.2f}s  overshoot={os_:.1f}%  settle={st:.2f}s  sse={sse:.2f}deg"
         )
         self.canvas.draw_idle()
 

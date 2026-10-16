@@ -9,7 +9,13 @@ The motor can deliver at most its stall torque at the voltage cap,
 
     tau_avail = Kt * (V_cap / R) * N * eta        (output-shaft side)
 
-(this is an upper bound while moving -- back-EMF only reduces it).
+This is an UPPER BOUND on the torque available. It is the stall value: while the joint
+moves, the back-EMF Ke*omega_m reduces the armature current, so the torque the motor
+can actually deliver falls with speed (tau = Kt*(V - Ke*omega_m)/R * N * eta). A case
+reported as "ok" or "marginal" can therefore still stall mid-motion; "infeasible" is
+reliable (it fails even at stall). A moving-state margin would need the speed profile and
+is not computed. The driver's current limit (if any) would also lower the stall figure;
+it is not included here yet.
 
 Two margins are reported because both matter:
   * ``margin_target`` -- can the joint *hold* the target? (torque at the target angle)

@@ -2,7 +2,7 @@
 
 1. **Trainer still duplicates plant constants** (`CFG` in `train_autotune_360.py`, `CFG` in the HTML) and the marginal-margin threshold (1.2). `tests/test_feasibility.py` checks they match the YAML for now; G2.1 removes the duplication via a generated config.
 2. **JS feasibility uses the page's own constants**, not generated ones (same G2.1 item). `tests/browser` checks it against `models/feasibility.py`.
-3. **Qt demo has no gravity yet**, so its new torque-margin status line always reads "no gravity holding torque". G2.3 adds gravity and makes it meaningful.
+3. **Qt demo has no gravity yet**, so the torque-margin status line was removed (it would always read "no gravity holding torque"). G2.3 adds gravity and brings the line back.
 4. **Policy initial bias** (`b3`) still starts near the legacy gains (5, 20, 0.05). It only affects the starting point of training; worth revisiting once a feasibility feature or the Tuned preset is the natural start.
 5. **Feasibility is not a policy input.** The tuner gets mass, length, gravity, speed limit and target but not the margin itself. Adding it would change `FEATURE_VERSION` and the JS contract.
 6. **`meta.json` records the git commit the trainer ran on**, i.e. the commit *before* the one that stores the new weights. Consider recording a "dirty" flag.
@@ -10,7 +10,8 @@
 8. **`.vscode` is intentionally not ignored** (existing `.gitignore` comment); the improvement prompt listed `.vscode` as ignorable. Kept the repo's deliberate choice.
 9. **Browser tests need Chromium** (`playwright install chromium`) and a WebGL-capable launch (`--enable-unsafe-swiftshader --ignore-gpu-blocklist`); without those flags the 3D canvas renders blank although the tests still pass.
 10. **Trainer cost is noisy per batch** (different contexts each iteration); the final policy is judged only by the held-out table.
-11. **Torque margin ignores back-EMF**, so it is an upper bound on available torque while moving. A moving-state margin would need the speed profile.
+11. **Torque margin ignores back-EMF** (and any driver current limit), so it is an upper bound on available torque while moving; now documented in `models/feasibility.py` and in the browser banner/tooltip. A moving-state margin would need the speed profile.
+12. **Marginal band (margin 1.0-1.2) is outside the training distribution** (about 3 % of raw draws). The policy is weaker there; options: include the band in training, or add the margin as a policy feature (changes `FEATURE_VERSION`).
 
 ## Proposal (not executed): the 15 MB self-contained HTML
 

@@ -2,3 +2,4 @@ pytest
 pytest-cov
 ruff
 playwright
+# browser tests also need a one-time: playwright install chromium (they skip cleanly without it)
