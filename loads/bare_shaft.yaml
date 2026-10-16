@@ -1,0 +1,16 @@
+# Example load: nothing on the shaft (the bare-motor case used throughout the simulation study).
+id: bare_shaft
+load:
+  arm_length_m: 0.0
+  payload_mass_kg: {min: 0.0, max: 0.0}
+  arm_mass_kg: 0.0
+  gravity: false
+task:
+  trajectory: step
+  target_deg: [90.0]
+  accuracy_deg: 0.5
+  max_overshoot_pct: 5.0
+  max_settling_s: 0.6
+  max_current_A: null
+  max_voltage_V: null
+  max_effort_noise_V_rms: 0.6
