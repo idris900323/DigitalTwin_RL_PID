@@ -346,7 +346,10 @@ def build_profile(motor_id: str, candidates: List[Candidate], review: Review, *,
         data[group][name] = f
     if data["feedback"].get("counts_per_rev"):
         data["feedback"].setdefault("mounted_on", review.answers.get("encoder_mounted_on", "motor"))
-        data["feedback"].setdefault("quadrature_included", review.answers.get("quadrature_included", "true") == "true")
+        unit = data["feedback"]["counts_per_rev"]["unit"]
+        # PPR is pulses per channel per revolution: quadrature decoding (x4) is NOT included unless stated; CPR / counts already are
+        default_quad = "false" if unit == "ppr" else "true"
+        data["feedback"].setdefault("quadrature_included", review.answers.get("quadrature_included", default_quad) == "true")
     data["ambiguity_answers"] = dict(review.answers)
     validate_profile(data)
     return Profile(motor_id, data, None, log)

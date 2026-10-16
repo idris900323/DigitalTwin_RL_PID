@@ -29,6 +29,13 @@ import yaml
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MOTORS_DIR = ROOT / "motors"
 
+
+def library_dir() -> pathlib.Path:
+    """The motor library folder: ``motors/`` in the repository, or the folder named by the DTRL_MOTORS_DIR environment variable."""
+    import os
+
+    return pathlib.Path(os.environ.get("DTRL_MOTORS_DIR", MOTORS_DIR))
+
 PROVENANCE = ("datasheet", "calculated", "measured", "assumed", "user")
 CONFIDENCE = ("high", "medium", "low")
 SHAFTS = ("motor", "output")
@@ -206,8 +213,9 @@ def validate_profile(data: dict) -> None:
         raise ProfileError("electrical.voltage_min is larger than voltage_max")
 
 
-def load_profile(motor_id: str, motors_dir: pathlib.Path = MOTORS_DIR) -> Profile:
+def load_profile(motor_id: str, motors_dir: Optional[pathlib.Path] = None) -> Profile:
     """Load and validate ``motors/<motor_id>/profile.yaml``."""
+    motors_dir = pathlib.Path(motors_dir) if motors_dir is not None else library_dir()
     path = motors_dir / motor_id / "profile.yaml"
     if not path.exists():
         raise FileNotFoundError(f"no motor profile {motor_id!r} (looked for {path}); available: {', '.join(list_motors(motors_dir))}")
@@ -219,6 +227,7 @@ def load_profile(motor_id: str, motors_dir: pathlib.Path = MOTORS_DIR) -> Profil
     return Profile(motor_id, data, path)
 
 
-def list_motors(motors_dir: pathlib.Path = MOTORS_DIR) -> List[str]:
+def list_motors(motors_dir: Optional[pathlib.Path] = None) -> List[str]:
     """Ids of all motor folders that contain a profile."""
-    return sorted(p.parent.name for p in pathlib.Path(motors_dir).glob("*/profile.yaml"))
+    base = pathlib.Path(motors_dir) if motors_dir is not None else library_dir()
+    return sorted(p.parent.name for p in base.glob("*/profile.yaml"))
