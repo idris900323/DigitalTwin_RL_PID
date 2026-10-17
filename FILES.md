@@ -73,6 +73,13 @@ for the governing spec.
 | `autotune_policy_360.json` | Trained tiny-MLP policy weights produced by the script above, evaluated in plain JS by the visualizer page. |
 | `servo_pid_visualizer_360.html` | Self-contained (~15 MB) browser page: servo PID digital twin with the learned auto-tune policy embedded. Open directly in a browser. |
 
+## Group 4-5 additions
+| File | What it is |
+|---|---|
+| `environments/rl_pid_env.py`, `rl/ppo.yaml`, `rl/train_ppo.py`, `requirements-rl.txt` | Gymnasium PID-adaptation environment and SB3 training (outputs in git-ignored `models/rl/`). |
+| `simulation/compare_controllers.py`, `results/controller_comparison/` | Paired comparison of Tuned, legacy, ZN, bandit, random-search oracle and PPO. |
+| `pybullet_sim/`, `docs/pybullet_install_windows.md` | URDF generator, untested PyBullet wrapper, install record. |
+
 ## Group 3B additions: bring your own motor
 
 | File | What it is |

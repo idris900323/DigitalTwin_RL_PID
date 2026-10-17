@@ -1,0 +1,31 @@
+{
+  "args": {
+    "n": 100,
+    "oracle_candidates": 16,
+    "policy_dir": "ppo_main",
+    "regimes": [
+      "static",
+      "changes",
+      "ood"
+    ],
+    "which": "best"
+  },
+  "commit": "eb4ce747a210aca3db4e2dbc0157a6a5dda0dff9",
+  "config_sha256": "ae75a000089bca6d8b3cca78e2cfff8e80e67241f3a01e5fb4567bee3a005b7d",
+  "files_sha256": {
+    "per_episode.csv": "d283ec99368733c093af056ac58a721495d69e13876122d918416e21d8e73b4a",
+    "summary.md": "2d6afd41fbcc83e6c91820172196d63e320ecdbd5a08a0b6f573fa2305cdf4c8"
+  },
+  "script": "simulation/compare_controllers.py",
+  "seeds": [
+    50000,
+    50099
+  ],
+  "software": {
+    "numpy": "2.4.2",
+    "platform": "Windows AMD64",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}

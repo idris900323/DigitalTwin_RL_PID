@@ -38,7 +38,8 @@ Everything below is a **preliminary** physics-based twin built from datasheet-de
 | 7 Encoder | Done (quantisation, optional noise) |
 | 8 Fixed PID | Done (saturation, anti-windup, filtered D) |
 | 9 Closed-loop twin | Done, cross-checked across four implementations |
-| 10 PyBullet | See `docs/pybullet_install_windows.md`; render-only CAD demos exist |
+| 10 PyBullet | Not installable on the dev machine (no wheel, no compiler): see `docs/pybullet_install_windows.md`; URDF generator tested, wrapper untested |
+| 13-14 Gymnasium env + RL | `environments/rl_pid_env.py`, `rl/train_ppo.py`; PPO x3 seeds trained and compared (`results/controller_comparison/summary.md`). Pre-validation: PPO beats the fixed Tuned preset but NOT the one-shot bandit tuner, and no gain from step-wise adaptation was found |
 | 11 Validation | Plan, loader, identification and comparison tooling done (`docs/validation_plan.md`, `validation/`); **no real data yet** |
 | 12 Load / disturbance variation | Done in the twin (joint model, sensitivity study) |
 | 13-16 Gymnasium env, RL-PID, comparison | See the status notes in `CHANGELOG.md` (pre-validation prototype) |
@@ -98,9 +99,9 @@ DigitalTwin_RL_PID/
 ├── controllers/
 │   └── pid.py               # fixed-gain PID: saturation, anti-windup, filtered D
 ├── simulation/              # phase-by-phase check scripts + demos (see below)
-├── pybullet/                # planned, not created yet — Phase 10 proper
-├── environments/            # planned, not created yet — Phase 13, Gymnasium env
-├── rl/                      # planned, not created yet — Phase 14+
+├── pybullet_sim/            # URDF generator (tested) + untested PyBullet wrapper; pybullet itself not installable here
+├── environments/            # RL_PID_Env (Gymnasium), pre-validation prototype
+├── rl/                      # train_ppo.py (PPO/SAC/TD3 via SB3), ppo.yaml; needs requirements-rl.txt
 ├── validation/              # planned, not created yet — Phase 11
 ├── results/                 # generated plots/data — gitignored, not source of truth
 └── reference/

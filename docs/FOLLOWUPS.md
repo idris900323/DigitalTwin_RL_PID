@@ -78,6 +78,13 @@ Recommendation: **C for development plus B for sharing**. C removes the embedded
 29. **PDF/OCR extraction is regex based**; unusual datasheet layouts need the confirmation table (or a hand-written YAML). A language model could assist but would have to treat the datasheet text as untrusted data and keep the confirmation step.
 30. **`dtrl motor add` writes into `motors/`** (or `DTRL_MOTORS_DIR`); the profile hash in stored recommendations goes stale when a profile changes (`tests/browser/test_motor_ui.py` detects it).
 
+## Found during Groups 4-5
+
+31. **PPO did not beat the bandit tuner**: the env rewards (error, effort, chatter, gain change, overshoot) differ from the bandit's one-shot cost, and PPO's success rate (36-62 %) is below the bandit's (69 %). Reward shaping toward the spec, longer training, SAC/TD3 and `n_stack > 1` are untried. The best-seed verdict is selected on the evaluation scenarios (optimistic).
+32. **Heavy-tailed returns in the `changes` regime** (std 80-100): Wilcoxon and bootstrap CIs disagree there; report medians too.
+33. **Comparison trained policies are not committed** (`models/rl/` ignored, trained with torch 2.14 CPU, SB3 2.9.0); `results/controller_comparison/` regenerates from them.
+34. **PyBullet unverified**: needs MSVC Build Tools, conda-forge or WSL2.
+
 ## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)
 
 The paper effort needs the software to produce auditable, regenerable data. Keep these in mind while building the improvement work, so nothing has to be retrofitted:

@@ -248,7 +248,6 @@ def report(results, seeds, ppo_names, a) -> str:
     verdicts = []
     for reg, res in results.items():
         t = np.array([r["ret"] for r in res["tuned"]])
-        t_iae = np.array([r["iae"] for r in res["tuned"]])
         L += [f"## Regime `{reg}`", "", "| controller | return mean ± std | Δreturn vs Tuned [95 % CI] | p (Wilcoxon) | IAE mean | overshoot % | settle s | success | diverged |",
               "|---|---|---|---|---|---|---|---|---|"]
         for name, lst in res.items():

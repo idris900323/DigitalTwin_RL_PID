@@ -2,6 +2,11 @@
 
 All results are simulated on the preliminary twin unless stated; nothing has been validated on hardware.
 
+## Group 4-5 (RL environment, comparison, PyBullet interface)
+- `RL_PID_Env` (Gymnasium, shared twin physics, domain randomisation, mid-episode payload/target changes, reward breakdown), `rl/train_ppo.py` (PPO/SAC/TD3 with SB3, multi-seed), `simulation/compare_controllers.py` (paired held-out scenarios, bootstrap CIs, Wilcoxon, failure analysis, OOD regime).
+- Result (simulated, pre-validation): 3 PPO seeds beat the Tuned preset but are indistinguishable from the one-shot bandit tuner and worse than a random-search oracle; no demonstrated benefit of step-wise adaptation, including with mid-episode changes.
+- PyBullet could not be installed here; `docs/pybullet_install_windows.md` records what was tried; `pybullet_sim/` has a tested URDF generator and an untested wrapper.
+
 ## Group 3B (bring your own motor)
 - Motor profiles with provenance, units and validation; derivation engine with intervals and conflict reports; `--motor` on scripts, trainer and demos.
 - Datasheet ingestion (text, CSV, text PDF, optional OCR) with mandatory per-value confirmation, ambiguity questions and a curve digitiser.
