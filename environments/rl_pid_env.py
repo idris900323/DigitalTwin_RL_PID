@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import copy
 import math
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 import gymnasium as gym
 import numpy as np

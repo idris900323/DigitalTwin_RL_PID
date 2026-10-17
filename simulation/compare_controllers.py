@@ -5,17 +5,23 @@ Controllers (every one runs in the SAME RL_PID_Env scenario for a given seed: sa
 
     tuned          fixed Tuned preset 15/0/0.3
     legacy         fixed legacy default 5/20/0.05
+    best_constant  ONE fixed gain triple per regime, chosen on VALIDATION seeds (never on the test seeds): best of random candidates
+                   plus Tuned, then a local multiplicative search (``select_best_constant``)
     zn             Ziegler-Nichols gains from the linear model of the nominal plant for that load (clipped to the env bounds)
     bandit         the one-shot context -> gains MLP (autotune_360/autotune_policy_360.json), gains fixed for the episode
-    random_search  ORACLE UPPER BOUND: best of N random gain sets per scenario, chosen with knowledge of the outcome
-    ppo            step-wise adaptation policy(ies) from rl/train_ppo.py (``--policy-dir``), one row per training seed
+    bandit_retune  the same MLP, re-queried whenever the payload or target changes mid-episode (the fair non-RL baseline for ``changes``)
+    random_search  ORACLE UPPER BOUND: best of N random gain sets per scenario chosen with hindsight on the test scenario (not deployable)
+    ppo            step-wise adaptation policies from rl/train_ppo.py (``--policy-dir``); one per training seed. The reported PPO is the
+                   seed with the best mean return on the VALIDATION seeds; seed mean and spread are reported too
 
-    python simulation/compare_controllers.py --policy-dir <models/rl/run> --out-dir results/controller_comparison
+Regimes: ``static`` (no mid-episode changes), ``changes`` (payload and target change mid-episode), ``ood`` (plant ranges x1.5, double delay).
 
-Regimes: ``static`` (no mid-episode changes), ``changes`` (payload and target change mid-episode: the case adaptation could help),
-``ood`` (plant ranges widened x1.5 and twice the delay: outside the training distribution). Statistics: mean and std, 95 % bootstrap
-CI of the paired difference to the Tuned preset, a paired Wilcoxon signed-rank test (normal approximation, tie-corrected), a
-per-context breakdown and the worst scenarios for the best PPO seed. The report states plainly whether RL beat the baselines.
+Pre-specified statistics (fixed before the run, see ``PRIMARY``): ONE primary comparison, validation-selected PPO minus best_constant in the
+``static`` regime on feasible scenarios, reported as the paired MEDIAN difference of the episode return with a 95 % bootstrap CI. Every
+other comparison is secondary: paired Wilcoxon signed-rank p-values, Holm-adjusted across the whole secondary family. Scenarios whose
+torque-feasibility margin is below 1.0 at any point (including after a payload change) are infeasible and are reported in a separate table.
+
+    python simulation/compare_controllers.py --policy-dir rl/policies/ppo_v2 --out-dir results/controller_comparison
 """
 
 from __future__ import annotations
@@ -34,15 +40,19 @@ if str(ROOT) not in sys.path:
 import numpy as np  # noqa: E402
 
 from environments.rl_pid_env import RL_PID_Env  # noqa: E402
+from models.feasibility import feasibility  # noqa: E402
 from simulation import rawlog  # noqa: E402
 
-EVAL_SEED0 = 50_000          # training uses seeds < 20_000 and 10_000 + seed for its evaluation; these are held out
+VAL_SEED0 = 40_000           # validation scenarios: used to choose best_constant and the PPO seed
+EVAL_SEED0 = 50_000          # test scenarios: never used for any choice (training uses seeds < 20_000)
 BANDIT_JSON = ROOT / "autotune_360" / "autotune_policy_360.json"
+PRIMARY = dict(regime="static", a="ppo", b="best_constant", statistic="paired median difference of return", subset="feasible")
 REGIMES = {
     "static": dict(change_prob={"payload": 0.0, "target": 0.0}, widen=1.0, delay_mult=1),
     "changes": dict(change_prob={"payload": 1.0, "target": 1.0}, widen=1.0, delay_mult=1),
     "ood": dict(change_prob={"payload": 0.0, "target": 0.0}, widen=1.5, delay_mult=2),
 }
+BASELINES = ["tuned", "legacy", "best_constant", "zn", "bandit", "bandit_retune", "random_search"]
 
 
 def make_env(regime: str, **kw) -> RL_PID_Env:
@@ -66,8 +76,9 @@ class Bandit:
         self.lo, self.hi = self.d["lo"], self.d["hi"]
         self.mass_max, self.len_min, self.len_max = d["mass_max"], d["len_min"], d["len_max"]
 
-    def gains(self, ctx):
-        m, L, g, v, R = ctx["mass"], ctx["length"], float(ctx["gravity"]), ctx["vpct"], ctx["target"]
+    def gains(self, ctx, target=None):
+        m, L, g, v = ctx["mass"], ctx["length"], float(ctx["gravity"]), ctx["vpct"]
+        R = ctx["target"] if target is None else target
         x = np.array([m / self.mass_max, (L - self.len_min) / (self.len_max - self.len_min), g, v / 100.0,
                       g * m * L / (self.mass_max * self.len_max), m * L ** 2 / (self.mass_max * self.len_max ** 2), R / 360.0,
                       g * m * L * math.sin(math.radians(R)) / (self.mass_max * self.len_max)])
@@ -86,21 +97,34 @@ def zn_gains(env: RL_PID_Env):
     return np.array(ziegler_nichols(plant), float)
 
 
-def run_episode(env: RL_PID_Env, seed: int, gains=None, policy=None) -> dict:
-    """One paired episode: the same ``seed`` always yields the same scenario. ``gains`` fixes the gains for the whole episode,
-    ``policy(obs)`` adapts them every decision."""
+def _margin(env: RL_PID_Env, mass: float, target: float) -> float:
+    c = env.ctx
+    m = feasibility(env.cfg, mass, c["length"], target, gravity=c["gravity"], v_pct=c["vpct"])["margin_path"]
+    return float("inf") if not math.isfinite(m) else float(m)
+
+
+def run_episode(env: RL_PID_Env, seed: int, gains=None, policy=None, retune=None) -> dict:
+    """One paired episode: the same ``seed`` always yields the same scenario. ``gains`` fixes the gains for the episode (an array, or a
+    callable of the env evaluated after the reset), ``policy(obs)`` adapts them every decision, ``retune(env)`` returns new gains when
+    the payload or target has changed (used by the re-tuning bandit)."""
     obs, info = env.reset(seed=seed)
-    ctx = dict(info["context"])
+    ctx0 = dict(info["context"])
+    margin0 = _margin(env, ctx0["mass"], ctx0["target"])
     if callable(gains):
-        gains = gains(env)                                    # context-dependent gains are computed after the reset
+        gains = gains(env)
     if gains is not None:
-        g = np.clip(np.asarray(gains, float), [env.lo[0], 0.0, env.lo[2]], env.hi)
-        env.gains = g
-        env._apply_gains(g)
-    ret, done, last = 0.0, False, {}
+        env.gains = np.clip(np.asarray(gains, float), [env.lo[0], 0.0, env.lo[2]], env.hi)
+        env._apply_gains(env.gains)
+    ret, done, last, min_margin = 0.0, False, {}, margin0
+    seen = (ctx0["mass"], ctx0["target"])
     while not done:
+        if retune is not None and (env.ctx["mass"], env.target_now) != seen:
+            seen = (env.ctx["mass"], env.target_now)
+            env.gains = np.clip(np.asarray(retune(env), float), [env.lo[0], 0.0, env.lo[2]], env.hi)
+            env._apply_gains(env.gains)
         a = np.zeros(3, np.float32) if policy is None else policy(obs)
         obs, r, term, trunc, last = env.step(a)
+        min_margin = min(min_margin, _margin(env, env.ctx["mass"], env.target_now))
         ret += r
         done = term or trunc
     m = last.get("episode_metrics", {})
@@ -108,9 +132,10 @@ def run_episode(env: RL_PID_Env, seed: int, gains=None, policy=None) -> dict:
     final_err = abs(env.target_now - th[-1]) / max(env.target_now, 1e-9) if len(th) and np.isfinite(th[-1]) else float("inf")
     diverged = bool(term)
     ok = (not diverged) and final_err < 0.02 and m.get("overshoot_pct", 100.0) <= 10.0
+    at_bound = bool(env.gains[0] >= 0.99 * env.hi[0] or env.gains[2] >= 0.99 * env.hi[2] or env.gains[0] <= 1.01 * env.lo[0] or env.gains[2] <= 1.01 * env.lo[2])
     return dict(ret=float(ret), iae=float(m.get("iae_deg_s", np.nan)), overshoot=float(m.get("overshoot_pct", np.nan)),
                 settle=float(m.get("settle_s", np.nan)), peak_current=float(m.get("peak_current_A", np.nan)), final_err=float(final_err),
-                diverged=diverged, success=bool(ok), gains=env.gains.copy(), ctx=ctx)
+                diverged=diverged, success=bool(ok), gains=env.gains.copy(), ctx=ctx0, margin=float(min_margin), at_bound=at_bound)
 
 
 def regime_of(ctx: dict) -> str:
@@ -121,16 +146,49 @@ def regime_of(ctx: dict) -> str:
     return "payload + gravity"
 
 
+def select_best_constant(regime: str, n_val: int, n_cand: int, rounds: int, seed: int = 4321):
+    """The best single gain triple for a regime, chosen on validation scenarios only: random log-uniform candidates plus Tuned, then a
+    local multiplicative coordinate search around the best (steps x1.25 / x0.8; Ki restarts from its seed value or 0)."""
+    env = make_env(regime)
+    vseeds = [VAL_SEED0 + i for i in range(n_val)]
+    tuned = np.array([env.cfg["pid_presets"]["tuned"][k] for k in ("Kp", "Ki", "Kd")])
+    rng = np.random.default_rng(seed)
+    cache = {}
+    lo = np.array([env.lo[0], 0.0, env.lo[2]])
+
+    def score(g):
+        key = tuple(np.round(g, 6))
+        if key not in cache:
+            cache[key] = float(np.mean([run_episode(env, s, gains=g)["ret"] for s in vseeds]))
+        return cache[key]
+
+    cands = [tuned] + list(np.exp(rng.uniform(np.log(env.lo), np.log(env.hi), (n_cand, 3))))
+    best = max(cands, key=score)
+    for _ in range(rounds):
+        improved = False
+        for j in range(3):
+            for f in (1.25, 0.8):
+                g = best.copy()
+                g[j] = np.clip(g[j] * f if g[j] > 0 else (env.ki_seed if f > 1 else 0.0), lo[j], env.hi[j])
+                if score(g) > score(best):
+                    best, improved = g, True
+        if not improved:
+            break
+    return np.asarray(best, float), score(best), len(cache)
+
+
 # ------------------------------------------------------------------ statistics
-def bootstrap_ci(d: np.ndarray, n: int = 2000, seed: int = 0):
+def bootstrap_ci(d: np.ndarray, stat=np.mean, n: int = 2000, seed: int = 0):
+    d = np.asarray(d, float)
     rng = np.random.default_rng(seed)
     idx = rng.integers(0, len(d), (n, len(d)))
-    means = d[idx].mean(axis=1)
-    return float(np.percentile(means, 2.5)), float(np.percentile(means, 97.5))
+    vals = stat(d[idx], axis=1)
+    return float(np.percentile(vals, 2.5)), float(np.percentile(vals, 97.5))
 
 
 def wilcoxon_p(d: np.ndarray) -> float:
     """Two-sided paired Wilcoxon signed-rank p-value, normal approximation with tie correction (no scipy dependency)."""
+    d = np.asarray(d, float)
     d = d[np.isfinite(d)]
     d = d[d != 0]
     n = len(d)
@@ -156,13 +214,24 @@ def wilcoxon_p(d: np.ndarray) -> float:
     return float(math.erfc(abs(z) / math.sqrt(2.0)))
 
 
+def holm(pvals: list) -> list:
+    """Holm-Bonferroni adjusted p-values (NaN stays NaN and is not counted)."""
+    idx = [i for i, p in enumerate(pvals) if p == p]
+    order = sorted(idx, key=lambda i: pvals[i])
+    adj, running, m = {}, 0.0, len(order)
+    for rank, i in enumerate(order):
+        running = max(running, min(1.0, (m - rank) * pvals[i]))
+        adj[i] = running
+    return [adj.get(i, float("nan")) for i in range(len(pvals))]
+
+
 def finite_mean(x):
     x = np.asarray(x, float)
     x = x[np.isfinite(x)]
     return float(x.mean()) if len(x) else float("nan")
 
 
-# ------------------------------------------------------------------ main
+# ------------------------------------------------------------------ policies
 def load_ppo(policy_dir: pathlib.Path, which: str):
     from stable_baselines3 import PPO, SAC, TD3
 
@@ -172,9 +241,9 @@ def load_ppo(policy_dir: pathlib.Path, which: str):
         cls = {"ppo": PPO, "sac": SAC, "td3": TD3}[meta["algo"]]
         f = d / ("best_model.zip" if which == "best" else "final_model.zip")
         model = cls.load(str(f), device="cpu")
-        out[f"{meta['algo']}_s{meta['seed']}"] = (lambda obs, m=model: m.predict(obs, deterministic=True)[0])
-        out[f"{meta['algo']}_s{meta['seed']}:n_stack"] = meta["common"]["env"]["n_stack"]
-        out[f"{meta['algo']}_s{meta['seed']}:action_mode"] = meta["common"]["env"]["action_mode"]
+        name = f"{meta['algo']}_s{meta['seed']}"
+        out[name] = dict(predict=lambda obs, m=model: m.predict(obs, deterministic=True)[0], n_stack=meta["common"]["env"]["n_stack"],
+                         action_mode=meta["common"]["env"]["action_mode"], file=f, meta=meta)
     return out
 
 
@@ -182,8 +251,11 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Paired comparison of PID strategies (pre-validation).")
     ap.add_argument("--policy-dir", default=None, help="run folder from rl/train_ppo.py (contains seed_*/)")
     ap.add_argument("--which", default="best", choices=["best", "final"])
-    ap.add_argument("--n", type=int, default=150, help="held-out scenarios per regime")
-    ap.add_argument("--oracle-candidates", type=int, default=24)
+    ap.add_argument("--n", type=int, default=150, help="held-out test scenarios per regime")
+    ap.add_argument("--n-val", type=int, default=40, help="validation scenarios per regime (best_constant and PPO seed selection)")
+    ap.add_argument("--const-candidates", type=int, default=48)
+    ap.add_argument("--const-rounds", type=int, default=2)
+    ap.add_argument("--oracle-candidates", type=int, default=16)
     ap.add_argument("--regimes", nargs="*", default=list(REGIMES))
     ap.add_argument("--out-dir", default=str(ROOT / "results" / "controller_comparison"))
     a = ap.parse_args(argv)
@@ -191,107 +263,153 @@ def main(argv=None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     bandit = Bandit()
     ppo = load_ppo(pathlib.Path(a.policy_dir), a.which) if a.policy_dir else {}
-    ppo_names = [k for k in ppo if ":" not in k]
     seeds = [EVAL_SEED0 + i for i in range(a.n)]
-    rows, results = [], {}
+    vseeds = [VAL_SEED0 + i for i in range(a.n_val)]
+    assert not set(seeds) & set(vseeds)
+    rows, results, selection = [], {}, {}
     for reg in a.regimes:
         base = make_env(reg)
-        lo, hi = base.lo, base.hi
         tuned = np.array([base.cfg["pid_presets"]["tuned"][k] for k in ("Kp", "Ki", "Kd")])
         legacy = np.array([base.cfg["pid_presets"]["legacy_default"][k] for k in ("Kp", "Ki", "Kd")])
+        const, const_val, n_eval = select_best_constant(reg, a.n_val, a.const_candidates, a.const_rounds)
+        print(f"  {reg}: best constant {np.round(const, 3)} (validation return {const_val:.3f}, {n_eval} candidates)", flush=True)
+        penvs = {n: make_env(reg, action_mode=p["action_mode"], n_stack=p["n_stack"]) for n, p in ppo.items()}
+        val_ret = {n: float(np.mean([run_episode(penvs[n], s, policy=ppo[n]["predict"])["ret"] for s in vseeds])) for n in ppo}
+        chosen = max(val_ret, key=val_ret.get) if val_ret else None
+        selection[reg] = dict(best_constant=[float(x) for x in const], best_constant_val_return=const_val, ppo_val_return=val_ret, ppo_selected=chosen)
         rng = np.random.default_rng(1234)
-        cands = np.exp(rng.uniform(np.log(lo), np.log(hi), (a.oracle_candidates, 3)))
-        penvs = {n: make_env(reg, action_mode=ppo[n + ":action_mode"], n_stack=ppo[n + ":n_stack"]) for n in ppo_names}
-        res = {k: [] for k in ["tuned", "legacy", "zn", "bandit", "random_search"] + ppo_names}
+        cands = np.exp(rng.uniform(np.log(base.lo), np.log(base.hi), (a.oracle_candidates, 3)))
+        res = {k: [] for k in BASELINES + list(ppo)}
         for i, s in enumerate(seeds):
             res["tuned"].append(run_episode(base, s, gains=tuned))
             res["legacy"].append(run_episode(base, s, gains=legacy))
+            res["best_constant"].append(run_episode(base, s, gains=const))
             res["zn"].append(run_episode(base, s, gains=zn_gains))
             res["bandit"].append(run_episode(base, s, gains=lambda e: bandit.gains(e.ctx)))
+            res["bandit_retune"].append(run_episode(base, s, gains=lambda e: bandit.gains(e.ctx),
+                                                    retune=lambda e: bandit.gains(e.ctx, target=e.target_now)))
             best = None
-            for c in np.vstack([cands, tuned, bandit.gains(base.ctx)]):    # base.ctx is this seed's context after the runs above                # the oracle may also pick Tuned or the bandit's choice
+            for c in np.vstack([cands, tuned, bandit.gains(base.ctx), const]):             # base.ctx: this seed's context from the runs above
                 r = run_episode(base, s, gains=c)
                 if best is None or r["ret"] > best["ret"]:
                     best = r
             res["random_search"].append(best)
-            for n in ppo_names:
-                res[n].append(run_episode(penvs[n], s, policy=ppo[n]))
+            for n in ppo:
+                res[n].append(run_episode(penvs[n], s, policy=ppo[n]["predict"]))
             if (i + 1) % 25 == 0:
                 print(f"  {reg}: {i + 1}/{a.n}", flush=True)
+        if chosen:
+            res["ppo"] = res[chosen]
         results[reg] = res
         for name, lst in res.items():
             for s, r in zip(seeds, lst):
                 rows.append(dict(regime=reg, controller=name, seed=s, context=regime_of(r["ctx"]), target=round(r["ctx"]["target"], 2),
-                                 mass=round(r["ctx"]["mass"], 3), ret=r["ret"], iae=r["iae"], overshoot=r["overshoot"], settle=r["settle"],
-                                 peak_current=r["peak_current"], final_err=r["final_err"], diverged=int(r["diverged"]), success=int(r["success"]),
+                                 mass=round(r["ctx"]["mass"], 3), margin=min(r["margin"], 99.0), ret=r["ret"], iae=r["iae"],
+                                 overshoot=r["overshoot"], settle=r["settle"], peak_current=r["peak_current"], final_err=r["final_err"],
+                                 diverged=int(r["diverged"]), success=int(r["success"]), at_bound=int(r["at_bound"]),
                                  Kp=r["gains"][0], Ki=r["gains"][1], Kd=r["gains"][2]))
     with open(out / "per_episode.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         for r in rows:
             w.writerow({k: (f"{v:.6g}" if isinstance(v, float) else v) for k, v in r.items()})
-    md = report(results, seeds, ppo_names, a)
+    (out / "selection.json").write_text(json.dumps(selection, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    md = report(results, seeds, ppo, selection, a)
     (out / "summary.md").write_text(md, encoding="utf-8", newline="\n")
-    rawlog.write_manifest(out, script="simulation/compare_controllers.py", args=dict(n=a.n, which=a.which, oracle_candidates=a.oracle_candidates,
-                          regimes=a.regimes, policy_dir=pathlib.Path(a.policy_dir).name if a.policy_dir else None), seeds=seeds[:1] + seeds[-1:],
-                          files=[out / "per_episode.csv", out / "summary.md"], name="comparison_manifest.json")
+    extra = {"selection": selection, "primary_comparison": PRIMARY}
+    if ppo:
+        import gymnasium
+        import stable_baselines3
+        import torch
+        extra["rl_software"] = {"torch": torch.__version__, "stable_baselines3": stable_baselines3.__version__, "gymnasium": gymnasium.__version__}
+        extra["policy_sha256"] = {f"{n}/{p['file'].name}": rawlog.sha256_file(p["file"]) for n, p in ppo.items()}
+        extra["policy_training_software"] = {n: p["meta"].get("software", {}) for n, p in ppo.items()}
+    rawlog.write_manifest(out, script="simulation/compare_controllers.py",
+                          args=dict(n=a.n, n_val=a.n_val, which=a.which, oracle_candidates=a.oracle_candidates, const_candidates=a.const_candidates,
+                                    regimes=a.regimes, policy_dir=pathlib.Path(a.policy_dir).name if a.policy_dir else None),
+                          seeds=[vseeds[0], vseeds[-1], seeds[0], seeds[-1]],
+                          files=[out / "per_episode.csv", out / "summary.md", out / "selection.json"], extra=extra, name="comparison_manifest.json")
     print(md.encode("ascii", "replace").decode())
     return 0
 
 
-def report(results, seeds, ppo_names, a) -> str:
+def report(results, seeds, ppo, selection, a) -> str:
     L = ["# Controller comparison (PRE-VALIDATION, simulated on the unvalidated twin)", "",
-         f"{len(seeds)} held-out paired scenarios per regime (seeds {seeds[0]}..{seeds[-1]}, never used in training). Every controller sees the same plant, "
-         f"payload, target, delay and noise for a given seed. `return` is the environment reward (higher is better); IAE in deg*s (lower is better). "
-         f"`random_search` is an oracle: best of {a.oracle_candidates} random gain sets + Tuned + bandit per scenario, chosen with hindsight, so it is an "
-         "upper bound for any fixed-gain strategy, not a deployable controller.", ""]
-    verdicts = []
+         f"{len(seeds)} held-out paired TEST scenarios per regime (seeds {seeds[0]}..{seeds[-1]}); {a.n_val} VALIDATION scenarios "
+         f"(seeds {VAL_SEED0}..{VAL_SEED0 + a.n_val - 1}) were used to choose `best_constant` and the reported PPO seed; neither set was used in training. "
+         "Every controller sees the same plant, payload, target, delay and noise for a given seed. `return` is the environment reward (higher is better).",
+         f"`random_search` is an ORACLE (best of {a.oracle_candidates} random sets + Tuned + bandit + best_constant per scenario, chosen with hindsight): an upper "
+         "bound, not a deployable controller.", "",
+         "**Pre-specified analysis.** One primary comparison: validation-selected PPO minus `best_constant`, `static` regime, feasible scenarios, "
+         "paired median difference of return with a 95 % bootstrap CI. All other comparisons are secondary: paired Wilcoxon p-values, Holm-adjusted across "
+         "the whole secondary family (feasible scenarios, all regimes). Infeasible scenarios (torque margin < 1.0 at any point, including after a payload "
+         "change) are reported separately.", ""]
+    tables = {}
     for reg, res in results.items():
-        t = np.array([r["ret"] for r in res["tuned"]])
-        L += [f"## Regime `{reg}`", "", "| controller | return mean ± std | Δreturn vs Tuned [95 % CI] | p (Wilcoxon) | IAE mean | overshoot % | settle s | success | diverged |",
-              "|---|---|---|---|---|---|---|---|---|"]
-        for name, lst in res.items():
+        feas = np.array([r["margin"] >= 1.0 for r in res["tuned"]])
+        ref = np.array([r["ret"] for r in res["best_constant"]])[feas]
+        names = list(dict.fromkeys(BASELINES + (["ppo"] if "ppo" in res else []) + list(ppo)))
+        tab = []
+        for name in names:
+            lst = [r for r, f in zip(res[name], feas) if f]
             r = np.array([x["ret"] for x in lst])
-            d = r - t
-            lo, hi = bootstrap_ci(d)
-            p = wilcoxon_p(d) if name != "tuned" else float("nan")
-            L.append(f"| {name} | {r.mean():.3f} ± {r.std():.3f} | {d.mean():+.3f} [{lo:+.3f}, {hi:+.3f}] | {p:.3g} | "
-                     f"{finite_mean([x['iae'] for x in lst]):.1f} | {finite_mean([x['overshoot'] for x in lst]):.1f} | "
+            d = r - ref
+            lo, hi = bootstrap_ci(d, np.median)
+            tab.append(dict(name=name, lst=lst, r=r, d=d, lo=lo, hi=hi, p=wilcoxon_p(d) if name != "best_constant" else float("nan")))
+        tables[reg] = (feas, ref, names, tab)
+    secondary = [(reg, t) for reg, (_, _, _, tab) in tables.items() for t in tab
+                 if t["name"] != "best_constant" and not (reg == PRIMARY["regime"] and t["name"] == "ppo")]
+    adj = holm([t["p"] for _, t in secondary])
+    adj_map = {(reg, t["name"]): p for (reg, t), p in zip(secondary, adj)}
+    primary = None
+    for reg, res in results.items():
+        feas, ref, names, tab = tables[reg]
+        sel = selection[reg]
+        L += [f"## Regime `{reg}`", "", f"Best constant gains (chosen on validation): Kp {sel['best_constant'][0]:.2f}, Ki {sel['best_constant'][1]:.2f}, "
+              f"Kd {sel['best_constant'][2]:.3f} (validation return {sel['best_constant_val_return']:.3f})."]
+        if sel["ppo_selected"]:
+            L.append("PPO seeds, validation mean return: " + ", ".join(f"{n} {v:.3f}" for n, v in sel["ppo_val_return"].items())
+                     + f". Selected on validation: `{sel['ppo_selected']}`.")
+        nf = int(feas.sum())
+        if reg == "changes":
+            L += ["", "Note: in this regime the target and payload change mid-episode, so overshoot, settling and success refer to the final target only; the return is the headline."]
+        L += ["", f"Feasible scenarios: {nf} of {len(feas)}; infeasible: {len(feas) - nf}.", "", "### Feasible scenarios (headline)", "",
+              "| controller | return mean ± std | median | Δmedian vs best_constant [95 % CI] | p (Wilcoxon) | p Holm | IAE | overshoot % | settle s | success | at a gain bound | diverged |",
+              "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+        for t in tab:
+            name, lst, r = t["name"], t["lst"], t["r"]
+            tag = " **(primary)**" if (reg == PRIMARY["regime"] and name == "ppo") else ""
+            L.append(f"| {name}{tag} | {r.mean():.3f} ± {r.std():.3f} | {np.median(r):.3f} | {np.median(t['d']):+.3f} [{t['lo']:+.3f}, {t['hi']:+.3f}] | {t['p']:.3g} | "
+                     f"{adj_map.get((reg, name), float('nan')):.3g} | {finite_mean([x['iae'] for x in lst]):.1f} | {finite_mean([x['overshoot'] for x in lst]):.1f} | "
                      f"{finite_mean([x['settle'] for x in lst]):.3f} | {100 * np.mean([x['success'] for x in lst]):.0f} % | "
-                     f"{100 * np.mean([x['diverged'] for x in lst]):.0f} % |")
+                     f"{100 * np.mean([x['at_bound'] for x in lst]):.0f} % | {100 * np.mean([x['diverged'] for x in lst]):.0f} % |")
+            if reg == PRIMARY["regime"] and name == "ppo":
+                primary = (float(np.median(t["d"])), t["lo"], t["hi"], t["p"], sel["ppo_selected"], len(r))
         L.append("")
-        if ppo_names:
-            best_ppo = max(ppo_names, key=lambda n: np.mean([x["ret"] for x in res[n]]))
-            rb, rs = np.array([x["ret"] for x in res[best_ppo]]), np.array([x["ret"] for x in res["bandit"]])
-            ro = np.array([x["ret"] for x in res["random_search"]])
-            for other, ro_ in (("tuned", t), ("bandit", rs), ("random_search (oracle)", ro)):
-                d = rb - ro_
-                lo, hi = bootstrap_ci(d)
-                verdicts.append((reg, best_ppo, other, float(d.mean()), lo, hi))
-            L += [f"Per-context breakdown of mean return (best PPO seed `{best_ppo}` vs Tuned vs bandit):", "",
-                  "| context | n | Tuned | bandit | " + best_ppo + " |", "|---|---|---|---|---|"]
-            ctxs = np.array([regime_of(x["ctx"]) for x in res["tuned"]])
-            for c in sorted(set(ctxs)):
-                m = ctxs == c
-                L.append(f"| {c} | {int(m.sum())} | {t[m].mean():.3f} | {rs[m].mean():.3f} | {rb[m].mean():.3f} |")
-            worst = np.argsort(rb - t)[:5]
-            L += ["", f"Worst five scenarios for `{best_ppo}` relative to Tuned (failure analysis):", "",
-                  "| seed | context | target deg | mass kg | Δreturn | PPO overshoot % | PPO final gains | Tuned overshoot % |", "|---|---|---|---|---|---|---|---|"]
-            for i in worst:
-                x, y = res[best_ppo][i], res["tuned"][i]
-                L.append(f"| {seeds[i]} | {regime_of(x['ctx'])} | {x['ctx']['target']:.0f} | {x['ctx']['mass']:.2f} | {rb[i] - t[i]:+.3f} | "
-                         f"{x['overshoot']:.1f} | {x['gains'][0]:.1f}/{x['gains'][1]:.2f}/{x['gains'][2]:.2f} | {y['overshoot']:.1f} |")
-            L.append("")
+        if ppo:
+            per_seed = [(n, float(np.mean([x["ret"] for x, f in zip(res[n], feas) if f]))) for n in ppo]
+            vals = np.array([v for _, v in per_seed])
+            L += ["PPO across training seeds (feasible test scenarios, mean return): " + ", ".join(f"{n} {v:.3f}" for n, v in per_seed)
+                  + f". Seed mean {vals.mean():.3f}, std {vals.std():.3f}, range [{vals.min():.3f}, {vals.max():.3f}]; best constant {np.mean(ref):.3f}.", ""]
+        if (~feas).any():
+            L += ["### Infeasible scenarios (reported separately)", "", "| controller | n | return mean | median |", "|---|---|---|---|"]
+            for name in names:
+                rr = np.array([x["ret"] for x, f in zip(res[name], feas) if not f])
+                L.append(f"| {name} | {len(rr)} | {rr.mean():.3f} | {np.median(rr):.3f} |")
+            bad = [(seeds[i], res["tuned"][i]["margin"]) for i in range(len(feas)) if not feas[i]]
+            L += ["", "Infeasible seeds (min margin): " + ", ".join(f"{s} ({m:.2f})" for s, m in bad[:12]) + ("..." if len(bad) > 12 else ""), ""]
     L += ["## Verdict", ""]
-    if verdicts:
-        for reg, n, other, m, lo, hi in verdicts:
-            word = "BETTER than" if lo > 0 else ("WORSE than" if hi < 0 else "statistically indistinguishable from")
-            L.append(f"- `{reg}`: best PPO seed `{n}` is {word} {other} (Δreturn {m:+.3f}, 95 % CI [{lo:+.3f}, {hi:+.3f}]).")
-        L += ["", "The best seed is picked on these same scenarios, which favours it (selection bias): treat its numbers as optimistic and compare the "
-              "seed spread in the tables above. Return is the training objective; IAE, overshoot, settling time and success rate are controller-agnostic checks.", ""]
+    if primary:
+        m, lo, hi, p, n, k = primary
+        word = "BETTER than" if lo > 0 else ("WORSE than" if hi < 0 else "NOT distinguishable from")
+        L += [f"**Primary** (static, feasible, n={k}): validation-selected PPO (`{n}`) is {word} the best constant gains: paired median difference of "
+              f"return {m:+.3f}, 95 % CI [{lo:+.3f}, {hi:+.3f}] (Wilcoxon p = {p:.3g}, single pre-specified test, unadjusted).", ""]
     else:
-        L.append("No RL policy was supplied (`--policy-dir`), so only the baselines are compared.")
-    L += ["", "Everything above is simulated on the preliminary twin and has not been validated on hardware."]
+        L += ["No primary comparison was computed (no RL policy supplied, or the `static` regime was not run).", ""]
+    sig = [(reg, t["name"], p) for (reg, t), p in zip(secondary, adj) if p == p and p < 0.05]
+    L += ["Secondary comparisons against best_constant with Holm-adjusted p < 0.05: " + (", ".join(f"{r_}/{n} (p={p:.2g})" for r_, n, p in sig) or "none")
+          + ". The sign of the median difference in the tables gives the direction.", "",
+          "Everything above is simulated on the preliminary twin and has not been validated on hardware."]
     return "\n".join(L) + "\n"
 
 

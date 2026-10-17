@@ -27,7 +27,7 @@ class PyBulletJointSim:
         pb.setTimeStep(dt, physicsClientId=self.cid)
         with tempfile.NamedTemporaryFile("w", suffix=".urdf", delete=False) as fh:
             fh.write(joint_urdf(cfg, params))
-        self.body = pb.loadURDF(fh.name, useFixedBase=True, physicsClientId=self.cid)
+        self.body = pb.loadURDF(fh.name, useFixedBase=True, flags=pb.URDF_USE_INERTIA_FROM_FILE, physicsClientId=self.cid)
         pb.setJointMotorControl2(self.body, 0, pb.VELOCITY_CONTROL, force=0.0, physicsClientId=self.cid)   # free joint: torque mode
         self.dt = dt
 
@@ -43,6 +43,7 @@ class PyBulletJointSim:
         self.pb.disconnect(physicsClientId=self.cid)
 
 
-def hanging_period_s(joint_inertia: float, gravity_moment: float) -> float:
-    """Small-oscillation period of the free (undamped) pendulum, the analytic check for a PyBullet gravity test."""
-    return 2.0 * math.pi * math.sqrt(joint_inertia / gravity_moment)
+def hanging_period_s(joint_inertia: float, gravity_moment: float, g: float = 9.81) -> float:
+    """Small-oscillation period of the free (undamped) pendulum, T = 2 pi sqrt(J / (g * m*l)), the analytic check for a PyBullet gravity test.
+    ``gravity_moment`` is the lever m*l [kg*m] (``Joint.gravity_moment()``); ``g`` must match the gravity set in the simulation."""
+    return 2.0 * math.pi * math.sqrt(joint_inertia / (g * gravity_moment))

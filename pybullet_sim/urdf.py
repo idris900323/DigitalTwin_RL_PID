@@ -25,19 +25,37 @@ def joint_urdf(cfg: dict, params: JointParams | None = None, name: str = "dtrl_j
     cg = Joint(p).arm_cg
     L, ma, mp = p.arm_length_m, p.arm_mass_kg, p.payload_mass_kg
     tiny = 1e-9                                                          # URDF needs positive masses; this is negligible
-    # hub: inertia-only link carrying the reflected rotor inertia about the shaft axis (y)
+    # hub: inertia-only link carrying the reflected rotor inertia about the shaft axis (y). A flat disc about y has ixx = izz = iyy/2, which
+    # is the physically valid (triangle-inequality) tensor with that iyy; ixx = izz = tiny would make PyBullet warn "Bad inertia".
+    h = max(hub, tiny)
     links = [f'  <link name="hub"><inertial><mass value="{tiny:.9g}"/><origin xyz="0 0 0"/>'
-             f'{_inertia_xml(tiny, max(hub, tiny), tiny)}</inertial></link>']
+             f'{_inertia_xml(h / 2.0, h, h / 2.0)}</inertial></link>']
     arm_i = max(ma * L ** 2 / 3.0 - ma * cg ** 2, tiny)      # so that I_axis = m*L^2/3 as in models/joint.py
     links.append(f'  <link name="arm"><inertial><mass value="{max(ma, tiny):.9g}"/><origin xyz="0 0 {-cg:.9g}"/>'
-                 f'{_inertia_xml(tiny, arm_i, tiny)}</inertial></link>')
+                 f'{_inertia_xml(arm_i, arm_i, arm_i * 1e-3)}</inertial></link>')            # thin rod along z: ixx = iyy, izz ~ 0
     links.append(f'  <link name="payload"><inertial><mass value="{max(mp, tiny):.9g}"/><origin xyz="0 0 {-L:.9g}"/>'
-                 f'{_inertia_xml(tiny, tiny, tiny)}</inertial></link>')
+                 f'{_inertia_xml(tiny, tiny, tiny)}</inertial></link>')                   # point mass: any valid tensor, here isotropic
     joints = ['  <joint name="shaft" type="revolute"><parent link="world"/><child link="hub"/><origin xyz="0 0 0"/><axis xyz="0 1 0"/>'
               '<limit lower="-12.566" upper="12.566" effort="1000" velocity="100"/></joint>',
               '  <joint name="arm_fixed" type="fixed"><parent link="hub"/><child link="arm"/></joint>',
               '  <joint name="payload_fixed" type="fixed"><parent link="arm"/><child link="payload"/></joint>']
     return "\n".join(['<?xml version="1.0"?>', f'<robot name="{name}">', '  <link name="world"/>', *links, *joints, '</robot>', ''])
+
+
+def tensors_are_valid(urdf: str, rel_tol: float = 1e-9) -> bool:
+    """Every link inertia tensor is positive and satisfies the triangle inequalities (ixx + iyy >= izz and permutations), the condition
+    PyBullet checks when it warns "Bad inertia"."""
+    import xml.etree.ElementTree as ET
+
+    for link in ET.fromstring(urdf).findall("link"):
+        inert = link.find("inertial")
+        if inert is None:
+            continue
+        t = inert.find("inertia")
+        ix, iy, iz = (float(t.get(k)) for k in ("ixx", "iyy", "izz"))
+        if min(ix, iy, iz) <= 0 or ix + iy < iz * (1 - rel_tol) or ix + iz < iy * (1 - rel_tol) or iy + iz < ix * (1 - rel_tol):
+            return False
+    return True
 
 
 def urdf_axis_inertia(urdf: str) -> Dict[str, float]:
