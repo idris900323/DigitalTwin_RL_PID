@@ -74,7 +74,7 @@ class RL_PID_Env(gym.Env):
         b = e["gain_bounds"]
         self.lo = np.array([b["Kp"][0], max(b["Ki"][0], 1e-3), b["Kd"][0]])
         self.hi = np.array([b["Kp"][1], b["Ki"][1], b["Kd"][1]])
-        self.floor_ki = b["Ki"][0]
+        self.ki_seed = e.get("ki_seed", 0.5)
         self.n_obs = 16
         self.action_space = spaces.Box(-1.0, 1.0, (3,), np.float32)
         self.observation_space = spaces.Box(-5.0, 5.0, (self.n_obs * n_stack,), np.float32)
@@ -179,9 +179,13 @@ class RL_PID_Env(gym.Env):
             new = self.gains * np.exp(a * math.log(1.0 + self.e["action_step"]))
         else:
             new = np.exp(np.log(self.lo) + (a + 1.0) / 2.0 * (np.log(self.hi) - np.log(self.lo)))
+        if self.action_mode != "multiplicative":
+            pass
+        elif old[1] <= 0.0:                                     # multiplication cannot leave Ki = 0: a positive action seeds it
+            new[1] = self.ki_seed * math.exp(max(a[1], 0.0) * math.log(1.0 + self.e["action_step"])) if a[1] > 0 else 0.0
+        elif new[1] < self.ki_seed:                           # below the seed Ki snaps to 0 (the integrator can be switched off)
+            new[1] = 0.0
         new = np.clip(new, [self.lo[0], 0.0, self.lo[2]], self.hi)
-        if new[1] < self.lo[1] and self.floor_ki > 0:
-            new[1] = max(new[1], self.floor_ki)
         self.gains = new
         self._apply_gains(self.gains)
         if self.i == self.payload_change_at:

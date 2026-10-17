@@ -187,14 +187,18 @@ rl_env:
   horizon_s: 2.0
   target_deg: {min: 30.0, max: 180.0}
   payload: {mass_max_kg: 2.0, length_min_m: 0.02, length_max_m: 0.15, gravity_prob: 0.5, vpct_min: 40.0}
-  gain_bounds: {Kp: [0.5, 50.0], Ki: [0.0, 200.0], Kd: [0.005, 5.0]}   # gains are clipped to these (Ki may reach 0)
+  # Bounds, with the reasons (checked in the twin, 90 deg step, 1 count encoder noise):
+  #  Kp <= 50: above about V_max/(step in rad) = 12 / 0.52 the output is saturated for the smallest step (30 deg), so Kp 50 and 150 gave identical responses;
+  #  Kd <= 2: Kd 5 amplifies encoder noise to 0.36 V rms (0.15 V rms at Kd 2, 0.05 V rms at the Tuned 0.3); Ki may be 0 (see ki_seed).
+  gain_bounds: {Kp: [0.5, 50.0], Ki: [0.0, 200.0], Kd: [0.005, 2.0]}
+  ki_seed: 0.5                       # a zero Ki rises to this value on a positive Ki action (multiplication cannot leave 0); below it Ki snaps to 0
   action_step: 0.10                  # multiplicative mode: gain *= exp(a * ln(1 + step)), a in [-1, 1]
   initial_gains: tuned               # "tuned" = pid_presets.tuned, "random" = log-uniform inside the bounds
   change_prob: {payload: 0.0, target: 0.0}    # per-episode probability of a mid-episode change (training can raise it)
   reward:
     w_error: 1.0                     # time-weighted squared error, normalised by the step size
     w_effort: 0.02                   # mean squared voltage / Vmax^2
-    w_chatter: 0.05                  # mean |dV| / Vmax per control step
+    w_chatter: 0.5                   # mean |dV| / Vmax per control step (raised from 0.05: the first PPO run sat on the Kp/Kd bounds)
     w_gain_change: 0.02              # |d log gain|_1 per decision (discourages thrashing)
     w_overshoot: 2.0                 # overshoot beyond the target as a fraction of the step
     diverge_penalty: 50.0

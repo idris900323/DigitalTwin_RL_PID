@@ -90,6 +90,38 @@ def test_multiplicative_actions_are_bounded_and_scale_free():
     assert env.gains[0] >= env.lo[0] * (1 - 1e-9) and env.gains[2] >= env.lo[2] * (1 - 1e-9)
 
 
+def test_ki_can_rise_from_zero_and_snap_back_to_zero():
+    env = env_fixed()
+    env.reset(seed=0)
+    assert env.gains[1] == 0.0                                                      # the Tuned preset has no integral action
+    env.step(np.array([0.0, 1.0, 0.0], np.float32))
+    seed_ki = env.e["ki_seed"]
+    assert env.gains[1] == pytest.approx(seed_ki * 1.10)                              # it rose
+    for _ in range(5):
+        env.step(np.array([0.0, 1.0, 0.0], np.float32))
+    assert env.gains[1] > seed_ki * 1.5
+    for _ in range(80):
+        env.step(np.array([0.0, -1.0, 0.0], np.float32))
+        if env.gains[1] == 0.0 or env.i >= env.n_decisions - 1:
+            break
+    assert env.gains[1] == 0.0                                                      # and the integrator can be switched off again
+    e2 = env_fixed()
+    e2.reset(seed=0)
+    e2.step(np.array([0.0, -1.0, 0.0], np.float32))
+    assert e2.gains[1] == 0.0                                                      # a negative action on Ki = 0 keeps it at 0
+
+
+def test_trained_style_random_actions_reach_nonzero_ki():
+    env = env_fixed()
+    env.reset(seed=1)
+    rng = np.random.default_rng(0)
+    seen = 0.0
+    for _ in range(env.n_decisions - 1):
+        env.step(rng.uniform(-1, 1, 3).astype(np.float32))
+        seen = max(seen, env.gains[1])
+    assert seen > 0.0
+
+
 def test_direct_mode_maps_actions_onto_the_log_range():
     env = RL_PID_Env(randomize=False, fixed_context=FIXED, action_mode="direct")
     env.reset(seed=0)

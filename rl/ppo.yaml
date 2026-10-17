@@ -1,6 +1,6 @@
 # Hyperparameters for rl/train_ppo.py. PRE-VALIDATION PROTOTYPE: trained on the unvalidated twin only.
 common:
-  seeds: [0, 1, 2]                 # training seeds (>= 3 so results come with a spread)
+  seeds: [0, 1, 2, 3, 4]              # training seeds (>= 3 so results come with a spread)
   total_timesteps: 150000          # decisions (each = 20 ms of simulated time)
   eval_freq: 10000                 # decisions between evaluations
   n_eval_episodes: 30
