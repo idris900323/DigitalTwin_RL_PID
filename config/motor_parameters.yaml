@@ -162,6 +162,25 @@ feasibility:
   # Below 1.0 the payload cannot be driven to the target; below this value it is "marginal".
   marginal_margin: 1.2  # ASSUMED, design choice
 
+# Sampling ranges of the synthetic motor zoo (tuning/zoo.py). ASSUMED design choices; they are the zoo's generation assumptions.
+zoo:
+  voltages_V: [6.0, 12.0, 24.0, 48.0]
+  stall_current_A: [1.5, 25.0]       # log-uniform
+  no_load_rpm: [3000.0, 18000.0]     # log-uniform
+  no_load_current_frac: [0.02, 0.08] # of stall current
+  viscous_frac: [0.3, 1.0]           # of the value implied by the no-load current
+  mass_coeff: 0.02                   # kg per (V*Is)^0.55
+  mass_exp: 0.55
+  mass_logsigma: 0.15
+  density_kg_m3: 6000.0
+  rotor_mass_frac: 0.3
+  rotor_dia_frac: 0.6
+  rotor_form: 1.178                  # motor volume / D^3
+  Jm_logsigma: 0.6
+  efficiency: [0.45, 0.9]
+  gear_ratios: [10, 19, 30, 50, 100, 150, 250]
+  motor_cpr: [16, 64, 360, 500, 1000, 2000]
+
 # Step-wise RL environment (environments/rl_pid_env.py). PRE-VALIDATION PROTOTYPE: every number is an ASSUMED design choice.
 rl_env:
   decision_interval_s: 0.02          # the agent adjusts gains every 20 ms (20 control steps)

@@ -55,22 +55,30 @@ class TrueMotor:
     cpr_motor: int
 
 
-def make_motor(seed: int) -> TrueMotor:
+def zoo_ranges() -> dict:
+    """The zoo's sampling ranges (YAML ``zoo:`` section; nothing is hard-coded here)."""
+    from models.motors import load_base_config
+
+    return load_base_config()["zoo"]
+
+
+def make_motor(seed: int, z: Optional[dict] = None) -> TrueMotor:
+    z = z or zoo_ranges()
     rng = np.random.default_rng(seed)
-    V = float(rng.choice([6.0, 12.0, 24.0, 48.0]))
-    Is = float(np.exp(rng.uniform(math.log(1.5), math.log(25.0))))
+    V = float(rng.choice(z["voltages_V"]))
+    Is = float(np.exp(rng.uniform(math.log(z["stall_current_A"][0]), math.log(z["stall_current_A"][1]))))
     R = V / Is
-    rpm = float(np.exp(rng.uniform(math.log(3000.0), math.log(18000.0))))
+    rpm = float(np.exp(rng.uniform(math.log(z["no_load_rpm"][0]), math.log(z["no_load_rpm"][1]))))
     w0 = rpm * 2 * math.pi / 60
-    I0 = Is * rng.uniform(0.02, 0.08)
+    I0 = Is * rng.uniform(*z["no_load_current_frac"])
     K = (V - R * I0) / w0
-    Bm = rng.uniform(0.3, 1.0) * K * I0 / w0
-    mass = float(0.02 * (V * Is) ** 0.55 * math.exp(rng.normal(0, 0.15)))
-    D = (mass / 6000.0 / 1.178) ** (1.0 / 3.0)
-    Jm_est = 0.5 * (0.3 * mass) * (0.6 * D / 2.0) ** 2
-    Jm = Jm_est * math.exp(rng.normal(0, 0.6))
-    return TrueMotor(f"zoo_{seed:03d}", V, R, K, Bm, Jm, float(rng.uniform(0.45, 0.9)), float(rng.choice([10, 19, 30, 50, 100, 150, 250])),
-                     I0, Is, w0, mass, int(rng.choice([16, 64, 360, 500, 1000, 2000])))
+    Bm = rng.uniform(*z["viscous_frac"]) * K * I0 / w0
+    mass = float(z["mass_coeff"] * (V * Is) ** z["mass_exp"] * math.exp(rng.normal(0, z["mass_logsigma"])))
+    D = (mass / z["density_kg_m3"] / z["rotor_form"]) ** (1.0 / 3.0)
+    Jm_est = 0.5 * (z["rotor_mass_frac"] * mass) * (z["rotor_dia_frac"] * D / 2.0) ** 2
+    Jm = Jm_est * math.exp(rng.normal(0, z["Jm_logsigma"]))
+    return TrueMotor(f"zoo_{seed:03d}", V, R, K, Bm, Jm, float(rng.uniform(*z["efficiency"])), float(rng.choice(z["gear_ratios"])),
+                     I0, Is, w0, mass, int(rng.choice(z["motor_cpr"])))
 
 
 def make_datasheet(m: TrueMotor, seed: int, mistake: Optional[str] = None) -> str:
