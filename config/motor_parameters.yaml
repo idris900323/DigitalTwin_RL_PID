@@ -192,6 +192,9 @@ rl_env:
   #  Kd <= 2: Kd 5 amplifies encoder noise to 0.36 V rms (0.15 V rms at Kd 2, 0.05 V rms at the Tuned 0.3); Ki may be 0 (see ki_seed).
   gain_bounds: {Kp: [0.5, 50.0], Ki: [0.0, 200.0], Kd: [0.005, 2.0]}
   ki_seed: 0.5                       # a zero Ki rises to this value on a positive Ki action (multiplication cannot leave 0); below it Ki snaps to 0
+  # Residual action mode (action = OFFSET from a fixed reference, so a zero action IS the reference): Kp, Kd *= span^a, Ki = base + a * ki_add.
+  # The reference is the best constant gain set found on VALIDATION seeds (simulation/compare_controllers.py, static regime, rounded).
+  residual: {base: {Kp: 19.0, Ki: 0.0, Kd: 1.3}, span: 2.0, ki_add: 20.0}
   action_step: 0.10                  # multiplicative mode: gain *= exp(a * ln(1 + step)), a in [-1, 1]
   initial_gains: tuned               # "tuned" = pid_presets.tuned, "random" = log-uniform inside the bounds
   change_prob: {payload: 0.0, target: 0.0}    # per-episode probability of a mid-episode change (training can raise it)
@@ -200,6 +203,7 @@ rl_env:
     w_effort: 0.02                   # mean squared voltage / Vmax^2
     w_chatter: 0.5                   # mean |dV| / Vmax per control step (raised from 0.05: the first PPO run sat on the Kp/Kd bounds)
     w_gain_change: 0.02              # |d log gain|_1 per decision (discourages thrashing)
+    w_band: 0.0                      # per-decision share of samples outside the 2 % band, time weighted (0 = off; the v3 experiment trains with 1.0)
     w_overshoot: 2.0                 # overshoot beyond the target as a fraction of the step
     diverge_penalty: 50.0
   randomize:

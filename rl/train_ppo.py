@@ -35,7 +35,14 @@ OUT_ROOT = ROOT / "models" / "rl"
 def make_env(env_cfg: dict, seed: int | None = None):
     from stable_baselines3.common.monitor import Monitor
 
-    env = RL_PID_Env(action_mode=env_cfg["action_mode"], n_stack=env_cfg["n_stack"], change_prob=env_cfg["change_prob"])
+    cfg = None
+    if env_cfg.get("rl_env_overrides"):                         # e.g. the shaped reward of the v3 experiment
+        from models.motors import load_base_config
+
+        cfg = load_base_config()
+        for k, v in env_cfg["rl_env_overrides"].items():
+            cfg["rl_env"][k].update(v) if isinstance(v, dict) else cfg["rl_env"].__setitem__(k, v)
+    env = RL_PID_Env(cfg, action_mode=env_cfg["action_mode"], n_stack=env_cfg["n_stack"], change_prob=env_cfg["change_prob"])
     return Monitor(env)
 
 
@@ -53,7 +60,9 @@ def train_one(algo: str, seed: int, hp: dict, common: dict, out: pathlib.Path, n
     eval_env = make_env(common["env"])
     eval_env.reset(seed=10_000 + seed)                            # held-out, seeded reset sequence
     policy_kwargs = dict(net_arch=list(hp["net_arch"]))
-    kw = {k: v for k, v in hp.items() if k not in ("policy", "net_arch")}
+    if "log_std_init" in hp:
+        policy_kwargs["log_std_init"] = hp["log_std_init"]
+    kw = {k: v for k, v in hp.items() if k not in ("policy", "net_arch", "log_std_init")}
     if algo == "ppo":
         if n_steps_override:
             kw["n_steps"] = n_steps_override
@@ -66,16 +75,22 @@ def train_one(algo: str, seed: int, hp: dict, common: dict, out: pathlib.Path, n
     else:
         raise ValueError(f"unknown algorithm {algo!r}")
     model.set_logger(configure(str(out), ["csv"]))
+    from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback
+
+    ckpt = CheckpointCallback(save_freq=common["eval_freq"], save_path=str(out / "checkpoints"), name_prefix="ckpt") if common.get("save_checkpoints") else None
     cb = EvalCallback(eval_env, best_model_save_path=str(out), log_path=str(out), eval_freq=common["eval_freq"], n_eval_episodes=common["n_eval_episodes"],
                       deterministic=True, verbose=0)
     t0 = time.time()
-    model.learn(total_timesteps=common["total_timesteps"], callback=cb)
+    model.learn(total_timesteps=common["total_timesteps"], callback=CallbackList([cb] + ([ckpt] if ckpt else [])))
     model.save(str(out / "final_model"))
     meta = {"algo": algo, "seed": seed, "pre_validation_prototype": True, "hyperparameters": hp, "common": common,
             "total_timesteps": common["total_timesteps"], "runtime_s": round(time.time() - t0, 1), "commit": rawlog.git_commit(),
             "config_sha256": rawlog.config_sha256(), "software": {"python": platform.python_version(), "numpy": np.__version__,
                                                                    "torch": torch.__version__, "stable_baselines3": sb3.__version__,
                                                                    "platform": platform.system() + " " + platform.machine()}}
+    import hashlib
+
+    meta["policy_files_sha256"] = {f.name: hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted(out.glob("*.zip"))}
     (out / "meta.json").write_text(json.dumps(meta, indent=2, default=str) + "\n", encoding="utf-8", newline="\n")
     (out / "config.yaml").write_text(yaml.safe_dump({"algo": algo, "hyperparameters": hp, "common": common}, sort_keys=False), encoding="utf-8", newline="\n")
     return meta

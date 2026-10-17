@@ -122,6 +122,34 @@ def test_trained_style_random_actions_reach_nonzero_ki():
     assert seen > 0.0
 
 
+def test_residual_mode_zero_action_is_the_reference_and_is_not_cumulative():
+    env = RL_PID_Env(randomize=False, fixed_context=FIXED, action_mode="residual")
+    env.reset(seed=0)
+    b = env.e["residual"]["base"]
+    ref = np.array([b["Kp"], b["Ki"], b["Kd"]])
+    assert np.allclose(env.gains, ref)                                                  # starts at the reference
+    env.step(np.zeros(3, np.float32))
+    assert np.allclose(env.gains, ref)                                                  # zero action = the reference
+    env.step(np.ones(3, np.float32))
+    up = env.gains.copy()
+    env.step(np.ones(3, np.float32))
+    assert np.allclose(env.gains, up)                                                   # the same action gives the same gains: not integrated
+    assert up[0] == pytest.approx(min(ref[0] * env.e["residual"]["span"], env.hi[0])) and up[1] == pytest.approx(env.e["residual"]["ki_add"])
+    env.step(-np.ones(3, np.float32))
+    assert env.gains[1] == 0.0 and env.gains[0] == pytest.approx(ref[0] / env.e["residual"]["span"])
+
+
+def test_band_reward_term_penalises_time_outside_the_band():
+    e1 = RL_PID_Env(randomize=False, fixed_context=FIXED)
+    e1.e["reward"]["w_band"] = 1.0
+    e1.reset(seed=0)
+    _, r, _, _, info = e1.step(np.zeros(3, np.float32))
+    assert info["reward_breakdown"]["band"] < 0                                          # at t = 0 the whole step error is outside the band
+    e0 = RL_PID_Env(randomize=False, fixed_context=FIXED)
+    e0.reset(seed=0)
+    assert e0.step(np.zeros(3, np.float32))[4]["reward_breakdown"]["band"] == 0.0        # off by default
+
+
 def test_direct_mode_maps_actions_onto_the_log_range():
     env = RL_PID_Env(randomize=False, fixed_context=FIXED, action_mode="direct")
     env.reset(seed=0)
@@ -140,7 +168,7 @@ def test_reward_breakdown_adds_up_and_penalises_thrashing():
     env.reset(seed=0)
     _, r, _, _, info = env.step(np.zeros(3, np.float32))
     bd = info["reward_breakdown"]
-    assert set(bd) == {"error", "effort", "chatter", "gain_change", "overshoot", "divergence"}
+    assert set(bd) == {"error", "effort", "chatter", "gain_change", "overshoot", "band", "divergence"}
     assert r == pytest.approx(sum(bd.values()), abs=1e-12) and all(v <= 0 for v in bd.values())
     assert bd["gain_change"] == 0.0
     env.reset(seed=0)

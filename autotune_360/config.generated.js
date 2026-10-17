@@ -145,7 +145,7 @@ const DTRL_CONFIG = {
     "sensitivity_ranges.calculated_rel": "CALCULATED",
     "sensitivity_ranges.assumed_rel": "ESTIMATED"
   },
-  "yamlSha256": "6a6a32dcb3171237d9cfac46cbe33bad2c1025e64dcf682de803fb50e230c818",
+  "yamlSha256": "69c6859d774e0d84dd65c29989cce8fa962b92f6b75ea9f91304b6c9e081a4ff",
   "defaultMotor": "rmcs_3070",
   "motors": {
     "rmcs_3070": {

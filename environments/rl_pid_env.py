@@ -150,7 +150,10 @@ class RL_PID_Env(gym.Env):
         d_lo, d_hi = self.e["randomize"]["delay_steps"]
         delay = int(rng.integers(d_lo, d_hi + 1)) if self.randomize else 0
         init = self.e["initial_gains"]
-        if init == "random":
+        if self.action_mode == "residual":
+            b = self.e["residual"]["base"]
+            g0 = np.array([b["Kp"], b["Ki"], b["Kd"]])
+        elif init == "random":
             g0 = np.exp(rng.uniform(np.log(self.lo), np.log(self.hi)))
         else:
             t = self.cfg["pid_presets"][init]
@@ -177,9 +180,14 @@ class RL_PID_Env(gym.Env):
         old = self.gains.copy()
         if self.action_mode == "multiplicative":
             new = self.gains * np.exp(a * math.log(1.0 + self.e["action_step"]))
+        elif self.action_mode == "residual":
+            rs, b = self.e["residual"], self.e["residual"]["base"]
+            new = np.array([b["Kp"] * rs["span"] ** a[0], max(b["Ki"] + a[1] * rs["ki_add"], 0.0), b["Kd"] * rs["span"] ** a[2]])
         else:
             new = np.exp(np.log(self.lo) + (a + 1.0) / 2.0 * (np.log(self.hi) - np.log(self.lo)))
-        if self.action_mode != "multiplicative":
+        if self.action_mode == "residual":
+            pass
+        elif self.action_mode != "multiplicative":
             pass
         elif old[1] <= 0.0:                                     # multiplication cannot leave Ki = 0: a positive action seeds it
             new[1] = self.ki_seed * math.exp(max(a[1], 0.0) * math.log(1.0 + self.e["action_step"])) if a[1] > 0 else 0.0
@@ -217,8 +225,9 @@ class RL_PID_Env(gym.Env):
         theta_deg = math.degrees(self.theta_log[-1]) if self.theta_log else 0.0
         over = max(0.0, (theta_deg - self.target_now) / max(self.target_now, 30.0)) if self.target_now > 0 else 0.0
         o_term = rew["w_overshoot"] * over
-        reward = -(e_term + u_term + ch_term + g_term + o_term)
-        breakdown = {"error": -e_term, "effort": -u_term, "chatter": -ch_term, "gain_change": -g_term, "overshoot": -o_term, "divergence": 0.0}
+        band_term = rew.get("w_band", 0.0) * t_w * float(np.mean(np.abs(errs) > 0.02 * scale))
+        reward = -(e_term + u_term + ch_term + g_term + o_term + band_term)
+        breakdown = {"error": -e_term, "effort": -u_term, "chatter": -ch_term, "gain_change": -g_term, "overshoot": -o_term, "band": -band_term, "divergence": 0.0}
         if diverged:
             reward -= rew["diverge_penalty"]
             breakdown["divergence"] = -rew["diverge_penalty"]

@@ -1,0 +1,33 @@
+# Experiment v3 (PRE-VALIDATION): residual action around the validation-chosen best constant, lower learning rate and initial exploration,
+# a shaped reward (time outside the 2 % band + overshoot), 400k decisions, a checkpoint every eval_freq decisions that is later SELECTED on
+# validation seeds 40000+ (rl/select_checkpoints.py). The comparison still scores every policy with the DEFAULT reward (w_band = 0).
+common:
+  seeds: [0, 1, 2]
+  total_timesteps: 400000
+  eval_freq: 10000
+  n_eval_episodes: 30
+  save_checkpoints: true
+  env:
+    action_mode: residual
+    n_stack: 1
+    change_prob: {payload: 0.3, target: 0.3}
+    rl_env_overrides:
+      reward: {w_band: 1.0}
+ppo:
+  policy: MlpPolicy
+  net_arch: [64, 64]
+  learning_rate: 1.0e-4
+  n_steps: 2048
+  batch_size: 256
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.0                    # already 0 in v2; exploration is instead reduced through log_std_init
+  log_std_init: -1.0
+smoke:
+  seeds: [0]
+  total_timesteps: 2048
+  eval_freq: 1024
+  n_eval_episodes: 3
+  ppo_n_steps: 256
