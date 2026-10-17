@@ -1,0 +1,4 @@
+# RL stack (Group 4). Not needed by anything else in the repo.
+gymnasium
+stable-baselines3
+torch

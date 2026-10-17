@@ -1,0 +1,42 @@
+# Hyperparameters for rl/train_ppo.py. PRE-VALIDATION PROTOTYPE: trained on the unvalidated twin only.
+common:
+  seeds: [0, 1, 2]                 # training seeds (>= 3 so results come with a spread)
+  total_timesteps: 150000          # decisions (each = 20 ms of simulated time)
+  eval_freq: 10000                 # decisions between evaluations
+  n_eval_episodes: 30
+  env:
+    action_mode: multiplicative
+    n_stack: 1
+    change_prob: {payload: 0.3, target: 0.3}     # mid-episode changes seen during training
+ppo:
+  policy: MlpPolicy
+  net_arch: [64, 64]
+  learning_rate: 3.0e-4
+  n_steps: 2048
+  batch_size: 256
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.0
+sac:
+  policy: MlpPolicy
+  net_arch: [64, 64]
+  learning_rate: 3.0e-4
+  buffer_size: 100000
+  batch_size: 256
+  gamma: 0.99
+  train_freq: 1
+td3:
+  policy: MlpPolicy
+  net_arch: [64, 64]
+  learning_rate: 1.0e-3
+  buffer_size: 100000
+  batch_size: 256
+  gamma: 0.99
+smoke:                             # --smoke: a minute, for CI
+  seeds: [0]
+  total_timesteps: 2048
+  eval_freq: 1024
+  n_eval_episodes: 3
+  ppo_n_steps: 256

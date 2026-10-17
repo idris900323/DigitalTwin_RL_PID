@@ -162,6 +162,28 @@ feasibility:
   # Below 1.0 the payload cannot be driven to the target; below this value it is "marginal".
   marginal_margin: 1.2  # ASSUMED, design choice
 
+# Step-wise RL environment (environments/rl_pid_env.py). PRE-VALIDATION PROTOTYPE: every number is an ASSUMED design choice.
+rl_env:
+  decision_interval_s: 0.02          # the agent adjusts gains every 20 ms (20 control steps)
+  horizon_s: 2.0
+  target_deg: {min: 30.0, max: 180.0}
+  payload: {mass_max_kg: 2.0, length_min_m: 0.02, length_max_m: 0.15, gravity_prob: 0.5, vpct_min: 40.0}
+  gain_bounds: {Kp: [0.5, 50.0], Ki: [0.0, 200.0], Kd: [0.005, 5.0]}   # gains are clipped to these (Ki may reach 0)
+  action_step: 0.10                  # multiplicative mode: gain *= exp(a * ln(1 + step)), a in [-1, 1]
+  initial_gains: tuned               # "tuned" = pid_presets.tuned, "random" = log-uniform inside the bounds
+  change_prob: {payload: 0.0, target: 0.0}    # per-episode probability of a mid-episode change (training can raise it)
+  reward:
+    w_error: 1.0                     # time-weighted squared error, normalised by the step size
+    w_effort: 0.02                   # mean squared voltage / Vmax^2
+    w_chatter: 0.05                  # mean |dV| / Vmax per control step
+    w_gain_change: 0.02              # |d log gain|_1 per decision (discourages thrashing)
+    w_overshoot: 2.0                 # overshoot beyond the target as a fraction of the step
+    diverge_penalty: 50.0
+  randomize:
+    plant: true                      # R, K, Jm, Bm, eta inside sensitivity_ranges
+    encoder_noise_counts: 1.0
+    delay_steps: [0, 2]
+
 # PROPOSED acceptance thresholds for calling the twin "validated" for a tested condition (validation/compare.py).
 # Reasoning and what to do on failure: docs/validation_plan.md section 7. Until bench data passes them the twin is "preliminary".
 validation_thresholds:
