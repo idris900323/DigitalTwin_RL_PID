@@ -3,7 +3,7 @@
     "const_candidates": 48,
     "n": 100,
     "n_val": 40,
-    "oracle_candidates": 16,
+    "oracle_candidates": 48,
     "policy_dir": "ppo_v2",
     "regimes": [
       "static",
@@ -12,12 +12,12 @@
     ],
     "which": "best"
   },
-  "commit": "36c8a34b7cf0edc85f9fd79af1768a894212f7fe",
-  "config_sha256": "6a6a32dcb3171237d9cfac46cbe33bad2c1025e64dcf682de803fb50e230c818",
+  "commit": "051e238fbb4d761b934908974e7c6989871f8617",
+  "config_sha256": "69c6859d774e0d84dd65c29989cce8fa962b92f6b75ea9f91304b6c9e081a4ff",
   "files_sha256": {
-    "per_episode.csv": "84b448da1c961279107f15ee7e53a9e971a67d0e46895bed04bd38c2d3b9714d",
+    "per_episode.csv": "a145db69d77e260d1b890b2ac9a558f756e5f20728d9bef77af2db462ae13771",
     "selection.json": "a395a4074382934f81fcfc89b3cf41bca2de1c6b16286e4bda64e0aecafdd9b4",
-    "summary.md": "030feecae20a7c26b2bec021ac9029ab3d21d255df6ea45b9d453f2fc94f9033"
+    "summary.md": "24b7949197f6ffc5a95102141f1ec4678015c61e0c81ca9adf9f86cc8ecb0c74"
   },
   "policy_sha256": {
     "ppo_s0/best_model.zip": "a887cd90c9208f8f61e25e711bf200fba5889bc35a63000f941709ab0125a366",
