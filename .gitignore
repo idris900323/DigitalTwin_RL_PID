@@ -70,3 +70,4 @@ Thumbs.db
 
 # RL training outputs
 models/rl/
+!rl/policies/**/*.zip

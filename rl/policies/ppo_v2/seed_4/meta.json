@@ -47,5 +47,9 @@
     "torch": "2.14.1+cpu",
     "stable_baselines3": "2.9.0",
     "platform": "Windows AMD64"
+  },
+  "policy_files_sha256": {
+    "best_model.zip": "06e46502eb580535805bc7811e698c2db00468e14dfe13aac29d42d4faee898c",
+    "final_model.zip": "4120a76763754252920668a5c549edb04187c47b7659c97c2c7bbc3756256369"
   }
 }
