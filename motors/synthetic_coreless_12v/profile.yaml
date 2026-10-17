@@ -1,0 +1,25 @@
+# SYNTHETIC example: a small coreless 12 V gearmotor with a motor-shaft encoder. Numbers were generated (not copied from a
+# real datasheet) with a known true motor and then rounded the way a manufacturer would; it exercises mA, rpm, oz.in and
+# an encoder on the MOTOR shaft.
+id: synthetic_coreless_12v
+synthetic: true
+identity: {manufacturer: Synthetic, model: CL-12-100, variant: "100:1, motor-shaft encoder", datasheet_revision: n/a, notes: "generated for tests"}
+electrical:
+  nominal_voltage: {value: 12, unit: V, provenance: datasheet, source: "synthetic", confidence: high}
+  winding_resistance: {value: 3.2, unit: ohm, provenance: datasheet, source: "synthetic", confidence: high}
+  no_load_current: {value: 120, unit: mA, provenance: datasheet, source: "synthetic", confidence: high}
+  stall_current: {value: 3.75, unit: A, provenance: datasheet, source: "synthetic", confidence: high, meaning: stall}
+mechanical:
+  no_load_speed: {value: 13100, unit: rpm, shaft: motor, provenance: datasheet, source: "synthetic", confidence: high}
+  stall_torque: {value: 4.5, unit: oz.in, shaft: motor, provenance: datasheet, source: "synthetic", confidence: high, meaning: theoretical}
+  mass: {value: 85, unit: g, provenance: datasheet, source: "synthetic", confidence: high}
+constants: {}
+gearbox:
+  ratio: {value: 100, unit: "", provenance: datasheet, source: "synthetic", confidence: high}
+  efficiency: {value: 72, unit: "%", provenance: datasheet, source: "synthetic", confidence: medium}
+  stated_figures_at: motor
+feedback:
+  counts_per_rev: {value: 64, unit: counts/rev, provenance: datasheet, source: "synthetic", confidence: high}
+  mounted_on: motor
+  quadrature_included: true
+drive: {}

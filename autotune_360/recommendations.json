@@ -1,0 +1,184 @@
+{
+ "rmcs_3070": {
+  "constraint_probability": {
+   "accuracy": 1.0,
+   "overshoot": 1.0,
+   "settling": 1.0
+  },
+  "gains": {
+   "Kd": 2.9290538522819873,
+   "Ki": 0.10744231192910968,
+   "Kp": 73.20465642182674
+  },
+  "label": "TIER 1 - datasheet estimate: safe starting point, expect to re-tune (preliminary, not validated)",
+  "load": "bare_shaft",
+  "margins": {
+   "crossover_rad_s": 19.24687915420091,
+   "delay_margin_s": 0.04086683495890771,
+   "gain_margin_db": 32.241180955200036,
+   "phase_margin_deg": 45.066512978568085
+  },
+  "method": "optimised (robust)",
+  "next_measurement": "rotor inertia: free-run speed decay with and without a known added inertia (docs/validation_plan.md T6)",
+  "predictions": {
+   "IAE / |ref| [s]": {
+    "p5": 0.09581728281363273,
+    "p50": 0.10980888325600177,
+    "p95": 0.1698488473366573
+   },
+   "control effort [mean V^2 / Vmax^2]": {
+    "p5": 0.061047353425602906,
+    "p50": 0.07052634798637458,
+    "p95": 0.12697866009636224
+   },
+   "overshoot [%]": {
+    "p5": 0.021470432640413938,
+    "p50": 0.021696660582237983,
+    "p95": 1.7616975187459167
+   },
+   "peak current [A]": {
+    "p5": 8.496403935673,
+    "p50": 17.44497829933146,
+    "p95": 27.846316320530903
+   },
+   "settling time [s]": {
+    "p5": 0.27935000000000004,
+    "p50": 0.2885,
+    "p95": 0.3432999999999999
+   },
+   "steady-state error [deg]": {
+    "p5": 0.01624890051482329,
+    "p50": 0.01771158156353824,
+    "p95": 0.01860981088406951
+   }
+  },
+  "profile_hash": "256ca5262cf4d1a0",
+  "seed": 0,
+  "tier": 1,
+  "warnings": [
+   "datasheet conflict unresolved: meaning of the current rating",
+   "datasheet conflict unresolved: output stall torque versus K, stall current and efficiency",
+   "predicted peak current reaches 27.8 A in some plausible plants, above the 7.5 A rating: set a driver current limit (config driver.current_limit_A) and re-run"
+  ]
+ },
+ "synthetic_brushed_48v": {
+  "constraint_probability": {
+   "accuracy": 1.0,
+   "overshoot": 1.0,
+   "settling": 1.0
+  },
+  "gains": {
+   "Kd": 0.8697527402067194,
+   "Ki": 0.09352465532198424,
+   "Kp": 63.759540177009065
+  },
+  "label": "TIER 1 - datasheet estimate: safe starting point, expect to re-tune (preliminary, not validated)",
+  "load": "bare_shaft",
+  "margins": {
+   "crossover_rad_s": 12.706145423981361,
+   "delay_margin_s": 0.08679355676593546,
+   "gain_margin_db": 37.953613184751035,
+   "phase_margin_deg": 63.18644765005865
+  },
+  "method": "optimised (robust)",
+  "next_measurement": "rotor inertia: free-run speed decay with and without a known added inertia (docs/validation_plan.md T6)",
+  "predictions": {
+   "IAE / |ref| [s]": {
+    "p5": 0.09762500937450014,
+    "p50": 0.10556493777361953,
+    "p95": 0.11708537579236158
+   },
+   "control effort [mean V^2 / Vmax^2]": {
+    "p5": 0.051544404884158714,
+    "p50": 0.05668227871398419,
+    "p95": 0.06573400861469197
+   },
+   "overshoot [%]": {
+    "p5": 0.005834599208766475,
+    "p50": 0.0058911738198396,
+    "p95": 1.0023433126731456
+   },
+   "peak current [A]": {
+    "p5": 18.59310017983293,
+    "p50": 20.550477486644553,
+    "p95": 21.976593710015806
+   },
+   "settling time [s]": {
+    "p5": 0.25105,
+    "p50": 0.318,
+    "p95": 0.35764999999999997
+   },
+   "steady-state error [deg]": {
+    "p5": 0.0037529312794364065,
+    "p50": 0.00525417099434879,
+    "p95": 0.006742611990495025
+   }
+  },
+  "profile_hash": "62996aeda0f81eb4",
+  "seed": 0,
+  "tier": 1,
+  "warnings": [
+   "an optimised gain sits at the edge of its search range: the bounds were too tight, widen them and re-run"
+  ]
+ },
+ "synthetic_coreless_12v": {
+  "constraint_probability": {
+   "accuracy": 1.0,
+   "overshoot": 1.0,
+   "settling": 1.0
+  },
+  "gains": {
+   "Kd": 0.303332298869463,
+   "Ki": 0.04395481707762285,
+   "Kp": 9.430689359607968
+  },
+  "label": "TIER 1 - datasheet estimate: safe starting point, expect to re-tune (preliminary, not validated)",
+  "load": "bare_shaft",
+  "margins": {
+   "crossover_rad_s": 9.27884378137798,
+   "delay_margin_s": 0.11947521416013347,
+   "gain_margin_db": 41.21528541654862,
+   "phase_margin_deg": 63.51763408948804
+  },
+  "method": "optimised (robust)",
+  "next_measurement": "rotor inertia: free-run speed decay with and without a known added inertia (docs/validation_plan.md T6)",
+  "predictions": {
+   "IAE / |ref| [s]": {
+    "p5": 0.11662661013866137,
+    "p50": 0.12351450490686836,
+    "p95": 0.13468766779946756
+   },
+   "control effort [mean V^2 / Vmax^2]": {
+    "p5": 0.029101947596812363,
+    "p50": 0.03333203808879037,
+    "p95": 0.04414865609111544
+   },
+   "overshoot [%]": {
+    "p5": 0.032255119071807475,
+    "p50": 0.032634971375726546,
+    "p95": 1.9551879392563023
+   },
+   "peak current [A]": {
+    "p5": 3.613284116567601,
+    "p50": 3.800895510349212,
+    "p95": 3.9265786597413013
+   },
+   "settling time [s]": {
+    "p5": 0.3004,
+    "p50": 0.4245,
+    "p95": 0.4823
+   },
+   "steady-state error [deg]": {
+    "p5": 0.0281646337368857,
+    "p50": 0.02826982833495212,
+    "p95": 0.028452917687768597
+   }
+  },
+  "profile_hash": "454287f2b4f08c90",
+  "seed": 0,
+  "tier": 1,
+  "warnings": [
+   "an optimised gain sits at the edge of its search range: the bounds were too tight, widen them and re-run"
+  ]
+ }
+}

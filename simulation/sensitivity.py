@@ -53,6 +53,7 @@ import yaml  # noqa: E402
 
 from models.factory import build_twin_from_config  # noqa: E402
 from models.joint import Joint, JointParams  # noqa: E402
+from models.motors import DEFAULT_MOTOR, add_motor_argument, get_cfg, motor_from_argv  # noqa: E402
 from simulation import rawlog  # noqa: E402
 from simulation.metrics import all_metrics  # noqa: E402
 
@@ -431,8 +432,9 @@ def ke_kt_statement(fixed_rows, mc, cfg, oat_rows):
 
 
 def main(argv=None):
-    cfg = load_config()
+    cfg = get_cfg(motor_from_argv(argv))
     ap = argparse.ArgumentParser(description="Sensitivity analysis of the preliminary twin.")
+    add_motor_argument(ap)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--morris-r", type=int, default=30, help="Morris trajectories")
     ap.add_argument("--mc-n", type=int, default=100, help="Monte-Carlo samples for the Ke/Kt comparison")
@@ -479,7 +481,13 @@ def main(argv=None):
     files.append(p)
 
     print("RL robustness preview ...", flush=True)
-    gains, rl_rows = run_rl_robustness(cfg, a.t_end, max_cases=7 if a.smoke else 0)
+    if a.motor != DEFAULT_MOTOR:
+        # the committed policy was trained for the reference motor only; it says nothing about other motors
+        gains = {"RL policy (committed)": TUNED, "Tuned preset": TUNED, "Legacy default": LEGACY}
+        rl_rows = [dict(controller="n/a", Kp=0.0, Ki=0.0, Kd=0.0, parameter="n/a", level="n/a", overshoot_pct=0.0, settle_s=0.0,
+                        iae_deg_s=0.0, peak_current_A=0.0, sse_deg=0.0, within_2pct=0)]
+    else:
+        gains, rl_rows = run_rl_robustness(cfg, a.t_end, max_cases=7 if a.smoke else 0)
     p = out / "sensitivity_rl_robustness.csv"; write_csv(p, rl_rows); files.append(p)
 
     rank = ranking(mo, oat_rows)

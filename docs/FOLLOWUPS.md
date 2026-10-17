@@ -68,6 +68,16 @@ Recommendation: **C for development plus B for sharing**. C removes the embedded
 22. **Sensitivity study recommends different first measurements for bare and loaded conditions** (Jm, R, Kt versus eta, R, Ke); the loaded run uses 1 kg x 10 cm with gravity. Ke and Kt are ranked separately although an ideal motor has Ke = Kt: measure them as one constant K first.
 23. **Method_d family are all inactive**; the single decisive measurement is the low-voltage locked-rotor test with a torque arm (`docs/parameter_derivation.md`, `docs/validation_plan.md` T2).
 
+## Found during Group 3B
+
+24. **Browser cannot add motors**: new profiles are added with `python -m dtrl motor add`, then `tools/generate_js_config.py` (and `tools/precompute_recommendations.py` for a stored recommendation) refresh the page. A paste-a-profile box in the browser would need the derivation engine in JavaScript.
+25. **The batch optimiser ignores command delay and joint friction**; final gains are re-checked in the full twin. Adding delay to `simulate_batch` would let the optimiser see it.
+26. **Zoo calibration depends on its generation assumptions** (rotor inertia log-normal sigma 0.6 around the mass-based approximation, Coulomb friction and inductance zero in the true plants). A real motor can violate them.
+27. **Gain scheduling** across the payload range (G3B.5.5) is not implemented; the recommender returns one robust set per load. The bandit tuner exists only for the reference motor.
+28. **Trajectory types other than step** (ramp, trapezoid, sinusoid) are rejected by `tuning/loads.py` with a clear message.
+29. **PDF/OCR extraction is regex based**; unusual datasheet layouts need the confirmation table (or a hand-written YAML). A language model could assist but would have to treat the datasheet text as untrusted data and keep the confirmation step.
+30. **`dtrl motor add` writes into `motors/`** (or `DTRL_MOTORS_DIR`); the profile hash in stored recommendations goes stale when a profile changes (`tests/browser/test_motor_ui.py` detects it).
+
 ## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)
 
 The paper effort needs the software to produce auditable, regenerable data. Keep these in mind while building the improvement work, so nothing has to be retrofitted:

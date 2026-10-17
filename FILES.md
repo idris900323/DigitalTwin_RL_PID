@@ -73,6 +73,19 @@ for the governing spec.
 | `autotune_policy_360.json` | Trained tiny-MLP policy weights produced by the script above, evaluated in plain JS by the visualizer page. |
 | `servo_pid_visualizer_360.html` | Self-contained (~15 MB) browser page: servo PID digital twin with the learned auto-tune policy embedded. Open directly in a browser. |
 
+## Group 3B additions: bring your own motor
+
+| File | What it is |
+|---|---|
+| `motors/<id>/profile.yaml` (+ `datasheets/`) | Validated motor profiles (provenance, source, confidence on every field). `rmcs_3070` plus two synthetic examples. |
+| `models/motor_profile.py`, `models/derive.py`, `models/motors.py` | Profile schema and unit handling, derivation engine with intervals and conflicts, `--motor` resolution. |
+| `models/ingest.py`, `models/curves.py` | Datasheet ingestion with mandatory confirmation (text/CSV/PDF, OCR optional), curve digitiser. |
+| `loads/*.yaml`, `tuning/loads.py` | Load and task definitions; torque-infeasible loads are rejected with numbers. |
+| `tuning/` | `linear.py` (margins, noise), `analytic.py`, `optimize.py`, `recommend.py`, `tiers.py`, `closing.py` (identification to profile, relay refinement), `report.py`, `export.py`, `zoo.py`. |
+| `dtrl/` | Command-line interface (`python -m dtrl ...`). |
+| `tools/precompute_recommendations.py`, `tools/run_zoo.py` | Stored Tier 1 recommendations for the browser; the synthetic motor-zoo evaluation. |
+| `docs/motors.md`, `docs/onhardware_tuning.md` | User guide and the Tier 3 relay protocol. |
+
 ## Group 3 additions: simulation programme and validation tooling
 
 | File | What it is |

@@ -1,0 +1,18 @@
+# Example load: a 10 cm arm carrying 0.2 .. 1.0 kg in a vertical plane, 90 deg step.
+id: arm_1kg_10cm
+load:
+  arm_length_m: 0.10
+  payload_mass_kg: {min: 0.2, max: 1.0}
+  arm_mass_kg: 0.0
+  gravity: true
+  joint_viscous_friction: 0.0
+  joint_coulomb_friction: 0.0
+task:
+  trajectory: step
+  target_deg: [30.0, 90.0]
+  accuracy_deg: 0.5
+  max_overshoot_pct: 5.0
+  max_settling_s: 1.0
+  max_current_A: null          # null = the supply/driver limit decides
+  max_voltage_V: null          # null = the supply voltage
+  max_effort_noise_V_rms: 0.6  # voltage noise from encoder quantisation allowed through the derivative term

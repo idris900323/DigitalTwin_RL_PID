@@ -14,3 +14,6 @@ explicit_package_bases = true
 check_untyped_defs = false
 warn_unused_ignores = false
 exclude = ["html/", "tests/", "cad/"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["F811"]   # shared pytest fixtures imported from other test modules

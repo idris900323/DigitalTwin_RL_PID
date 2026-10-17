@@ -37,7 +37,8 @@ from validation.synthetic import simulate_open_loop
 PARAMS = ("R", "Ke", "Kt", "Jm", "Bm")
 DEFAULT_BOUNDS = {"R": (0.2, 20.0), "Ke": (1e-4, 5e-2), "Kt": (1e-4, 5e-2), "Jm": (1e-8, 1e-4), "Bm": (1e-8, 1e-4)}
 NULL_LEAK_TOL = 1e-3          # a parameter axis with more than this much weight in the null space is "unidentifiable" (identifiable ones are ~1e-8)
-RANK_TOL = 1e-3               # singular values below RANK_TOL * largest are treated as zero
+RANK_TOL = 1e-9               # singular values below RANK_TOL * largest are numerically zero
+MIN_SINGULAR = 1.0            # with noise-weighted residuals 1/s is the 1-sigma log-uncertainty: s < 1 means over 100 % uncertain = not determined
 
 
 @dataclass
@@ -143,7 +144,7 @@ def identify(runs: Sequence[Run], cfg: dict, *, free: Sequence[str] = PARAMS, fi
     J = best.jac
     n_obs = len(best.fun)
     U, s, Vt = np.linalg.svd(J, full_matrices=False)
-    keep = s > RANK_TOL * s[0]
+    keep = (s > RANK_TOL * s[0]) & (s > MIN_SINGULAR)      # a direction counts as determined if it is not numerically null AND its uncertainty is below 100 %
     rank = int(np.sum(keep))
     Vr, sr = Vt[keep].T, s[keep]
     Vn = Vt[~keep].T if (~keep).any() else np.zeros((len(free), 0))

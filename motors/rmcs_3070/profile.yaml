@@ -1,0 +1,50 @@
+# Johnson RMCS-3070 (datasheet title block reads RMCS-3013: open flag). Values transcribed from
+# datasheets/RMCS-3013_RMCS-3070_datasheet.pdf; see also datasheet/parameter_table.md for the open flags.
+id: rmcs_3070
+synthetic: false
+identity:
+  manufacturer: Johnson
+  model: RMCS-3070
+  variant: "100 RPM, 180:1, quadrature encoder"
+  datasheet_revision: unknown
+  notes: "Datasheet title block says RMCS-3013; all numeric specs match. 151 g.cm equals 27.18 kg.cm / 180 exactly (a reflected value)."
+electrical:
+  nominal_voltage: {value: 12, unit: V, provenance: datasheet, source: "datasheet p1", confidence: high}
+  no_load_current: {value: 0.8, unit: A, provenance: datasheet, source: "datasheet p1 (base motor)", confidence: high}
+  stall_current:
+    value: 7.5
+    unit: A
+    provenance: datasheet
+    source: "datasheet p1: 'load current up to 7.5 A (Max)'"
+    confidence: low
+    meaning: unknown          # labelled Max, not "stall": open flag
+mechanical:
+  no_load_speed: {value: 18000, unit: rpm, shaft: motor, provenance: datasheet, source: "datasheet p1 (base motor)", confidence: high}
+  stall_torque:
+    value: 27.18
+    unit: kg.cm
+    shaft: output
+    provenance: datasheet
+    source: "datasheet p1"
+    confidence: medium
+    meaning: unknown          # theoretical or practical rating: open flag
+  rated_torque: {value: 12.5, unit: kg.cm, shaft: output, provenance: datasheet, source: "datasheet p1", confidence: medium}
+  motor_rated_torque: {value: 151, unit: g.cm, shaft: motor, provenance: datasheet, source: "datasheet p1", confidence: low}
+  rotor_inertia: {value: 5.0e-7, unit: kg.m2, provenance: assumed, source: "estimate, order of magnitude only", confidence: low}
+  viscous_friction: {value: 1.0e-6, unit: N.m.s/rad, provenance: assumed, source: "estimate, order of magnitude only", confidence: low}
+  mass: {value: 180, unit: g, provenance: datasheet, source: "datasheet p1", confidence: high}
+constants: {}
+gearbox:
+  ratio: {value: 180, unit: "", provenance: datasheet, source: "datasheet p1", confidence: high}
+  efficiency: {value: 0.80, unit: "", provenance: assumed, source: "typical 0.70-0.85 for small spur/planetary", confidence: low}
+  stated_figures_at: motor    # default shaft for figures without their own `shaft`; torque fields above say output explicitly
+feedback:
+  counts_per_rev: {value: 9360, unit: counts/rev, provenance: datasheet, source: "datasheet p1 (13 Hall x 4 x 180)", confidence: high}
+  mounted_on: output
+  quadrature_included: true
+  index_pulse: false
+drive: {}
+# The simulation model for this motor is the project's active parameter set, kept in config/motor_parameters.yaml.
+derived_model:
+  source_config: config/motor_parameters.yaml
+  scenario: method_c

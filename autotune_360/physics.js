@@ -12,17 +12,21 @@
 
 const G_ACC = 9.81;
 
-function makeCFG(gen, scenario) {
-  const name = scenario || gen.activeScenario;
-  const motor = gen.scenarios[name];
+function makeCFG(gen, scenario, motorId) {
+  const lib = motorId ? gen.motors[motorId] : null;
+  if (motorId && !lib) throw new Error('unknown motor: ' + motorId);
+  const name = scenario || (lib ? lib.scenario : gen.activeScenario);
+  const motor = lib ? lib.motor : gen.scenarios[name];
   if (!motor) throw new Error('unknown or non-simulatable parameter set: ' + name);
   // Explicit RK4 is unstable once dt exceeds ~2.8*L/R. The Python twin sub-steps; this port does not (yet), so refuse.
   if (motor.L > 0) throw new Error('physics.js does not sub-step the electrical dynamics, so it refuses L > 0 (L = ' + motor.L + ' H); use the Python twin');
   return {
     scenario: name,
-    V_rated: gen.supply.V_rated,
-    gearboxRatio: gen.gearbox.ratio, gearboxEff: motor.eff !== undefined ? motor.eff : gen.gearbox.efficiency,
-    encoderCPR: gen.encoder.cpr,
+    motorId: motorId || gen.defaultMotor,
+    V_rated: lib ? lib.supply.V_rated : gen.supply.V_rated,
+    gearboxRatio: lib ? lib.gearbox.ratio : gen.gearbox.ratio,
+    gearboxEff: lib ? lib.gearbox.efficiency : (motor.eff !== undefined ? motor.eff : gen.gearbox.efficiency),
+    encoderCPR: lib ? lib.encoder.cpr : gen.encoder.cpr,
     motor: Object.assign({}, motor),
     dt: gen.simulation.dt, duration: gen.simulation.durationS, thetaRefDeg: gen.simulation.thetaRefDefaultDeg,
     derivFilterTau: gen.controller.derivativeFilterTauS,
@@ -176,6 +180,18 @@ function feasibilityJS(cfg, mass, len, thetaDeg, gravity, vPct, armMass, current
   return { tau_avail: tauAvail, tau_hold_target: holdT, tau_hold_peak: holdP, margin_target: marginT, margin_path: marginP, status };
 }
 
+// Tier 1 analytic fallback used when no precomputed recommendation exists for a motor: pole placement (critically damped PD)
+// on the linear plant, wn = 4 / settleS reduced until it is below a tenth of the Nyquist frequency. No margin check, no
+// uncertainty: it is only a safe starting point, labelled as such in the page.
+function analyticPD(cfg, settleS) {
+  const m = cfg.motor, N = cfg.gearboxRatio;
+  const b = m.Kt / (m.R * m.Jm), a = (m.Kt * m.Ke / m.R + m.Bm) / m.Jm;
+  let wn = 4 / (settleS || 0.5);
+  wn = Math.min(wn, 0.1 * Math.PI / cfg.dt);
+  const kp = N * wn * wn / b, kd = Math.max(0, N * (2 * wn - a) / b);
+  return { Kp: kp, Ki: 0, Kd: kd, wn: wn, note: 'analytic pole placement, no margin check' };
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { makeCFG, nSteps, runTwin, riseTime, overshootPct, settlingTime, steadyStateError, feasibilityJS };
+  module.exports = { analyticPD, makeCFG, nSteps, runTwin, riseTime, overshootPct, settlingTime, steadyStateError, feasibilityJS };
 }
