@@ -1,0 +1,51 @@
+{
+  "algo": "ppo",
+  "seed": 1,
+  "pre_validation_prototype": true,
+  "hyperparameters": {
+    "policy": "MlpPolicy",
+    "net_arch": [
+      64,
+      64
+    ],
+    "learning_rate": 0.0003,
+    "n_steps": 2048,
+    "batch_size": 256,
+    "n_epochs": 10,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.0
+  },
+  "common": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "total_timesteps": 150000,
+    "eval_freq": 10000,
+    "n_eval_episodes": 30,
+    "env": {
+      "action_mode": "multiplicative",
+      "n_stack": 1,
+      "change_prob": {
+        "payload": 0.3,
+        "target": 0.3
+      }
+    }
+  },
+  "total_timesteps": 150000,
+  "runtime_s": 484.3,
+  "commit": "36c8a34b7cf0edc85f9fd79af1768a894212f7fe",
+  "config_sha256": "6a6a32dcb3171237d9cfac46cbe33bad2c1025e64dcf682de803fb50e230c818",
+  "software": {
+    "python": "3.12.10",
+    "numpy": "2.4.2",
+    "torch": "2.14.1+cpu",
+    "stable_baselines3": "2.9.0",
+    "platform": "Windows AMD64"
+  }
+}

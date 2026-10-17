@@ -4,7 +4,10 @@ All results are simulated on the preliminary twin unless stated; nothing has bee
 
 ## Group 4-5 (RL environment, comparison, PyBullet interface)
 - `RL_PID_Env` (Gymnasium, shared twin physics, domain randomisation, mid-episode payload/target changes, reward breakdown), `rl/train_ppo.py` (PPO/SAC/TD3 with SB3, multi-seed), `simulation/compare_controllers.py` (paired held-out scenarios, bootstrap CIs, Wilcoxon, failure analysis, OOD regime).
-- Result (simulated, pre-validation): 3 PPO seeds beat the Tuned preset but are indistinguishable from the one-shot bandit tuner and worse than a random-search oracle; no demonstrated benefit of step-wise adaptation, including with mid-episode changes.
+- Revised after review: Ki can rise from zero (`ki_seed`), Kd bound 2 (noise), chatter weight 0.5, 5 PPO seeds, policies committed (`rl/policies/ppo_v2`). Comparison now has a best-constant baseline and a re-tuning bandit, both chosen/defined without the test seeds, validation-selected PPO seed, one pre-specified primary test, Holm-adjusted secondary tests, infeasible scenarios reported separately, policy hashes and library versions in the manifest.
+- Result (simulated, pre-validation): PPO is WORSE than the best constant gains in all three regimes (primary: median return difference -1.75, CI [-2.00, -1.53]); the original 'PPO beats the bandit-level baselines' reading of PR #10 is withdrawn.
+- The bandit README table gained a best-constant row: it matches the policy's share within 2 % (94.7 %) at about 9 % higher cost.
+- Zoo sampling ranges moved into the YAML; PyBullet URDF tensors made valid (untested against PyBullet; Linux CI job added).
 - PyBullet could not be installed here; `docs/pybullet_install_windows.md` records what was tried; `pybullet_sim/` has a tested URDF generator and an untested wrapper.
 
 ## Group 3B (bring your own motor)

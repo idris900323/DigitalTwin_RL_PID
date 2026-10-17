@@ -39,7 +39,7 @@ Everything below is a **preliminary** physics-based twin built from datasheet-de
 | 8 Fixed PID | Done (saturation, anti-windup, filtered D) |
 | 9 Closed-loop twin | Done, cross-checked across four implementations |
 | 10 PyBullet | Not installable on the dev machine (no wheel, no compiler): see `docs/pybullet_install_windows.md`; URDF generator tested, wrapper untested |
-| 13-14 Gymnasium env + RL | `environments/rl_pid_env.py`, `rl/train_ppo.py`; PPO x3 seeds trained and compared (`results/controller_comparison/summary.md`). Pre-validation: PPO beats the fixed Tuned preset but NOT the one-shot bandit tuner, and no gain from step-wise adaptation was found |
+| 13-14 Gymnasium env + RL | `environments/rl_pid_env.py`, `rl/train_ppo.py`; PPO x5 seeds trained (`rl/policies/ppo_v2`) and compared (`results/controller_comparison/summary.md`). Pre-validation, negative result: PPO beats the Tuned preset but is WORSE than a single best-constant gain set chosen on validation seeds (primary test, median return difference -1.75, 95 % CI [-2.00, -1.53]); no benefit of step-wise adaptation found |
 | 11 Validation | Plan, loader, identification and comparison tooling done (`docs/validation_plan.md`, `validation/`); **no real data yet** |
 | 12 Load / disturbance variation | Done in the twin (joint model, sensitivity study) |
 | 13-16 Gymnasium env, RL-PID, comparison | See the status notes in `CHANGELOG.md` (pre-validation prototype) |

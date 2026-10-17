@@ -1,113 +1,157 @@
 # Controller comparison (PRE-VALIDATION, simulated on the unvalidated twin)
 
-100 held-out paired scenarios per regime (seeds 50000..50099, never used in training). Every controller sees the same plant, payload, target, delay and noise for a given seed. `return` is the environment reward (higher is better); IAE in deg*s (lower is better). `random_search` is an oracle: best of 16 random gain sets + Tuned + bandit per scenario, chosen with hindsight, so it is an upper bound for any fixed-gain strategy, not a deployable controller.
+100 held-out paired TEST scenarios per regime (seeds 50000..50099); 40 VALIDATION scenarios (seeds 40000..40039) were used to choose `best_constant` and the reported PPO seed; neither set was used in training. Every controller sees the same plant, payload, target, delay and noise for a given seed. `return` is the environment reward (higher is better).
+`random_search` is an ORACLE (best of 16 random sets + Tuned + bandit + best_constant per scenario, chosen with hindsight): an upper bound, not a deployable controller.
+
+**Pre-specified analysis.** One primary comparison: validation-selected PPO minus `best_constant`, `static` regime, feasible scenarios, paired median difference of return with a 95 % bootstrap CI. All other comparisons are secondary: paired Wilcoxon p-values, Holm-adjusted across the whole secondary family (feasible scenarios, all regimes). Infeasible scenarios (torque margin < 1.0 at any point, including after a payload change) are reported separately.
 
 ## Regime `static`
 
-| controller | return mean ± std | Δreturn vs Tuned [95 % CI] | p (Wilcoxon) | IAE mean | overshoot % | settle s | success | diverged |
-|---|---|---|---|---|---|---|---|---|
-| tuned | -14.157 ± 14.626 | +0.000 [+0.000, +0.000] | nan | 44.6 | 18.3 | 1.026 | 12 % | 0 % |
-| legacy | -54.705 ± 50.186 | -40.548 [-50.232, -31.961] | 6.61e-17 | 83.5 | 54.9 | 1.384 | 2 % | 0 % |
-| zn | -20.491 ± 28.714 | -6.334 [-11.336, -2.079] | 0.421 | 63.9 | 7.4 | 0.815 | 55 % | 0 % |
-| bandit | -9.689 ± 14.971 | +4.468 [+3.677, +5.334] | 5.07e-17 | 36.6 | 4.9 | 0.501 | 69 % | 0 % |
-| random_search | -8.882 ± 15.029 | +5.275 [+4.332, +6.311] | 5.57e-17 | 36.8 | 0.4 | 0.440 | 86 % | 0 % |
-| ppo_s0 | -10.597 ± 14.936 | +3.560 [+2.911, +4.265] | 4.12e-16 | 37.7 | 9.4 | 0.492 | 41 % | 0 % |
-| ppo_s1 | -10.771 ± 14.635 | +3.386 [+2.734, +4.096] | 6.54e-17 | 37.9 | 10.6 | 0.543 | 36 % | 0 % |
-| ppo_s2 | -9.870 ± 14.799 | +4.287 [+3.489, +5.143] | 4.88e-17 | 37.8 | 4.5 | 0.528 | 62 % | 0 % |
+Best constant gains (chosen on validation): Kp 18.94, Ki 0.01, Kd 1.317 (validation return -8.099).
+PPO seeds, validation mean return: ppo_s0 -10.251, ppo_s1 -9.508, ppo_s2 -9.645, ppo_s3 -10.359, ppo_s4 -9.895. Selected on validation: `ppo_s1`.
 
-Per-context breakdown of mean return (best PPO seed `ppo_s2` vs Tuned vs bandit):
+Feasible scenarios: 94 of 100; infeasible: 6.
 
-| context | n | Tuned | bandit | ppo_s2 |
-|---|---|---|---|---|
-| no payload | 19 | -7.492 | -5.035 | -4.830 |
-| payload + gravity | 33 | -20.795 | -18.223 | -18.421 |
-| payload, no gravity | 48 | -12.232 | -5.663 | -5.987 |
+### Feasible scenarios (headline)
 
-Worst five scenarios for `ppo_s2` relative to Tuned (failure analysis):
+| controller | return mean ± std | median | Δmedian vs best_constant [95 % CI] | p (Wilcoxon) | p Holm | IAE | overshoot % | settle s | success | at a gain bound | diverged |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| tuned | -11.596 ± 9.104 | -9.278 | -2.611 [-3.882, -1.688] | 7.85e-15 | 2.2e-13 | 35.2 | 19.5 | 1.026 | 13 % | 0 % | 0 % |
+| legacy | -54.669 ± 51.614 | -36.098 | -28.031 [-43.053, -20.570] | 9.33e-17 | 3.08e-15 | 76.5 | 58.4 | 1.384 | 2 % | 0 % | 0 % |
+| best_constant | -7.931 ± 8.108 | -5.822 | +0.000 [+0.000, +0.000] | nan | nan | 29.9 | 4.5 | 0.585 | 54 % | 0 % | 0 % |
+| zn | -16.884 ± 24.305 | -6.675 | -1.207 [-1.481, -1.095] | 4.35e-12 | 7.83e-11 | 52.4 | 10.1 | 0.656 | 46 % | 100 % | 0 % |
+| bandit | -7.951 ± 8.143 | -5.914 | -0.162 [-0.236, -0.050] | 0.0247 | 0.124 | 27.0 | 6.8 | 0.534 | 63 % | 37 % | 0 % |
+| bandit_retune | -7.951 ± 8.143 | -5.914 | -0.162 [-0.236, -0.050] | 0.0247 | 0.124 | 27.0 | 6.8 | 0.534 | 63 % | 37 % | 0 % |
+| random_search | -7.424 ± 8.047 | -5.535 | +0.033 [+0.000, +0.167] | 5.15e-10 | 7.2e-09 | 27.4 | 4.8 | 0.559 | 68 % | 5 % | 0 % |
+| ppo **(primary)** | -9.663 ± 7.746 | -7.292 | -1.751 [-2.003, -1.526] | 7.48e-13 | nan | 28.4 | 11.0 | 0.701 | 31 % | 100 % | 0 % |
+| ppo_s0 | -11.167 ± 8.289 | -8.520 | -2.633 [-3.614, -2.282] | 6e-15 | 1.74e-13 | 30.0 | 17.1 | 0.936 | 20 % | 100 % | 0 % |
+| ppo_s1 | -9.663 ± 7.746 | -7.292 | -1.751 [-2.003, -1.526] | 7.48e-13 | 1.42e-11 | 28.4 | 11.0 | 0.701 | 31 % | 100 % | 0 % |
+| ppo_s2 | -9.602 ± 7.704 | -7.775 | -1.723 [-1.939, -1.576] | 8.85e-14 | 2.12e-12 | 28.8 | 8.1 | 0.607 | 44 % | 100 % | 0 % |
+| ppo_s3 | -10.299 ± 7.808 | -7.836 | -2.224 [-2.381, -1.943] | 4.47e-17 | 1.57e-15 | 28.5 | 11.3 | 1.028 | 46 % | 100 % | 0 % |
+| ppo_s4 | -10.911 ± 8.452 | -8.051 | -2.441 [-3.420, -2.020] | 9.11e-14 | 2.12e-12 | 30.4 | 17.9 | 0.752 | 18 % | 100 % | 0 % |
 
-| seed | context | target deg | mass kg | Δreturn | PPO overshoot % | PPO final gains | Tuned overshoot % |
-|---|---|---|---|---|---|---|---|
-| 50036 | no payload | 71 | 0.00 | -0.347 | 0.1 | 50.0/0.00/5.00 | 0.2 |
-| 50043 | no payload | 71 | 0.00 | -0.266 | 0.0 | 50.0/0.00/5.00 | 0.2 |
-| 50086 | no payload | 93 | 0.00 | -0.227 | 0.0 | 50.0/0.00/5.00 | 1.0 |
-| 50084 | payload + gravity | 174 | 1.76 | -0.136 | 0.0 | 50.0/0.00/5.00 | 0.0 |
-| 50027 | payload + gravity | 166 | 1.76 | -0.080 | 0.0 | 50.0/0.00/5.00 | 0.0 |
+PPO across training seeds (feasible test scenarios, mean return): ppo_s0 -11.167, ppo_s1 -9.663, ppo_s2 -9.602, ppo_s3 -10.299, ppo_s4 -10.911. Seed mean -10.328, std 0.635, range [-11.167, -9.602]; best constant -7.931.
+
+### Infeasible scenarios (reported separately)
+
+| controller | n | return mean | median |
+|---|---|---|---|
+| tuned | 6 | -57.700 | -58.332 |
+| legacy | 6 | -57.210 | -58.332 |
+| best_constant | 6 | -57.515 | -58.657 |
+| zn | 6 | -83.740 | -94.188 |
+| bandit | 6 | -57.072 | -58.332 |
+| bandit_retune | 6 | -57.072 | -58.332 |
+| random_search | 6 | -57.068 | -58.332 |
+| ppo | 6 | -57.634 | -58.878 |
+| ppo_s0 | 6 | -57.634 | -58.892 |
+| ppo_s1 | 6 | -57.634 | -58.878 |
+| ppo_s2 | 6 | -57.690 | -58.913 |
+| ppo_s3 | 6 | -57.642 | -58.884 |
+| ppo_s4 | 6 | -57.625 | -58.824 |
+
+Infeasible seeds (min margin): 50017 (0.81), 50024 (0.66), 50041 (0.67), 50064 (0.55), 50079 (0.52), 50081 (0.63)
 
 ## Regime `changes`
 
-| controller | return mean ± std | Δreturn vs Tuned [95 % CI] | p (Wilcoxon) | IAE mean | overshoot % | settle s | success | diverged |
-|---|---|---|---|---|---|---|---|---|
-| tuned | -34.248 ± 44.284 | +0.000 [+0.000, +0.000] | nan | 69.4 | 67.2 | 1.337 | 14 % | 0 % |
-| legacy | -105.105 ± 148.061 | -70.856 [-96.788, -51.491] | 7.1e-17 | 98.8 | 113.0 | 1.640 | 0 % | 0 % |
-| zn | -37.091 ± 48.658 | -2.842 [-12.723, +6.383] | 0.17 | 75.5 | 45.3 | 1.315 | 43 % | 0 % |
-| bandit | -29.460 ± 82.864 | +4.789 [-5.485, +10.681] | 1.87e-14 | 60.6 | 52.3 | 1.103 | 43 % | 0 % |
-| random_search | -17.271 ± 18.497 | +16.978 [+11.396, +24.092] | 3.9e-18 | 56.6 | 23.7 | 1.029 | 49 % | 0 % |
-| ppo_s0 | -34.435 ± 99.080 | -0.186 [-14.118, +7.831] | 3.4e-06 | 62.1 | 53.5 | 1.081 | 34 % | 0 % |
-| ppo_s1 | -34.288 ± 87.737 | -0.040 [-11.775, +6.911] | 0.000186 | 62.8 | 54.5 | 1.168 | 35 % | 0 % |
-| ppo_s2 | -30.540 ± 86.990 | +3.709 [-7.863, +10.727] | 1.96e-10 | 61.1 | 47.5 | 1.093 | 40 % | 0 % |
+Best constant gains (chosen on validation): Kp 29.59, Ki 0.01, Kd 1.317 (validation return -19.770).
+PPO seeds, validation mean return: ppo_s0 -21.950, ppo_s1 -22.029, ppo_s2 -21.697, ppo_s3 -21.419, ppo_s4 -21.524. Selected on validation: `ppo_s3`.
 
-Per-context breakdown of mean return (best PPO seed `ppo_s2` vs Tuned vs bandit):
+Note: in this regime the target and payload change mid-episode, so overshoot, settling and success refer to the final target only; the return is the headline.
 
-| context | n | Tuned | bandit | ppo_s2 |
-|---|---|---|---|---|
-| no payload | 19 | -35.378 | -28.001 | -25.783 |
-| payload + gravity | 33 | -45.703 | -49.037 | -51.156 |
-| payload, no gravity | 48 | -25.926 | -16.578 | -18.249 |
+Feasible scenarios: 89 of 100; infeasible: 11.
 
-Worst five scenarios for `ppo_s2` relative to Tuned (failure analysis):
+### Feasible scenarios (headline)
 
-| seed | context | target deg | mass kg | Δreturn | PPO overshoot % | PPO final gains | Tuned overshoot % |
-|---|---|---|---|---|---|---|---|
-| 50046 | payload + gravity | 134 | 0.84 | -480.450 | 0.0 | 37.8/0.00/5.00 | 0.0 |
-| 50031 | no payload | 137 | 0.00 | -28.975 | 46.7 | 50.0/0.00/5.00 | 70.8 |
-| 50066 | payload + gravity | 160 | 1.71 | -9.752 | 279.3 | 50.0/0.00/5.00 | 272.6 |
-| 50091 | payload, no gravity | 159 | 0.43 | -9.242 | 294.8 | 50.0/0.00/5.00 | 331.2 |
-| 50050 | no payload | 123 | 0.00 | -8.633 | 198.4 | 50.0/0.00/5.00 | 244.1 |
+| controller | return mean ± std | median | Δmedian vs best_constant [95 % CI] | p (Wilcoxon) | p Holm | IAE | overshoot % | settle s | success | at a gain bound | diverged |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| tuned | -28.791 ± 27.314 | -21.237 | -5.713 [-7.290, -3.636] | 9.76e-14 | 2.15e-12 | 63.5 | 70.4 | 1.337 | 16 % | 0 % | 0 % |
+| legacy | -95.526 ± 78.509 | -72.824 | -56.103 [-69.435, -41.227] | 3.96e-16 | 1.27e-14 | 95.7 | 118.4 | 1.614 | 0 % | 0 % | 0 % |
+| best_constant | -21.315 ± 23.926 | -13.900 | +0.000 [+0.000, +0.000] | nan | nan | 57.0 | 56.5 | 1.100 | 34 % | 0 % | 0 % |
+| zn | -29.423 ± 34.572 | -14.656 | -0.878 [-1.088, -0.618] | 1.1e-05 | 8.82e-05 | 67.2 | 53.2 | 1.150 | 39 % | 100 % | 0 % |
+| bandit | -20.189 ± 23.629 | -12.751 | +0.325 [+0.110, +0.890] | 6.34e-06 | 5.7e-05 | 55.3 | 55.8 | 1.099 | 45 % | 37 % | 0 % |
+| bandit_retune | -20.493 ± 23.419 | -13.424 | +0.039 [-0.362, +0.326] | 0.348 | 1 | 54.9 | 56.0 | 1.111 | 49 % | 40 % | 0 % |
+| random_search | -17.312 ± 20.412 | -12.316 | +1.279 [+0.879, +1.951] | 7.85e-15 | 2.2e-13 | 52.2 | 39.4 | 1.071 | 49 % | 7 % | 0 % |
+| ppo | -22.294 ± 23.348 | -14.663 | -1.349 [-1.676, -1.189] | 2.05e-06 | 2.26e-05 | 56.0 | 59.1 | 1.434 | 45 % | 100 % | 0 % |
+| ppo_s0 | -23.397 ± 23.437 | -16.104 | -2.329 [-2.900, -1.767] | 8.43e-08 | 1.01e-06 | 56.7 | 65.7 | 1.330 | 30 % | 100 % | 0 % |
+| ppo_s1 | -23.031 ± 26.142 | -15.073 | -1.418 [-1.886, -0.989] | 0.000405 | 0.00283 | 57.1 | 58.5 | 1.211 | 30 % | 100 % | 0 % |
+| ppo_s2 | -22.049 ± 25.665 | -13.980 | -1.530 [-1.898, -1.228] | 0.000431 | 0.00283 | 55.9 | 54.1 | 1.126 | 26 % | 94 % | 0 % |
+| ppo_s3 | -22.294 ± 23.348 | -14.663 | -1.349 [-1.676, -1.189] | 2.05e-06 | 2.26e-05 | 56.0 | 59.1 | 1.434 | 45 % | 100 % | 0 % |
+| ppo_s4 | -24.169 ± 25.596 | -16.145 | -1.837 [-2.914, -1.438] | 3.37e-08 | 4.38e-07 | 57.5 | 67.6 | 1.138 | 29 % | 100 % | 0 % |
+
+PPO across training seeds (feasible test scenarios, mean return): ppo_s0 -23.397, ppo_s1 -23.031, ppo_s2 -22.049, ppo_s3 -22.294, ppo_s4 -24.169. Seed mean -22.988, std 0.765, range [-24.169, -22.049]; best constant -21.315.
+
+### Infeasible scenarios (reported separately)
+
+| controller | n | return mean | median |
+|---|---|---|---|
+| tuned | 11 | -80.530 | -52.124 |
+| legacy | 11 | -183.830 | -49.491 |
+| best_constant | 11 | -115.307 | -40.569 |
+| zn | 11 | -97.332 | -97.678 |
+| bandit | 11 | -114.615 | -42.017 |
+| bandit_retune | 11 | -114.535 | -42.049 |
+| random_search | 11 | -45.823 | -39.392 |
+| ppo | 11 | -119.518 | -43.883 |
+| ppo_s0 | 11 | -118.783 | -35.654 |
+| ppo_s1 | 11 | -120.570 | -42.208 |
+| ppo_s2 | 11 | -119.525 | -44.431 |
+| ppo_s3 | 11 | -119.518 | -43.883 |
+| ppo_s4 | 11 | -117.730 | -38.713 |
+
+Infeasible seeds (min margin): 50017 (0.81), 50024 (0.66), 50031 (0.58), 50041 (0.67), 50042 (0.83), 50046 (0.68), 50052 (0.75), 50064 (0.46), 50079 (0.52), 50081 (0.63), 50083 (0.98)
 
 ## Regime `ood`
 
-| controller | return mean ± std | Δreturn vs Tuned [95 % CI] | p (Wilcoxon) | IAE mean | overshoot % | settle s | success | diverged |
-|---|---|---|---|---|---|---|---|---|
-| tuned | -16.460 ± 18.252 | +0.000 [+0.000, +0.000] | nan | 49.7 | 16.5 | 0.872 | 22 % | 0 % |
-| legacy | -55.571 ± 54.165 | -39.111 [-48.872, -29.835] | 5.2e-17 | 84.8 | 51.8 | 1.372 | 1 % | 0 % |
-| zn | -21.277 ± 28.552 | -4.817 [-9.375, -0.703] | 0.878 | 65.7 | 8.1 | 0.871 | 48 % | 0 % |
-| bandit | -11.966 ± 17.984 | +4.494 [+3.492, +5.603] | 2.46e-15 | 42.2 | 5.8 | 0.593 | 67 % | 0 % |
-| random_search | -10.599 ± 17.889 | +5.861 [+4.454, +7.458] | 7.99e-16 | 41.5 | 0.5 | 0.478 | 84 % | 0 % |
-| ppo_s0 | -12.398 ± 17.802 | +4.061 [+3.046, +5.217] | 3.04e-13 | 42.6 | 8.4 | 0.537 | 46 % | 0 % |
-| ppo_s1 | -12.516 ± 17.549 | +3.944 [+2.924, +5.115] | 7.71e-14 | 42.8 | 9.1 | 0.584 | 43 % | 0 % |
-| ppo_s2 | -11.516 ± 17.672 | +4.944 [+3.689, +6.399] | 5.64e-14 | 43.0 | 3.8 | 0.608 | 65 % | 0 % |
+Best constant gains (chosen on validation): Kp 23.67, Ki 0.01, Kd 1.317 (validation return -10.173).
+PPO seeds, validation mean return: ppo_s0 -12.190, ppo_s1 -11.740, ppo_s2 -11.714, ppo_s3 -12.387, ppo_s4 -11.686. Selected on validation: `ppo_s4`.
 
-Per-context breakdown of mean return (best PPO seed `ppo_s2` vs Tuned vs bandit):
+Feasible scenarios: 94 of 100; infeasible: 6.
 
-| context | n | Tuned | bandit | ppo_s2 |
-|---|---|---|---|---|
-| no payload | 19 | -8.413 | -5.844 | -5.481 |
-| payload + gravity | 33 | -25.040 | -22.472 | -22.576 |
-| payload, no gravity | 48 | -13.746 | -7.166 | -6.302 |
+### Feasible scenarios (headline)
 
-Worst five scenarios for `ppo_s2` relative to Tuned (failure analysis):
+| controller | return mean ± std | median | Δmedian vs best_constant [95 % CI] | p (Wilcoxon) | p Holm | IAE | overshoot % | settle s | success | at a gain bound | diverged |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| tuned | -14.029 ± 14.512 | -9.385 | -2.072 [-3.466, -1.021] | 7.39e-12 | 1.26e-10 | 40.7 | 17.5 | 0.872 | 23 % | 0 % | 0 % |
+| legacy | -55.589 ± 55.621 | -35.247 | -21.791 [-35.817, -17.132] | 7.71e-17 | 2.62e-15 | 78.1 | 55.1 | 1.372 | 1 % | 0 % | 0 % |
+| best_constant | -10.420 ± 13.072 | -6.216 | +0.000 [+0.000, +0.000] | nan | nan | 35.0 | 6.7 | 0.632 | 49 % | 0 % | 0 % |
+| zn | -18.265 ± 24.330 | -7.147 | -1.289 [-1.539, -1.063] | 5.83e-13 | 1.17e-11 | 55.1 | 10.9 | 0.781 | 48 % | 100 % | 0 % |
+| bandit | -10.344 ± 13.110 | -6.137 | -0.093 [-0.155, -0.045] | 0.381 | 1 | 33.0 | 7.5 | 0.628 | 63 % | 37 % | 0 % |
+| bandit_retune | -10.344 ± 13.110 | -6.137 | -0.093 [-0.155, -0.045] | 0.381 | 1 | 33.0 | 7.5 | 0.628 | 63 % | 37 % | 0 % |
+| random_search | -9.765 ± 13.033 | -5.777 | +0.363 [+0.257, +0.524] | 3.56e-13 | 7.47e-12 | 34.2 | 5.9 | 0.622 | 63 % | 3 % | 0 % |
+| ppo | -13.225 ± 13.589 | -8.026 | -1.993 [-2.663, -1.558] | 2.95e-14 | 7.68e-13 | 36.2 | 16.3 | 0.776 | 28 % | 100 % | 0 % |
+| ppo_s0 | -13.416 ± 13.238 | -8.403 | -2.164 [-3.022, -1.812] | 4.87e-15 | 1.46e-13 | 35.7 | 15.6 | 0.991 | 33 % | 100 % | 0 % |
+| ppo_s1 | -11.874 ± 12.480 | -7.858 | -1.504 [-1.820, -1.311] | 9.15e-11 | 1.46e-09 | 34.3 | 10.4 | 0.686 | 33 % | 100 % | 0 % |
+| ppo_s2 | -11.645 ± 12.391 | -8.384 | -1.768 [-1.941, -1.489] | 1.4e-10 | 2.1e-09 | 34.6 | 7.6 | 0.704 | 40 % | 100 % | 0 % |
+| ppo_s3 | -12.568 ± 12.643 | -8.387 | -2.067 [-2.275, -1.787] | 1.03e-15 | 3.21e-14 | 34.4 | 10.8 | 1.198 | 53 % | 100 % | 0 % |
+| ppo_s4 | -13.225 ± 13.589 | -8.026 | -1.993 [-2.663, -1.558] | 2.95e-14 | 7.68e-13 | 36.2 | 16.3 | 0.776 | 28 % | 100 % | 0 % |
 
-| seed | context | target deg | mass kg | Δreturn | PPO overshoot % | PPO final gains | Tuned overshoot % |
-|---|---|---|---|---|---|---|---|
-| 50036 | no payload | 71 | 0.00 | -2.151 | 2.0 | 50.0/0.00/5.00 | 0.0 |
-| 50043 | no payload | 71 | 0.00 | -0.346 | 0.1 | 50.0/0.00/5.00 | 0.0 |
-| 50039 | payload, no gravity | 93 | 0.44 | -0.340 | 0.0 | 50.0/0.00/5.00 | 0.0 |
-| 50086 | no payload | 93 | 0.00 | -0.337 | 0.1 | 50.0/0.00/5.00 | 0.0 |
-| 50088 | no payload | 91 | 0.00 | -0.303 | 0.1 | 50.0/0.00/5.00 | 0.0 |
+PPO across training seeds (feasible test scenarios, mean return): ppo_s0 -13.416, ppo_s1 -11.874, ppo_s2 -11.645, ppo_s3 -12.568, ppo_s4 -13.225. Seed mean -12.545, std 0.704, range [-13.416, -11.645]; best constant -10.420.
+
+### Infeasible scenarios (reported separately)
+
+| controller | n | return mean | median |
+|---|---|---|---|
+| tuned | 6 | -57.792 | -60.289 |
+| legacy | 6 | -57.055 | -60.304 |
+| best_constant | 6 | -57.318 | -60.614 |
+| zn | 6 | -83.731 | -95.146 |
+| bandit | 6 | -56.998 | -60.289 |
+| bandit_retune | 6 | -56.998 | -60.289 |
+| random_search | 6 | -56.985 | -60.289 |
+| ppo | 6 | -57.477 | -60.785 |
+| ppo_s0 | 6 | -57.567 | -60.845 |
+| ppo_s1 | 6 | -57.554 | -60.842 |
+| ppo_s2 | 6 | -57.541 | -60.872 |
+| ppo_s3 | 6 | -57.523 | -60.853 |
+| ppo_s4 | 6 | -57.477 | -60.785 |
+
+Infeasible seeds (min margin): 50017 (0.81), 50024 (0.66), 50041 (0.67), 50064 (0.55), 50079 (0.52), 50081 (0.63)
 
 ## Verdict
 
-- `static`: best PPO seed `ppo_s2` is BETTER than tuned (Δreturn +4.287, 95 % CI [+3.489, +5.143]).
-- `static`: best PPO seed `ppo_s2` is statistically indistinguishable from bandit (Δreturn -0.182, 95 % CI [-0.510, +0.154]).
-- `static`: best PPO seed `ppo_s2` is WORSE than random_search (oracle) (Δreturn -0.988, 95 % CI [-1.245, -0.760]).
-- `changes`: best PPO seed `ppo_s2` is statistically indistinguishable from tuned (Δreturn +3.709, 95 % CI [-7.863, +10.727]).
-- `changes`: best PPO seed `ppo_s2` is statistically indistinguishable from bandit (Δreturn -1.080, 95 % CI [-2.887, +1.225]).
-- `changes`: best PPO seed `ppo_s2` is WORSE than random_search (oracle) (Δreturn -13.269, 95 % CI [-30.114, -3.749]).
-- `ood`: best PPO seed `ppo_s2` is BETTER than tuned (Δreturn +4.944, 95 % CI [+3.689, +6.399]).
-- `ood`: best PPO seed `ppo_s2` is statistically indistinguishable from bandit (Δreturn +0.450, 95 % CI [-0.088, +1.109]).
-- `ood`: best PPO seed `ppo_s2` is WORSE than random_search (oracle) (Δreturn -0.917, 95 % CI [-1.200, -0.649]).
+**Primary** (static, feasible, n=94): validation-selected PPO (`ppo_s1`) is WORSE than the best constant gains: paired median difference of return -1.751, 95 % CI [-2.003, -1.526] (Wilcoxon p = 7.48e-13, single pre-specified test, unadjusted).
 
-The best seed is picked on these same scenarios, which favours it (selection bias): treat its numbers as optimistic and compare the seed spread in the tables above. Return is the training objective; IAE, overshoot, settling time and success rate are controller-agnostic checks.
-
+Secondary comparisons against best_constant with Holm-adjusted p < 0.05: static/tuned (p=2.2e-13), static/legacy (p=3.1e-15), static/zn (p=7.8e-11), static/random_search (p=7.2e-09), static/ppo_s0 (p=1.7e-13), static/ppo_s1 (p=1.4e-11), static/ppo_s2 (p=2.1e-12), static/ppo_s3 (p=1.6e-15), static/ppo_s4 (p=2.1e-12), changes/tuned (p=2.1e-12), changes/legacy (p=1.3e-14), changes/zn (p=8.8e-05), changes/bandit (p=5.7e-05), changes/random_search (p=2.2e-13), changes/ppo (p=2.3e-05), changes/ppo_s0 (p=1e-06), changes/ppo_s1 (p=0.0028), changes/ppo_s2 (p=0.0028), changes/ppo_s3 (p=2.3e-05), changes/ppo_s4 (p=4.4e-07), ood/tuned (p=1.3e-10), ood/legacy (p=2.6e-15), ood/zn (p=1.2e-11), ood/random_search (p=7.5e-12), ood/ppo (p=7.7e-13), ood/ppo_s0 (p=1.5e-13), ood/ppo_s1 (p=1.5e-09), ood/ppo_s2 (p=2.1e-09), ood/ppo_s3 (p=3.2e-14), ood/ppo_s4 (p=7.7e-13). The sign of the median difference in the tables gives the direction.
 
 Everything above is simulated on the preliminary twin and has not been validated on hardware.

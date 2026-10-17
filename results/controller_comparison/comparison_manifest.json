@@ -1,8 +1,10 @@
 {
   "args": {
+    "const_candidates": 48,
     "n": 100,
+    "n_val": 40,
     "oracle_candidates": 16,
-    "policy_dir": "ppo_main",
+    "policy_dir": "ppo_v2",
     "regimes": [
       "static",
       "changes",
@@ -10,17 +12,126 @@
     ],
     "which": "best"
   },
-  "commit": "eb4ce747a210aca3db4e2dbc0157a6a5dda0dff9",
-  "config_sha256": "ae75a000089bca6d8b3cca78e2cfff8e80e67241f3a01e5fb4567bee3a005b7d",
+  "commit": "36c8a34b7cf0edc85f9fd79af1768a894212f7fe",
+  "config_sha256": "6a6a32dcb3171237d9cfac46cbe33bad2c1025e64dcf682de803fb50e230c818",
   "files_sha256": {
-    "per_episode.csv": "d283ec99368733c093af056ac58a721495d69e13876122d918416e21d8e73b4a",
-    "summary.md": "2d6afd41fbcc83e6c91820172196d63e320ecdbd5a08a0b6f573fa2305cdf4c8"
+    "per_episode.csv": "84b448da1c961279107f15ee7e53a9e971a67d0e46895bed04bd38c2d3b9714d",
+    "selection.json": "a395a4074382934f81fcfc89b3cf41bca2de1c6b16286e4bda64e0aecafdd9b4",
+    "summary.md": "030feecae20a7c26b2bec021ac9029ab3d21d255df6ea45b9d453f2fc94f9033"
+  },
+  "policy_sha256": {
+    "ppo_s0/best_model.zip": "a887cd90c9208f8f61e25e711bf200fba5889bc35a63000f941709ab0125a366",
+    "ppo_s1/best_model.zip": "f4367a25cbc3efdb57720393621723ee2721711513c8f770a2581514af84aa42",
+    "ppo_s2/best_model.zip": "03353eefe027aa39a31a08f95d4d276bd8cfcf7933b699b59dfdf5ebb0ef9a31",
+    "ppo_s3/best_model.zip": "bf57b873ee1a47534a99b32edbff9f576c080cc56a1026a632d45d5791f4176f",
+    "ppo_s4/best_model.zip": "06e46502eb580535805bc7811e698c2db00468e14dfe13aac29d42d4faee898c"
+  },
+  "policy_training_software": {
+    "ppo_s0": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    },
+    "ppo_s1": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    },
+    "ppo_s2": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    },
+    "ppo_s3": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    },
+    "ppo_s4": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    }
+  },
+  "primary_comparison": {
+    "a": "ppo",
+    "b": "best_constant",
+    "regime": "static",
+    "statistic": "paired median difference of return",
+    "subset": "feasible"
+  },
+  "rl_software": {
+    "gymnasium": "1.4.0",
+    "stable_baselines3": "2.9.0",
+    "torch": "2.14.1+cpu"
   },
   "script": "simulation/compare_controllers.py",
   "seeds": [
+    40000,
+    40039,
     50000,
     50099
   ],
+  "selection": {
+    "changes": {
+      "best_constant": [
+        29.587870536858457,
+        0.011285805844833744,
+        1.3165664262384769
+      ],
+      "best_constant_val_return": -19.770120194788994,
+      "ppo_selected": "ppo_s3",
+      "ppo_val_return": {
+        "ppo_s0": -21.950466714321276,
+        "ppo_s1": -22.02948201652203,
+        "ppo_s2": -21.696617179282743,
+        "ppo_s3": -21.419213514879083,
+        "ppo_s4": -21.523917148189604
+      }
+    },
+    "ood": {
+      "best_constant": [
+        23.670296429486765,
+        0.011285805844833744,
+        1.3165664262384769
+      ],
+      "best_constant_val_return": -10.172870240579044,
+      "ppo_selected": "ppo_s4",
+      "ppo_val_return": {
+        "ppo_s0": -12.190163782968332,
+        "ppo_s1": -11.740310939464127,
+        "ppo_s2": -11.714188987543,
+        "ppo_s3": -12.386562902501067,
+        "ppo_s4": -11.685614527431776
+      }
+    },
+    "static": {
+      "best_constant": [
+        18.936237143589413,
+        0.011285805844833744,
+        1.3165664262384769
+      ],
+      "best_constant_val_return": -8.098964797467621,
+      "ppo_selected": "ppo_s1",
+      "ppo_val_return": {
+        "ppo_s0": -10.25103626867718,
+        "ppo_s1": -9.507516112734248,
+        "ppo_s2": -9.645261147814931,
+        "ppo_s3": -10.358870893531563,
+        "ppo_s4": -9.894834321680722
+      }
+    }
+  },
   "software": {
     "numpy": "2.4.2",
     "platform": "Windows AMD64",

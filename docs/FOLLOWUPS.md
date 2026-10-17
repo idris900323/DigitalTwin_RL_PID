@@ -80,7 +80,9 @@ Recommendation: **C for development plus B for sharing**. C removes the embedded
 
 ## Found during Groups 4-5
 
-31. **PPO did not beat the bandit tuner**: the env rewards (error, effort, chatter, gain change, overshoot) differ from the bandit's one-shot cost, and PPO's success rate (36-62 %) is below the bandit's (69 %). Reward shaping toward the spec, longer training, SAC/TD3 and `n_stack > 1` are untried. The best-seed verdict is selected on the evaluation scenarios (optimistic).
+31. **PPO does not beat a single best-constant gain set** (all regimes, v2 run), and 100 % of its final gains still sit at a bound (Kp 50 or Kd 2) even with chatter weight 0.5 and a Kd cap of 2. Untried: reward closer to the metrics (settling, overshoot), a smaller action space (e.g. only Kp/Kd scale), SAC/TD3, `n_stack > 1`, longer training, or removing the gain-change/effort terms that may favour saturation. Until then the RL adaptation claim is unsupported.
+35. **Infeasible scenarios dominate return variance**: 6-11 % of test scenarios are infeasible (including after a payload change, e.g. seed 50046: 0.84 kg at 134 deg, margin 0.68) and are now reported separately.
+36. **PyBullet code is untested** here; the Linux CI job `pybullet` is the first real test. Check its result.
 32. **Heavy-tailed returns in the `changes` regime** (std 80-100): Wilcoxon and bootstrap CIs disagree there; report medians too.
 33. **Comparison trained policies are not committed** (`models/rl/` ignored, trained with torch 2.14 CPU, SB3 2.9.0); `results/controller_comparison/` regenerates from them.
 34. **PyBullet unverified**: needs MSVC Build Tools, conda-forge or WSL2.
