@@ -211,8 +211,9 @@ A small numpy REINFORCE policy that picks Kp/Ki/Kd for a given payload and targe
 | RL auto-tune | **0.539** | **94.7 %** | 1.263 | 80.8 % |
 | "Tuned" preset 15/0/0.3 | 0.925 | 72.2 % | 1.632 | 60.8 % |
 | Legacy default 5/20/0.05 | 1.712 | 44.9 % | 2.245 | 38.0 % |
+| Best constant gains 50/105/1.54 (chosen on validation contexts, `tools/add_best_constant_row.py`) | 0.591 | 94.7 % | 1.307 | 80.6 % |
 
-Lower cost is better. Source: `autotune_360/autotune_policy_360.meta.json` (seed 0, 300 iterations). Training samples only contexts with margin at least 1.2; contexts with margin in [1.0, 1.2) ("marginal", about 3 % of raw draws) are outside the training distribution and the policy is weaker there (cost 2.66, 46 % within 2 % on a 400-context marginal-band check, versus 4.20 / 1.5 % for the Tuned preset). See `autotune_360/README.md` for regeneration.
+**Reading the table honestly:** one well-chosen constant setting, found by search on separate validation contexts, already reaches the same share within 2 % of the target as the RL policy (94.7 %) at a cost only about 9 % higher (0.591 vs 0.539). The policy's advantage over "a good global setting" is therefore small on this metric; its large advantage is over the Tuned and Legacy presets, which were not optimised for this context distribution. Lower cost is better. Source: `autotune_360/autotune_policy_360.meta.json` (seed 0, 300 iterations). Training samples only contexts with margin at least 1.2; contexts with margin in [1.0, 1.2) ("marginal", about 3 % of raw draws) are outside the training distribution and the policy is weaker there (cost 2.66, 46 % within 2 % on a 400-context marginal-band check, versus 4.20 / 1.5 % for the Tuned preset). See `autotune_360/README.md` for regeneration.
 
 ## Known issues / platform notes
 
