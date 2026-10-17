@@ -1,0 +1,582 @@
+[
+ {
+  "seed": 0,
+  "motor": "zoo_000",
+  "mistake": "",
+  "V": 48.0,
+  "N": 100.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 5.1555666987543205,
+  "cost_oracle": 5.153627123536664,
+  "price": 1.0003763514843358,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   1067.3989871889244,
+   4.240654892423294,
+   5.953891020127201
+  ],
+  "conflicts": [],
+  "overshoot": 0.0010219910732524164,
+  "settle": 0.464,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 1,
+  "motor": "zoo_001",
+  "mistake": "",
+  "V": 12.0,
+  "N": 50.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 2.4260246382075223,
+  "cost_oracle": 2.110270527692166,
+  "price": 1.149627313831024,
+  "in_band": {
+   "overshoot [%]": false,
+   "settling time [s]": true,
+   "peak current [A]": false
+  },
+  "gains": [
+   51.275020965992006,
+   0.09747388996819839,
+   1.4384443637207716
+  ],
+  "conflicts": [],
+  "overshoot": 0.002271397894462426,
+  "settle": 0.294,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 2,
+  "motor": "zoo_002",
+  "mistake": "",
+  "V": 48.0,
+  "N": 19.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 2.6208635623622207,
+  "cost_oracle": 1.3202545174268923,
+  "price": 1.9851199354122628,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   28.277616163810123,
+   0.05681794634834864,
+   2.6901129020000987
+  ],
+  "conflicts": [],
+  "overshoot": 0.01607074655164335,
+  "settle": 0.418,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 3,
+  "motor": "zoo_003",
+  "mistake": "",
+  "V": 48.0,
+  "N": 10.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 5.277197888249071,
+  "cost_oracle": 0.5313136202017954,
+  "price": 9.932359509708723,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   2.061341082744477,
+   0.012316069475370115,
+   0.18065454259870853
+  ],
+  "conflicts": [],
+  "overshoot": 0.07835333480146447,
+  "settle": 0.855,
+  "true_Jm_in_interval": false,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 4,
+  "motor": "zoo_004",
+  "mistake": "",
+  "V": 24.0,
+  "N": 250.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 4.745265399900539,
+  "cost_oracle": 3.79086407007002,
+  "price": 1.251763532585037,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   169.98161888673962,
+   0.4323778981805112,
+   17.154833778124825
+  ],
+  "conflicts": [],
+  "overshoot": 0.014616624500863255,
+  "settle": 0.554,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 5,
+  "motor": "zoo_005",
+  "mistake": "",
+  "V": 24.0,
+  "N": 150.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 4.180117458651653,
+  "cost_oracle": 3.6986844525807427,
+  "price": 1.1301633086691112,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   86.08388177321896,
+   0.4498203913300656,
+   3.629083223256522
+  ],
+  "conflicts": [],
+  "overshoot": 0.021501791762530174,
+  "settle": 0.461,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 6,
+  "motor": "zoo_006",
+  "mistake": "",
+  "V": 12.0,
+  "N": 50.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 2.1061049344806695,
+  "cost_oracle": 1.917290967491855,
+  "price": 1.0984795579753945,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   36.32933270300113,
+   0.059824659135243645,
+   0.868279738516012
+  ],
+  "conflicts": [],
+  "overshoot": 0.00303323340623428,
+  "settle": 0.226,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 7,
+  "motor": "zoo_007",
+  "mistake": "",
+  "V": 48.0,
+  "N": 100.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 4.408569250914996,
+  "cost_oracle": 2.662111982849586,
+  "price": 1.6560419994789108,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   36.24233185495495,
+   0.16981635005256768,
+   2.492597754364024
+  ],
+  "conflicts": [],
+  "overshoot": 0.033329514328717856,
+  "settle": 0.597,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 8,
+  "motor": "zoo_008",
+  "mistake": "",
+  "V": 24.0,
+  "N": 30.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 1.539216334931609,
+  "cost_oracle": 1.0734609624295532,
+  "price": 1.4338819843508015,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   73.89782603566833,
+   0.08212724456580416,
+   1.0462931032388585
+  ],
+  "conflicts": [],
+  "overshoot": 0.029538343946534776,
+  "settle": 0.157,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 9,
+  "motor": "zoo_009",
+  "mistake": "",
+  "V": 12.0,
+  "N": 250.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 5.941257100383675,
+  "cost_oracle": 5.534935686382225,
+  "price": 1.073410322544693,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   41.7285664952154,
+   0.2358177735612239,
+   2.275223914296526
+  ],
+  "conflicts": [],
+  "overshoot": 0.013438962494360693,
+  "settle": 0.626,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 10,
+  "motor": "zoo_010",
+  "mistake": "",
+  "V": 48.0,
+  "N": 250.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 6.1016349808205295,
+  "cost_oracle": 5.2107141413420734,
+  "price": 1.1709786442533556,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   123.96301721450888,
+   0.33591891972312515,
+   14.196692834038517
+  ],
+  "conflicts": [],
+  "overshoot": 0.013658770854176636,
+  "settle": 0.675,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 11,
+  "motor": "zoo_011",
+  "mistake": "",
+  "V": 6.0,
+  "N": 10.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 2.656598530963085,
+  "cost_oracle": 1.3609135479945933,
+  "price": 1.9520700156727657,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   0.7737524648880856,
+   0.003452025539805116,
+   0.048565261484803245
+  ],
+  "conflicts": [],
+  "overshoot": 0.03525914485643335,
+  "settle": 0.40700000000000003,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 12,
+  "motor": "zoo_012",
+  "mistake": "",
+  "V": 24.0,
+  "N": 19.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 1.0791060345217565,
+  "cost_oracle": 0.8557506597736428,
+  "price": 1.261005203089407,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   48.583882836984685,
+   0.09587046516765262,
+   0.323234011199426
+  ],
+  "conflicts": [],
+  "overshoot": 0.016520095095463223,
+  "settle": 0.126,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 13,
+  "motor": "zoo_013",
+  "mistake": "",
+  "V": 48.0,
+  "N": 250.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 9.973030098522951,
+  "cost_oracle": 5.994136846402062,
+  "price": 1.6637975331692987,
+  "in_band": {
+   "overshoot [%]": false,
+   "settling time [s]": false,
+   "peak current [A]": false
+  },
+  "gains": [
+   98.24314666154912,
+   1.0210536665071874,
+   8.760925420901286
+  ],
+  "conflicts": [],
+  "overshoot": 3.714082551918681,
+  "settle": 0.889,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 14,
+  "motor": "zoo_014",
+  "mistake": "",
+  "V": 6.0,
+  "N": 150.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 5.207063821831428,
+  "cost_oracle": 3.6361196338830064,
+  "price": 1.4320386417734041,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   13.961461233239207,
+   0.037937211656129,
+   1.5163784956400133
+  ],
+  "conflicts": [],
+  "overshoot": 0.027010396434516477,
+  "settle": 0.637,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 15,
+  "motor": "zoo_015",
+  "mistake": "",
+  "V": 48.0,
+  "N": 100.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 3.1561917572865514,
+  "cost_oracle": 3.1215752496581413,
+  "price": 1.0110894355765414,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   599.0181713574335,
+   1.062208326539767,
+   7.485634761411678
+  ],
+  "conflicts": [],
+  "overshoot": 0.0005545678860288364,
+  "settle": 0.292,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 16,
+  "motor": "zoo_016",
+  "mistake": "",
+  "V": 24.0,
+  "N": 50.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 2.461065706213179,
+  "cost_oracle": 2.3886365732072408,
+  "price": 1.0303223746208856,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   142.94677653421263,
+   0.3392801047856949,
+   0.9218774889365148
+  ],
+  "conflicts": [],
+  "overshoot": 0.0013622113145256914,
+  "settle": 0.23600000000000002,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 17,
+  "motor": "zoo_017",
+  "mistake": "",
+  "V": 24.0,
+  "N": 150.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 4.2334272211147095,
+  "cost_oracle": 3.4182758676874165,
+  "price": 1.238468568652644,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   64.13279577950442,
+   0.2904238438721375,
+   3.2246234518779784
+  ],
+  "conflicts": [],
+  "overshoot": 0.02172444960355809,
+  "settle": 0.504,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 18,
+  "motor": "zoo_018",
+  "mistake": "",
+  "V": 48.0,
+  "N": 30.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 1.6420864446334817,
+  "cost_oracle": 1.1691327362923674,
+  "price": 1.4045337998497733,
+  "in_band": {
+   "overshoot [%]": false,
+   "settling time [s]": true,
+   "peak current [A]": false
+  },
+  "gains": [
+   105.9922596031048,
+   0.19501601485655692,
+   2.6803727743640664
+  ],
+  "conflicts": [],
+  "overshoot": 0.005148981955708601,
+  "settle": 0.223,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ },
+ {
+  "seed": 19,
+  "motor": "zoo_019",
+  "mistake": "",
+  "V": 24.0,
+  "N": 30.0,
+  "status": "ok",
+  "stable": true,
+  "meets_spec": true,
+  "cost_rec": 1.218470610306783,
+  "cost_oracle": 1.153898762054399,
+  "price": 1.0559597170703436,
+  "in_band": {
+   "overshoot [%]": true,
+   "settling time [s]": true,
+   "peak current [A]": true
+  },
+  "gains": [
+   105.32875634267504,
+   0.12303146019237801,
+   0.8314468290489205
+  ],
+  "conflicts": [],
+  "overshoot": 0.0008847676381486104,
+  "settle": 0.129,
+  "true_Jm_in_interval": true,
+  "true_R_in_interval": true,
+  "true_K_in_interval": true
+ }
+]
