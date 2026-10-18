@@ -1,0 +1,12 @@
+id,experiment,date,commit_in_manifest,config,seed_set,status,notes
+L01,v2 training PPO x5 seeds,2026-10-17,051e238fbb,rl/ppo.yaml,train seeds 0-4,completed,150k decisions; checkpoints = EvalCallback best
+L02,v2 comparison (validation-selected PPO seed),2026-10-17,051e238fbb,results/controller_comparison,test 50000-50099 (validation 40000-40039),completed,label pre-specified; oracle 48 random + Ki=0 grid
+L03,v3 training PPO x3 seeds,2026-10-17,051e238fbb,rl/ppo_v3.yaml,train seeds 0-2,completed,400k decisions; residual; shaped reward
+L04,v3 checkpoint selection,2026-10-17,051e238fbb,rl/select_checkpoints.py,validation 40000-40029,completed,40 checkpoints per seed
+L05,v3 comparison exploratory,2026-10-18,72c1219963,results/controller_comparison_v3,test 50000-50099,completed,label exploratory
+L06,v3 comparison confirmatory,2026-10-18,72c1219963,results/controller_comparison_v3_fresh,test 60000-60099,completed,label confirmatory; run once
+L07,v4 training PPO/SAC/TD3 x3 seeds,2026-10-18,72c1219963,rl/ppo_v4.yaml,train seeds 0-2,completed,200k decisions each; residual span 1.5
+L08,v4 checkpoint selection,2026-10-18,72c1219963,rl/select_checkpoints.py,validation 40000-40029,completed,
+L09,v4 comparisons PPO/SAC/TD3,2026-10-18,50313602cf,results/controller_comparison_v4_{ppo;sac;td3},test 70000-70099,completed,label confirmatory; run once per algorithm
+L10,summaries re-rendered from per_episode.csv,2026-10-18,a3aaef1,simulation/compare_controllers.py --rerender,n/a,completed,no simulation; labels and mean/IQR columns only
+L11,post-hoc constant sensitivity v3,2026-10-18,in progress,results/constant_sensitivity_v3,test 60000-60099 (validation 40000-40039),running,POST HOC; added after confirmatory runs

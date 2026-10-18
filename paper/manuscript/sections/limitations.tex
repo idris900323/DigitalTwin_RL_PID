@@ -1,0 +1,11 @@
+\section{Limitations and Threats to Validity}
+\begin{itemize}
+\item \textbf{Unvalidated twin; no hardware.} Parameters come from a datasheet with a documented inconsistency; nothing has been compared with a measured response. Every statement is conditional on the twin.
+\item \textbf{One motor model, one payload family, one reward design, three seeds per algorithm} (five for v2). Between-seed spread is reported, but three seeds give little power for seed-level claims; the changes regime in particular rests on two of three seeds after Holm correction.
+\item \textbf{Baseline strength.} The best constant is found with a modest validation search (about $50$ candidates); a stronger search might close part of the gap (Section~\ref{sec:posthoc}). The oracle is an upper bound chosen with hindsight and is not a deployable method.
+\item \textbf{Design chosen after seeing results.} The v3 design followed the v2 test results on seeds 50000+; only seeds 60000+ are confirmatory for v3, and v4 (seeds 70000+) is a separate experiment. There is no formal pre-registration file for the RL runs.
+\item \textbf{Metrics and success definition.} Return is a composite with hand-set weights; the ranking could change with the weights (not studied). The success rate is descriptive and was not stable across seed sets.
+\item \textbf{Modelling.} Inductance is zero in the base twin, the gearbox is ideal, friction is small, and there is no thermal model; the feasibility margin is an upper bound that ignores back-EMF.
+\item \textbf{Reproducibility scope.} The PPO, SAC and TD3 policies are provided as committed weight files and are not retrained by the comparison scripts. The numpy bandit policy retrains byte-identically only on the same NumPy and Python build (an independent check across two platforms found a largest weight difference of $7.3\times10^{-4}$ with the same metrics).
+\item \textbf{Extension.} Nothing here supports statements about industrial robot joints; extending the claims would need hardware data on the intended joint class.
+\end{itemize}

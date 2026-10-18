@@ -1,0 +1,19 @@
+\section{Hardware Replication Protocol and Plan (no results)}\label{app:hardware}
+\textbf{This appendix is a plan. No hardware experiment has been run and no measured value appears anywhere in this paper.} The motor, bench and measurement choices are still open; the protocol below is written so that another laboratory can run it and so that the claims of the main text can be tested.
+
+\paragraph*{Purpose.} (i) Measure the quantities the twin takes from a datasheet (armature resistance, back-EMF constant, no-load speed and current, viscous and Coulomb friction, reflected inertia, gearbox efficiency); (ii) compare measured and simulated closed-loop step responses for the gain sets used here; (iii) test whether a policy trained on the twin transfers without retraining and whether the residual benefit over a tuned constant, if any, survives.
+
+\paragraph*{Planned protocol outline (to be detailed in a replication kit).}
+\begin{enumerate}
+\item \emph{Rig characterisation:} sampling-time jitter, encoder resolution and repeatability, supply sag under load, current-sense accuracy.
+\item \emph{Static identification:} steady speed and current versus voltage (several voltages, both directions, repeated), locked-rotor current with a duty-limited protocol.
+\item \emph{Dynamic identification:} voltage steps, pseudo-random binary excitation, coast-down; fit with a parameter-identifiability analysis (parameters flagged as not identifiable are reported, not forced).
+\item \emph{Closed-loop validation:} step responses for the fixed gain sets and targets used in the simulation study; compare with the twin using pre-set pass thresholds on normalised error, overshoot and settling.
+\item \emph{Payload and gravity:} measure with and without a payload arm, including a condition near the torque-feasibility boundary.
+\item \emph{Tuner comparison on hardware:} best constant versus the learned residual policy and the baselines on the same trials, paired, with randomised order.
+\item \emph{Repeatability:} several sessions, and at least one independent unit or laboratory.
+\end{enumerate}
+
+\paragraph*{What must be fixed before any data are taken.} The hypotheses, the numerical thresholds (equivalence margins, validation thresholds, the number of trials) and the exclusion rules go into a pre-registration file committed before the first confirmatory run, with the reasons for each threshold (engineering relevance, measurement resolution or pilot data). The safety checklist (current limit, guarded shaft, no locked rotor at full voltage, emergency stop) must be signed by the person running the rig; this paper does not provide instructions for unsafe operation.
+
+\paragraph*{Claims ladder.} Until measured data exist, results are worded ``in simulation''; ``validated'' is used only for quantities that passed stated thresholds on measured data; multi-unit or multi-laboratory statements require replication data; and nothing is said about industrial joints from a small hobby-class motor.

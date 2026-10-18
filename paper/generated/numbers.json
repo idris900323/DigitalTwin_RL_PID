@@ -9,6 +9,66 @@
   "tex": "10",
   "value": 10.101527063050707
  },
+ "ConfThreeChangesGainKdBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.32",
+  "value": 1.31657
+ },
+ "ConfThreeChangesGainKdMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.78",
+  "value": 1.78391
+ },
+ "ConfThreeChangesGainKdPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.87",
+  "value": 1.870106
+ },
+ "ConfThreeChangesGainKdPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.48",
+  "value": 1.476154
+ },
+ "ConfThreeChangesGainKiBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeChangesGainKiMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeChangesGainKiPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "9.00",
+  "value": 8.997979999999986
+ },
+ "ConfThreeChangesGainKiPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeChangesGainKpBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "29.59",
+  "value": 29.5879
+ },
+ "ConfThreeChangesGainKpMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "27.23",
+  "value": 27.2276
+ },
+ "ConfThreeChangesGainKpPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "35.83",
+  "value": 35.8255
+ },
+ "ConfThreeChangesGainKpPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "23.59",
+  "value": 23.595
+ },
  "ConfThreeChangesHi": {
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
   "tex": "+1.23",
@@ -143,6 +203,66 @@
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
   "tex": "31",
   "value": 31.306225469290215
+ },
+ "ConfThreeOodGainKdBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.32",
+  "value": 1.31657
+ },
+ "ConfThreeOodGainKdMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.78",
+  "value": 1.78212
+ },
+ "ConfThreeOodGainKdPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.87",
+  "value": 1.86968
+ },
+ "ConfThreeOodGainKdPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.55",
+  "value": 1.55202
+ },
+ "ConfThreeOodGainKiBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeOodGainKiMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeOodGainKiPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeOodGainKiPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeOodGainKpBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "23.67",
+  "value": 23.6703
+ },
+ "ConfThreeOodGainKpMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "27.83",
+  "value": 27.8268
+ },
+ "ConfThreeOodGainKpPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "34.88",
+  "value": 34.8793
+ },
+ "ConfThreeOodGainKpPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "23.57",
+  "value": 23.566
  },
  "ConfThreeOodHi": {
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
@@ -288,6 +408,66 @@
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
   "tex": "43",
   "value": 43.47001546804071
+ },
+ "ConfThreeStaticGainKdBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.32",
+  "value": 1.31657
+ },
+ "ConfThreeStaticGainKdMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.78",
+  "value": 1.7775
+ },
+ "ConfThreeStaticGainKdPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.88",
+  "value": 1.87619
+ },
+ "ConfThreeStaticGainKdPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.53",
+  "value": 1.5347
+ },
+ "ConfThreeStaticGainKiBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeStaticGainKiMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeStaticGainKiPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeStaticGainKiPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeStaticGainKpBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "18.94",
+  "value": 18.9362
+ },
+ "ConfThreeStaticGainKpMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "27.82",
+  "value": 27.8238
+ },
+ "ConfThreeStaticGainKpPhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "35.37",
+  "value": 35.3719
+ },
+ "ConfThreeStaticGainKpPlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "23.51",
+  "value": 23.5094
  },
  "ConfThreeStaticHi": {
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
@@ -821,8 +1001,8 @@
  },
  "PaperCommit": {
   "source": "git rev-parse HEAD",
-  "tex": "a3aaef12db",
-  "value": "a3aaef12db"
+  "tex": "90717d262e",
+  "value": "90717d262e"
  },
  "VFourPpoChangesCap": {
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",
@@ -833,6 +1013,66 @@
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",
   "tex": "-10",
   "value": -10.083568795571773
+ },
+ "VFourPpoChangesGainKdBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.32",
+  "value": 1.31657
+ },
+ "VFourPpoChangesGainKdMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.23",
+  "value": 1.231585
+ },
+ "VFourPpoChangesGainKdPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.24",
+  "value": 1.23835
+ },
+ "VFourPpoChangesGainKdPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.21",
+  "value": 1.214815
+ },
+ "VFourPpoChangesGainKiBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoChangesGainKiMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoChangesGainKiPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoChangesGainKiPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoChangesGainKpBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "29.59",
+  "value": 29.5879
+ },
+ "VFourPpoChangesGainKpMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.53",
+  "value": 19.526449999999997
+ },
+ "VFourPpoChangesGainKpPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.75",
+  "value": 19.7509
+ },
+ "VFourPpoChangesGainKpPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.40",
+  "value": 19.3955
  },
  "VFourPpoChangesHi": {
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",
@@ -968,6 +1208,66 @@
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",
   "tex": "6",
   "value": 5.80825583322756
+ },
+ "VFourPpoOodGainKdBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.32",
+  "value": 1.31657
+ },
+ "VFourPpoOodGainKdMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.23",
+  "value": 1.22899
+ },
+ "VFourPpoOodGainKdPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.24",
+  "value": 1.2372139999999998
+ },
+ "VFourPpoOodGainKdPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.21",
+  "value": 1.213006
+ },
+ "VFourPpoOodGainKiBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoOodGainKiMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoOodGainKiPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoOodGainKiPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoOodGainKpBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "23.67",
+  "value": 23.6703
+ },
+ "VFourPpoOodGainKpMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.58",
+  "value": 19.5765
+ },
+ "VFourPpoOodGainKpPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.81",
+  "value": 19.8078
+ },
+ "VFourPpoOodGainKpPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.46",
+  "value": 19.4564
  },
  "VFourPpoOodHi": {
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",
@@ -1113,6 +1413,66 @@
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",
   "tex": "11",
   "value": 11.166977730920914
+ },
+ "VFourPpoStaticGainKdBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.32",
+  "value": 1.31657
+ },
+ "VFourPpoStaticGainKdMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.23",
+  "value": 1.229
+ },
+ "VFourPpoStaticGainKdPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.24",
+  "value": 1.2371079999999999
+ },
+ "VFourPpoStaticGainKdPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.21",
+  "value": 1.213026
+ },
+ "VFourPpoStaticGainKiBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoStaticGainKiMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoStaticGainKiPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoStaticGainKiPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "VFourPpoStaticGainKpBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "18.94",
+  "value": 18.9362
+ },
+ "VFourPpoStaticGainKpMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.58",
+  "value": 19.5804
+ },
+ "VFourPpoStaticGainKpPhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.81",
+  "value": 19.8076
+ },
+ "VFourPpoStaticGainKpPlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19.47",
+  "value": 19.47108
  },
  "VFourPpoStaticHi": {
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",

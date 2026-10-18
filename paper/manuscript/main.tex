@@ -1,0 +1,33 @@
+% Venue-neutral IEEE-style draft (IEEEtran). Retarget by swapping the document class and the abstract/introduction/conclusion files.
+% All numbers come from generated/numbers.tex (paper/make_numbers.py) so the text cannot drift from results/.
+% DRAFT: simulation only, pre-validation. No hardware results exist; hardware appears only as a replication plan (Appendix A).
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amssymb,booktabs,graphicx,siunitx,hyperref,cite,multirow}
+\graphicspath{{../generated/}}
+\input{../generated/numbers.tex}
+\newcommand{\prelim}{\emph{pre-validation}}
+
+\begin{document}
+\title{Residual Reinforcement Learning on a Tuned Constant: A Simulation Study of PID Gain Adaptation for a Geared DC-Motor Joint}
+\author{\IEEEauthorblockN{Author names withheld in this draft}\IEEEauthorblockA{Affiliation}}
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/problem}
+\input{sections/method}
+\input{sections/setup}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+\input{sections/availability}
+
+\bibliographystyle{IEEEtran}
+\bibliography{../refs}
+
+\appendices
+\input{sections/appendix_hardware}
+\input{sections/appendix_supplement}
+\end{document}

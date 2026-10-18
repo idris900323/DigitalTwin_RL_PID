@@ -62,6 +62,19 @@ def main() -> int:
             add(f"{pre}{R}InfBase", b["mean_ret"] if False else c.arr(reg, "best_constant")[~f].mean(), src, "{:.1f}")
             add(f"{pre}{R}InfOrc", c.arr(reg, "random_search")[~f].mean(), src, "{:.1f}")
         add(f"{pre}Commit", c.manifest["commit"][:10], f"results/{SETS[key]['dir']}/comparison_manifest.json")
+    # how much do the learned policies' final gains vary across scenarios? (feasible scenarios; best constant for reference)
+    for key, pre in (("v3_conf", "ConfThree"), ("v4_ppo", "VFourPpo")):
+        c = Comparison(key)
+        src = f"results/{SETS[key]['dir']}/per_episode.csv"
+        for reg, R in REG.items():
+            f = c.feasible(reg)
+            for gi, gname in enumerate(("Kp", "Ki", "Kd")):
+                g = np.array([float(r[gname]) for r in c.data[reg]["ppo"]])[f]
+                b = float(c.data[reg]["best_constant"][0][gname])
+                add(f"{pre}{R}Gain{gname}Med", float(np.median(g)), src, "{:.2f}")
+                add(f"{pre}{R}Gain{gname}Plo", float(np.percentile(g, 10)), src, "{:.2f}")
+                add(f"{pre}{R}Gain{gname}Phi", float(np.percentile(g, 90)), src, "{:.2f}")
+                add(f"{pre}{R}Gain{gname}Base", b, src, "{:.2f}")
     # v2 specifics: bandit versus best constant, and where the v2 PPO gains ended up
     c2 = Comparison("v2")
     for reg, R in REG.items():

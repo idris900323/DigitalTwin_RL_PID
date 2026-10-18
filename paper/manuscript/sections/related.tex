@@ -1,0 +1,10 @@
+\section{Related Work}
+\emph{This section is a stub: the systematic search is incomplete (see \texttt{literature\_log.md}); only verified references are cited and no novelty claim is made yet.}
+
+\paragraph*{Classical autotuning.} Ziegler and Nichols \cite{ziegler1942optimum} and relay-feedback autotuning \cite{astrom1984relay} derive gains from a few closed-loop measurements. We include a Ziegler--Nichols baseline computed on the linearised twin; a relay refinement exists in the code base but is not evaluated here.
+
+\paragraph*{Learning-based PID tuning.} Q-learning and deep-RL approaches that adapt or tune PID gains, including a physical-system study, are reported by Carlucho et al.\ \cite{carlucho2017incremental} and Lawrence et al.\ \cite{lawrence2021shallow}. We do not claim to improve on them; our contribution is the evaluation protocol on a shared twin.
+
+\paragraph*{Residual learning.} Learning a correction on top of an existing controller is the idea of residual RL \cite{johannink2019residual,silver2018residual}. Our residual is in gain space (a multiplicative offset on Kp and Kd and an additive offset on Ki around a tuned constant), not in control space.
+
+\paragraph*{Algorithms and evaluation practice.} PPO \cite{schulman2017ppo}, SAC \cite{haarnoja2018sac} and TD3 \cite{fujimoto2018td3} are trained with Stable-Baselines3 \cite{raffin2021sb3} in a Gymnasium environment \cite{towers2024gymnasium}. Our reporting follows recommendations on reproducibility and statistical rigour in deep RL \cite{henderson2018matters,agarwal2021precipice}, paired nonparametric tests \cite{wilcoxon1945individual}, Holm correction \cite{holm1979simple} and bootstrap intervals \cite{efron1979bootstrap}. Domain randomisation for transfer \cite{tobin2017domain} motivates the plant randomisation used in training.
