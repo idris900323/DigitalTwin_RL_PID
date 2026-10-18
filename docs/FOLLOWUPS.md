@@ -78,6 +78,15 @@ Recommendation: **C for development plus B for sharing**. C removes the embedded
 29. **PDF/OCR extraction is regex based**; unusual datasheet layouts need the confirmation table (or a hand-written YAML). A language model could assist but would have to treat the datasheet text as untrusted data and keep the confirmation step.
 30. **`dtrl motor add` writes into `motors/`** (or `DTRL_MOTORS_DIR`); the profile hash in stored recommendations goes stale when a profile changes (`tests/browser/test_motor_ui.py` detects it).
 
+## Found during Groups 4-5
+
+31. **v2 PPO did not match a tuned constant** (gains at 50/200/2, instability); **v3 residual PPO beats it modestly** (see `docs/rl_findings.md`) but needs confirmation on fresh test seeds. Still untried: reward closer to the metrics (settling, overshoot), a smaller action space (e.g. only Kp/Kd scale), SAC/TD3, `n_stack > 1`, longer training, or removing the gain-change/effort terms that may favour saturation. Until then the RL adaptation claim is unsupported.
+35. **Infeasible scenarios dominate return variance**: 6-11 % of test scenarios are infeasible (including after a payload change, e.g. seed 50046: 0.84 kg at 134 deg, margin 0.68) and are now reported separately.
+36. **PyBullet code is untested** here; the Linux CI job `pybullet` is the first real test. Check its result.
+32. **Heavy-tailed returns in the `changes` regime** (std 80-100): Wilcoxon and bootstrap CIs disagree there; report medians too.
+33. **Comparison trained policies are not committed** (`models/rl/` ignored, trained with torch 2.14 CPU, SB3 2.9.0); `results/controller_comparison/` regenerates from them.
+34. **PyBullet unverified**: needs MSVC Build Tools, conda-forge or WSL2.
+
 ## Paper-readiness constraints to honour in Groups 2-4 (from `PAPER_PREPARATION_PROMPT.md`, not yet enacted)
 
 The paper effort needs the software to produce auditable, regenerable data. Keep these in mind while building the improvement work, so nothing has to be retrofitted:

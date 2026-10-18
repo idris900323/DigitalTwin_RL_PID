@@ -279,8 +279,42 @@ def _score(G, ctx, nrng):
     c = step_cost(th, V, v, R)
     return c, np.mean(np.abs(np.degrees(th[-1]) - R) < 0.02 * R)
 
+BEST_CONST_NAME = "Best constant (chosen on validation contexts)"
+
+def best_constant_gains(val_seed=77, n=400, cand=400, rounds=3):
+    """The single best fixed gain triple for the feasible context distribution, chosen on VALIDATION contexts (val_seed, distinct
+    from the held-out seed and from training): best of ``cand`` log-uniform candidates plus the Tuned and legacy presets, then a local
+    multiplicative search. This is the honest 'no learning, one global setting' baseline for the RL rows."""
+    ctx = sample_context(n, np.random.default_rng(val_seed), feasible_only=True)
+    rs = np.random.default_rng(val_seed + 1)
+    G = np.vstack([np.exp(rs.uniform(np.log(LO), np.log(HI), (cand, 3))), [[15.0, 0.0, 0.3], [5.0, 20.0, 0.05]]])
+    m, L, g, v, R = ctx
+
+    def mean_cost(gs):
+        gs = np.atleast_2d(gs)
+        out = []
+        for k in range(len(gs)):
+            rp = lambda a: np.full(n, a)
+            th, V = simulate_batch(rp(gs[k, 0]), rp(gs[k, 1]), rp(gs[k, 2]), m, L, g, v, R, nrng=np.random.default_rng(val_seed + 2))
+            out.append(step_cost(th, V, v, R).mean())
+        return np.array(out)
+
+    costs = mean_cost(G)
+    best, bc = G[int(np.argmin(costs))].copy(), float(costs.min())
+    for _ in range(rounds):
+        for j in range(3):
+            for f in (1.25, 0.8):
+                t = best.copy()
+                t[j] = np.clip(t[j] * f if t[j] > 0 else LO[j] * 2.0, LO[j] if j != 1 else 0.0, HI[j])
+                c = float(mean_cost(t)[0])
+                if c < bc:
+                    best, bc = t, c
+    return best, bc
+
 def evaluate(pol, n=1000, seed=123):
     """Held-out evaluation on a feasible-only set and on the full (unfiltered) set. Returns a dict of results."""
+    best_const, _ = best_constant_gains()
+    print(f"best constant gains (validation contexts): Kp {best_const[0]:.3f} Ki {best_const[1]:.3f} Kd {best_const[2]:.3f}")
     out = {}
     for label, feas in (("feasible-only", True), ("full (incl. infeasible)", False)):
         stats = {}
@@ -289,7 +323,8 @@ def evaluate(pol, n=1000, seed=123):
         m, L, g, v, R = ctx
         rows = {"RL auto-tune": policy_gains(pol, m, L, g, v, R),
                 "Legacy default 5/20/0.05": np.tile([5, 20, 0.05], (n, 1)),
-                "'Tuned' preset 15/0/0.3": np.tile([15, 0, 0.3], (n, 1))}
+                "'Tuned' preset 15/0/0.3": np.tile([15, 0, 0.3], (n, 1)),
+                BEST_CONST_NAME: np.tile(best_const, (n, 1))}
         print(f"\nHeld-out contexts, {label} (n={n}, targets 5-360 deg, infeasible/marginal fraction of this set "
               f"{100 * infeas:.1f}%):  mean cost | share within 2% of target at the end")
         out[label] = dict(n=n, infeasible_fraction=infeas, rows={})

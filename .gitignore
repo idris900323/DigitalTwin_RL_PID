@@ -67,3 +67,7 @@ Thumbs.db
 # Env / secrets
 .env
 *.local
+
+# RL training outputs
+models/rl/
+!rl/policies/**/*.zip

@@ -38,7 +38,8 @@ Everything below is a **preliminary** physics-based twin built from datasheet-de
 | 7 Encoder | Done (quantisation, optional noise) |
 | 8 Fixed PID | Done (saturation, anti-windup, filtered D) |
 | 9 Closed-loop twin | Done, cross-checked across four implementations |
-| 10 PyBullet | See `docs/pybullet_install_windows.md`; render-only CAD demos exist |
+| 10 PyBullet | Not installable on the dev machine (no wheel, no compiler): see `docs/pybullet_install_windows.md`; URDF generator tested, wrapper untested |
+| 13-14 Gymnasium env + RL | `environments/rl_pid_env.py`, `rl/train_ppo.py`; Two PPO experiments (`docs/rl_findings.md`). v2 (multiplicative actions) did not match a tuned constant (median return difference -1.75, CI [-2.00, -1.53]). v3 (residual around the best constant, validation-selected checkpoints): on fresh confirmatory seeds the median return beats the best constant by +0.61 (static), +0.58 (changes), +0.45 (ood), all three training seeds positive (seed 2 inconclusive in `changes` after Holm). Claim: a residual PPO beats a tuned constant by about 0.5-0.6 median return (6-10 % of |return|), in simulation only; it captures roughly a third of the oracle headroom, and success rate gains are not stable. Pre-validation |
 | 11 Validation | Plan, loader, identification and comparison tooling done (`docs/validation_plan.md`, `validation/`); **no real data yet** |
 | 12 Load / disturbance variation | Done in the twin (joint model, sensitivity study) |
 | 13-16 Gymnasium env, RL-PID, comparison | See the status notes in `CHANGELOG.md` (pre-validation prototype) |
@@ -98,9 +99,9 @@ DigitalTwin_RL_PID/
 ├── controllers/
 │   └── pid.py               # fixed-gain PID: saturation, anti-windup, filtered D
 ├── simulation/              # phase-by-phase check scripts + demos (see below)
-├── pybullet/                # planned, not created yet — Phase 10 proper
-├── environments/            # planned, not created yet — Phase 13, Gymnasium env
-├── rl/                      # planned, not created yet — Phase 14+
+├── pybullet_sim/            # URDF generator (tested) + untested PyBullet wrapper; pybullet itself not installable here
+├── environments/            # RL_PID_Env (Gymnasium), pre-validation prototype
+├── rl/                      # train_ppo.py (PPO/SAC/TD3 via SB3), ppo.yaml; needs requirements-rl.txt
 ├── validation/              # planned, not created yet — Phase 11
 ├── results/                 # generated plots/data — gitignored, not source of truth
 └── reference/
@@ -210,8 +211,9 @@ A small numpy REINFORCE policy that picks Kp/Ki/Kd for a given payload and targe
 | RL auto-tune | **0.539** | **94.7 %** | 1.263 | 80.8 % |
 | "Tuned" preset 15/0/0.3 | 0.925 | 72.2 % | 1.632 | 60.8 % |
 | Legacy default 5/20/0.05 | 1.712 | 44.9 % | 2.245 | 38.0 % |
+| Best constant gains 50/105/1.54 (chosen on validation contexts, `tools/add_best_constant_row.py`) | 0.591 | 94.7 % | 1.307 | 80.6 % |
 
-Lower cost is better. Source: `autotune_360/autotune_policy_360.meta.json` (seed 0, 300 iterations). Training samples only contexts with margin at least 1.2; contexts with margin in [1.0, 1.2) ("marginal", about 3 % of raw draws) are outside the training distribution and the policy is weaker there (cost 2.66, 46 % within 2 % on a 400-context marginal-band check, versus 4.20 / 1.5 % for the Tuned preset). See `autotune_360/README.md` for regeneration.
+**Reading the table honestly:** one well-chosen constant setting, found by search on separate validation contexts, already reaches the same share within 2 % of the target as the RL policy (94.7 %) at a cost only about 9 % higher (0.591 vs 0.539). The policy's advantage over "a good global setting" is therefore small on this metric; its large advantage is over the Tuned and Legacy presets, which were not optimised for this context distribution. Lower cost is better. Source: `autotune_360/autotune_policy_360.meta.json` (seed 0, 300 iterations). Training samples only contexts with margin at least 1.2; contexts with margin in [1.0, 1.2) ("marginal", about 3 % of raw draws) are outside the training distribution and the policy is weaker there (cost 2.66, 46 % within 2 % on a 400-context marginal-band check, versus 4.20 / 1.5 % for the Tuned preset). See `autotune_360/README.md` for regeneration.
 
 ## Known issues / platform notes
 

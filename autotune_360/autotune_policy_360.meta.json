@@ -69,6 +69,10 @@
         "'Tuned' preset 15/0/0.3": {
           "mean_cost": 0.9251211776923611,
           "within_2pct": 0.722
+        },
+        "Best constant (chosen on validation contexts)": {
+          "mean_cost": 0.5907907676886305,
+          "within_2pct": 0.947
         }
       }
     },
@@ -87,6 +91,10 @@
         "'Tuned' preset 15/0/0.3": {
           "mean_cost": 1.6315011157449868,
           "within_2pct": 0.608
+        },
+        "Best constant (chosen on validation contexts)": {
+          "mean_cost": 1.3070411236097517,
+          "within_2pct": 0.806
         }
       }
     },
@@ -96,5 +104,14 @@
       "best_of_n": 0.7064420471348236,
       "policy": 0.7112465519250765
     }
+  },
+  "best_constant": {
+    "gains": [
+      50.0,
+      104.76983379328927,
+      1.540024386569424
+    ],
+    "validation_mean_cost": 0.6405911075884623,
+    "validation_seed": 77
   }
 }
