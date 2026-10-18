@@ -57,9 +57,20 @@ REGIMES = {
 BASELINES = ["tuned", "legacy", "best_constant", "zn", "bandit", "bandit_retune", "random_search"]
 
 
-def make_env(regime: str, **kw) -> RL_PID_Env:
+def make_env(regime: str, overrides: dict | None = None, **kw) -> RL_PID_Env:
+    """Evaluation env for a regime. ``overrides`` are a policy's training-time ``rl_env`` overrides (e.g. a smaller residual range) EXCEPT the
+    reward: every policy is scored with the default reward so returns are comparable."""
     r = REGIMES[regime]
-    env = RL_PID_Env(change_prob=r["change_prob"], **kw)
+    cfg = None
+    if overrides:
+        from models.motors import load_base_config
+
+        cfg = load_base_config()
+        for k, v in overrides.items():
+            if k == "reward":
+                continue
+            cfg["rl_env"][k].update(v) if isinstance(v, dict) else cfg["rl_env"].__setitem__(k, v)
+    env = RL_PID_Env(cfg, change_prob=r["change_prob"], **kw)
     if r["widen"] != 1.0:
         for v in env._ranges.values():
             if v["kind"] in ("uniform", "log"):
@@ -245,6 +256,7 @@ def load_ppo(policy_dir: pathlib.Path, which: str):
         model = cls.load(str(f), device="cpu")
         name = f"{meta['algo']}_s{meta['seed']}"
         out[name] = dict(predict=lambda obs, m=model: m.predict(obs, deterministic=True)[0], n_stack=meta["common"]["env"]["n_stack"],
+                         overrides=meta["common"]["env"].get("rl_env_overrides"),
                          action_mode=meta["common"]["env"]["action_mode"], file=f, meta=meta)
     return out
 
@@ -258,6 +270,9 @@ def main(argv=None) -> int:
     ap.add_argument("--const-candidates", type=int, default=48)
     ap.add_argument("--const-rounds", type=int, default=2)
     ap.add_argument("--oracle-candidates", type=int, default=48)
+    ap.add_argument("--test-seed0", type=int, default=EVAL_SEED0, help="first test scenario seed (50000 = original set, 60000 = fresh confirmatory set)")
+    ap.add_argument("--label", default="pre-specified", choices=["pre-specified", "exploratory", "confirmatory"],
+                    help="how to describe the analysis: exploratory when the design was chosen after seeing results on these seeds; confirmatory for fresh seeds")
     ap.add_argument("--regimes", nargs="*", default=list(REGIMES))
     ap.add_argument("--out-dir", default=str(ROOT / "results" / "controller_comparison"))
     a = ap.parse_args(argv)
@@ -265,7 +280,7 @@ def main(argv=None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     bandit = Bandit()
     ppo = load_ppo(pathlib.Path(a.policy_dir), a.which) if a.policy_dir else {}
-    seeds = [EVAL_SEED0 + i for i in range(a.n)]
+    seeds = [a.test_seed0 + i for i in range(a.n)]
     vseeds = [VAL_SEED0 + i for i in range(a.n_val)]
     assert not set(seeds) & set(vseeds)
     rows, results, selection = [], {}, {}
@@ -275,7 +290,7 @@ def main(argv=None) -> int:
         legacy = np.array([base.cfg["pid_presets"]["legacy_default"][k] for k in ("Kp", "Ki", "Kd")])
         const, const_val, n_eval = select_best_constant(reg, a.n_val, a.const_candidates, a.const_rounds)
         print(f"  {reg}: best constant {np.round(const, 3)} (validation return {const_val:.3f}, {n_eval} candidates)", flush=True)
-        penvs = {n: make_env(reg, action_mode=p["action_mode"], n_stack=p["n_stack"]) for n, p in ppo.items()}
+        penvs = {n: make_env(reg, p["overrides"], action_mode=p["action_mode"], n_stack=p["n_stack"]) for n, p in ppo.items()}
         val_ret = {n: float(np.mean([run_episode(penvs[n], s, policy=ppo[n]["predict"])["ret"] for s in vseeds])) for n in ppo}
         chosen = max(val_ret, key=val_ret.get) if val_ret else None
         selection[reg] = dict(best_constant=[float(x) for x in const], best_constant_val_return=const_val, ppo_val_return=val_ret, ppo_selected=chosen)
@@ -344,7 +359,9 @@ def report(results, seeds, ppo, selection, a) -> str:
          "Every controller sees the same plant, payload, target, delay and noise for a given seed. `return` is the environment reward (higher is better).",
          f"`random_search` is an ORACLE (best of {a.oracle_candidates} random sets + a 20-point Ki = 0 grid + Tuned + bandit + best_constant per scenario, chosen with "
          "hindsight): an upper bound for any adaptive tuner of this kind, not a deployable controller. Primary metric: episode return (success rate is descriptive).", "",
-         "**Pre-specified analysis.** One primary comparison: validation-selected PPO minus `best_constant`, `static` regime, feasible scenarios, "
+         f"**Analysis status: {a.label}.** " + {"pre-specified": "", "exploratory": "The policy design under test was chosen after seeing results on an earlier test set that overlaps these seeds, so this set is exploratory, not confirmatory. ",
+                                                "confirmatory": "These seeds were not used to train, select or tune anything; they confirm (or not) a design fixed earlier. Nothing may be re-tuned on them. "}[a.label] +
+         "One primary comparison: validation-selected PPO minus `best_constant`, `static` regime, feasible scenarios, "
          "paired median difference of return with a 95 % bootstrap CI. All other comparisons are secondary: paired Wilcoxon p-values, Holm-adjusted across "
          "the whole secondary family (feasible scenarios, all regimes). Infeasible scenarios (torque margin < 1.0 at any point, including after a payload "
          "change) are reported separately.", ""]
@@ -394,6 +411,11 @@ def report(results, seeds, ppo, selection, a) -> str:
         orc = np.array([r["ret"] for r, f in zip(res["random_search"], feas) if f])
         L += ["", f"Oracle headroom over best_constant (feasible): mean return {orc.mean() - ref.mean():+.3f} ({100 * (orc.mean() - ref.mean()) / abs(ref.mean()):.1f} % of |best_constant return|); "
               "this is the ceiling for any adaptive tuner on this scenario set."]
+        if "ppo" in res:
+            def cap(n):
+                rr = np.array([x["ret"] for x, f in zip(res[n], feas) if f])
+                return 100 * (rr.mean() - ref.mean()) / (orc.mean() - ref.mean())
+            L += ["Headroom captured (mean PPO gain over best_constant divided by the oracle headroom): selected " + f"{cap('ppo'):.0f} %" + "; per seed " + ", ".join(f"{n} {cap(n):.0f} %" for n in ppo) + ". Success rate is descriptive only; return is the headline."]
         bd = next(t for t in tab if t["name"] == "bandit")
         L += [f"Bandit vs best_constant (return, median difference): {np.median(bd['d']):+.3f} [{bd['lo']:+.3f}, {bd['hi']:+.3f}].", ""]
         if ppo:
@@ -413,7 +435,7 @@ def report(results, seeds, ppo, selection, a) -> str:
         m, lo, hi, p, n, k = primary
         word = "BETTER than" if lo > 0 else ("WORSE than" if hi < 0 else "NOT distinguishable from")
         L += [f"**Primary** (static, feasible, n={k}): validation-selected PPO (`{n}`) is {word} the best constant gains: paired median difference of "
-              f"return {m:+.3f}, 95 % CI [{lo:+.3f}, {hi:+.3f}] (Wilcoxon p = {p:.3g}, single pre-specified test, unadjusted).", ""]
+              f"return {m:+.3f}, 95 % CI [{lo:+.3f}, {hi:+.3f}] (Wilcoxon p = {p:.3g}, single primary test, unadjusted; analysis status: {a.label}).", ""]
     else:
         L += ["No primary comparison was computed (no RL policy supplied, or the `static` regime was not run).", ""]
     sig = [(reg, t["name"], p) for (reg, t), p in zip(secondary, adj) if p == p and p < 0.05]

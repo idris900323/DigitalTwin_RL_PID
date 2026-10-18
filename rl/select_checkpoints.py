@@ -41,7 +41,7 @@ def main(argv=None) -> int:
         meta = json.loads((d / "meta.json").read_text())
         cls = {"ppo": PPO, "sac": SAC, "td3": TD3}[meta["algo"]]
         env_cfg = meta["common"]["env"]
-        envs = {reg: make_env(reg, action_mode=env_cfg["action_mode"], n_stack=env_cfg["n_stack"]) for reg in ("static", "changes")}
+        envs = {reg: make_env(reg, env_cfg.get("rl_env_overrides"), action_mode=env_cfg["action_mode"], n_stack=env_cfg["n_stack"]) for reg in ("static", "changes")}
         ckpts = sorted(d.glob("checkpoints/ckpt_*_steps.zip"), key=lambda p: int(re.search(r"ckpt_(\d+)_steps", p.name).group(1)))
         curve = []
         for f in ckpts:
