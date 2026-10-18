@@ -1,0 +1,14 @@
+{
+ "data_files": [
+  "rl/policies/ppo_v2/seed_0/evaluations.npz",
+  "rl/policies/ppo_v2/seed_1/evaluations.npz",
+  "rl/policies/ppo_v2/seed_2/evaluations.npz",
+  "rl/policies/ppo_v2/seed_3/evaluations.npz",
+  "rl/policies/ppo_v2/seed_4/evaluations.npz",
+  "rl/policies/ppo_v3/seed_0/val_curve.json",
+  "rl/policies/ppo_v3/seed_1/val_curve.json",
+  "rl/policies/ppo_v3/seed_2/val_curve.json"
+ ],
+ "commit": "a3aaef12db88872d82f49708044805cc95d8f0dd",
+ "script": "paper/figures.py"
+}

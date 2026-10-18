@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Infeasible scenarios (torque margin $<1$ at any point), confirmatory seeds 60000--60099: mean return. No controller can hold these targets; differences are not evidence of better control.}
+\label{tab:infeasible}
+\begin{tabular}{lrrrr}
+\toprule
+Controller & static & changes & ood & \\
+\midrule
+Tuned preset & $-$40.4 & $-$92.7 & $-$35.8 & \\
+Bandit (one-shot) & $-$38.2 & $-$84.2 & $-$34.9 & \\
+Best constant & $-$39.5 & $-$85.5 & $-$35.5 & \\
+PPO residual (selected) & $-$38.5 & $-$85.2 & $-$35.0 & \\
+Hindsight oracle & $-$37.7 & $-$42.6 & $-$34.7 & \\
+\midrule
+$n$ infeasible & 9 & 17 & 9 & \\
+\bottomrule
+\end{tabular}
+\end{table}

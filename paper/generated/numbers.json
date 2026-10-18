@@ -1,0 +1,2752 @@
+{
+ "ConfThreeChangesCap": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "24",
+  "value": 23.66166319299276
+ },
+ "ConfThreeChangesCapMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "10",
+  "value": 10.101527063050707
+ },
+ "ConfThreeChangesHi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.23",
+  "value": 1.2272999999999996
+ },
+ "ConfThreeChangesInfBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-85.5",
+  "value": -85.49329999999999
+ },
+ "ConfThreeChangesInfOrc": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-42.6",
+  "value": -42.60252235294118
+ },
+ "ConfThreeChangesInfPpo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-85.2",
+  "value": -85.15636294117648
+ },
+ "ConfThreeChangesLo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.24",
+  "value": 0.2439399999999985
+ },
+ "ConfThreeChangesMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.53",
+  "value": 1.5333736144578314
+ },
+ "ConfThreeChangesMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.58",
+  "value": 0.5794099999999993
+ },
+ "ConfThreeChangesMhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+2.15",
+  "value": 2.146013277108434
+ },
+ "ConfThreeChangesMlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.04",
+  "value": 1.0355397771084338
+ },
+ "ConfThreeChangesN": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "83",
+  "value": 83
+ },
+ "ConfThreeChangesNInf": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "17",
+  "value": 17
+ },
+ "ConfThreeChangesOrcAbs": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "6.48",
+  "value": 6.480413493975906
+ },
+ "ConfThreeChangesOrcPct": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "34",
+  "value": 34.22419255125504
+ },
+ "ConfThreeChangesQone": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "$-$0.15",
+  "value": -0.15225500000000025
+ },
+ "ConfThreeChangesQthree": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+2.69",
+  "value": 2.6925599999999994
+ },
+ "ConfThreeChangesSeedAHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "0.0057",
+  "value": 0.005748434163362553
+ },
+ "ConfThreeChangesSeedAMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.54",
+  "value": 0.5351999999999997
+ },
+ "ConfThreeChangesSeedBHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.9e-05",
+  "value": 1.9209580123110684e-05
+ },
+ "ConfThreeChangesSeedBMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.58",
+  "value": 0.5794099999999993
+ },
+ "ConfThreeChangesSeedCHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "ConfThreeChangesSeedCMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.32",
+  "value": 0.3214300000000003
+ },
+ "ConfThreeChangesSelected": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "ConfThreeChangesSucc": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "37",
+  "value": 37.34939759036144
+ },
+ "ConfThreeChangesSuccBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "27",
+  "value": 26.506024096385545
+ },
+ "ConfThreeCommit": {
+  "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
+  "tex": "72c1219963",
+  "value": "72c1219963"
+ },
+ "ConfThreeOodCap": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "46",
+  "value": 46.290452379795425
+ },
+ "ConfThreeOodCapMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "31",
+  "value": 31.306225469290215
+ },
+ "ConfThreeOodHi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.74",
+  "value": 0.7374100000000006
+ },
+ "ConfThreeOodInfBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-35.5",
+  "value": -35.46535666666667
+ },
+ "ConfThreeOodInfOrc": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-34.7",
+  "value": -34.68470333333333
+ },
+ "ConfThreeOodInfPpo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-35.0",
+  "value": -35.00929222222222
+ },
+ "ConfThreeOodLo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.24",
+  "value": 0.23569999999999958
+ },
+ "ConfThreeOodMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.05",
+  "value": 1.0510575824175825
+ },
+ "ConfThreeOodMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.45",
+  "value": 0.4517800000000012
+ },
+ "ConfThreeOodMhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.38",
+  "value": 1.3814079093406595
+ },
+ "ConfThreeOodMlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.74",
+  "value": 0.7438613241758243
+ },
+ "ConfThreeOodN": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "91",
+  "value": 91
+ },
+ "ConfThreeOodNInf": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "9",
+  "value": 9
+ },
+ "ConfThreeOodOrcAbs": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "2.27",
+  "value": 2.270570989010989
+ },
+ "ConfThreeOodOrcPct": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "26",
+  "value": 25.99232875055261
+ },
+ "ConfThreeOodQone": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.02",
+  "value": 0.018689999999999873
+ },
+ "ConfThreeOodQthree": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.51",
+  "value": 1.5146149999999996
+ },
+ "ConfThreeOodSeedAHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "4.6e-09",
+  "value": 4.612766220386157e-09
+ },
+ "ConfThreeOodSeedAMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.30",
+  "value": 0.2968000000000046
+ },
+ "ConfThreeOodSeedBHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "7.3e-11",
+  "value": 7.301438293000017e-11
+ },
+ "ConfThreeOodSeedBMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.45",
+  "value": 0.4517800000000012
+ },
+ "ConfThreeOodSeedCHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "3.7e-10",
+  "value": 3.721503899729971e-10
+ },
+ "ConfThreeOodSeedCMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.32",
+  "value": 0.31739999999999924
+ },
+ "ConfThreeOodSelected": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "ConfThreeOodSucc": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "56",
+  "value": 56.043956043956044
+ },
+ "ConfThreeOodSuccBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "47",
+  "value": 47.25274725274725
+ },
+ "ConfThreeSelStepA": {
+  "source": "rl/policies/ppo_v3/seed_0/val_curve.json",
+  "tex": "400",
+  "value": 400
+ },
+ "ConfThreeSelStepB": {
+  "source": "rl/policies/ppo_v3/seed_1/val_curve.json",
+  "tex": "340",
+  "value": 340
+ },
+ "ConfThreeSelStepC": {
+  "source": "rl/policies/ppo_v3/seed_2/val_curve.json",
+  "tex": "30",
+  "value": 30
+ },
+ "ConfThreeStaticCap": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "60",
+  "value": 59.768777012847046
+ },
+ "ConfThreeStaticCapMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "43",
+  "value": 43.47001546804071
+ },
+ "ConfThreeStaticHi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.75",
+  "value": 0.7521700000000004
+ },
+ "ConfThreeStaticInfBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-39.5",
+  "value": -39.471363333333336
+ },
+ "ConfThreeStaticInfOrc": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-37.7",
+  "value": -37.658165555555556
+ },
+ "ConfThreeStaticInfPpo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "-38.5",
+  "value": -38.47956111111111
+ },
+ "ConfThreeStaticLo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.29",
+  "value": 0.28610000000000024
+ },
+ "ConfThreeStaticMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.14",
+  "value": 1.1380026373626375
+ },
+ "ConfThreeStaticMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.61",
+  "value": 0.6099500000000004
+ },
+ "ConfThreeStaticMhi": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.50",
+  "value": 1.4992015851648346
+ },
+ "ConfThreeStaticMlo": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.83",
+  "value": 0.8284828873626375
+ },
+ "ConfThreeStaticN": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "91",
+  "value": 91
+ },
+ "ConfThreeStaticNInf": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "9",
+  "value": 9
+ },
+ "ConfThreeStaticOrcAbs": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.90",
+  "value": 1.904008571428573
+ },
+ "ConfThreeStaticOrcPct": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "26",
+  "value": 26.478846971096665
+ },
+ "ConfThreeStaticQone": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.08",
+  "value": 0.07566000000000006
+ },
+ "ConfThreeStaticQthree": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.69",
+  "value": 1.68887
+ },
+ "ConfThreeStaticSeedAHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.4e-06",
+  "value": 1.4443964206854617e-06
+ },
+ "ConfThreeStaticSeedAMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.23",
+  "value": 0.22623999999999977
+ },
+ "ConfThreeStaticSeedBHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "1.1e-12",
+  "value": 1.1340610862090741e-12
+ },
+ "ConfThreeStaticSeedBMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.61",
+  "value": 0.6099500000000004
+ },
+ "ConfThreeStaticSeedCHolm": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "3.5e-15",
+  "value": 3.4568150444291764e-15
+ },
+ "ConfThreeStaticSeedCMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.40",
+  "value": 0.4049299999999998
+ },
+ "ConfThreeStaticSelected": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "ConfThreeStaticSucc": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "58",
+  "value": 58.24175824175825
+ },
+ "ConfThreeStaticSuccBase": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "49",
+  "value": 49.45054945054945
+ },
+ "ConfThreeValDegA": {
+  "source": "rl/policies/ppo_v3/seed_0/val_curve.json",
+  "tex": "0.00",
+  "value": 0.0
+ },
+ "ConfThreeValDegB": {
+  "source": "rl/policies/ppo_v3/seed_1/val_curve.json",
+  "tex": "0.07",
+  "value": 0.07240748529209817
+ },
+ "ConfThreeValDegC": {
+  "source": "rl/policies/ppo_v3/seed_2/val_curve.json",
+  "tex": "0.57",
+  "value": 0.5739281210204243
+ },
+ "ExplThreeChangesCap": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "20",
+  "value": 19.94666978345667
+ },
+ "ExplThreeChangesCapMean": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "11",
+  "value": 11.000878746395552
+ },
+ "ExplThreeChangesHi": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.49",
+  "value": 1.4862000000000002
+ },
+ "ExplThreeChangesInfBase": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-115.3",
+  "value": -115.30665454545455
+ },
+ "ExplThreeChangesInfOrc": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-44.0",
+  "value": -44.00262545454545
+ },
+ "ExplThreeChangesInfPpo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-123.3",
+  "value": -123.34775181818182
+ },
+ "ExplThreeChangesLo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.25",
+  "value": 0.2532300000000003
+ },
+ "ExplThreeChangesMean": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.47",
+  "value": 1.4703599999999997
+ },
+ "ExplThreeChangesMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.55",
+  "value": 0.553799999999999
+ },
+ "ExplThreeChangesMhi": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+2.55",
+  "value": 2.548990058988764
+ },
+ "ExplThreeChangesMlo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.56",
+  "value": 0.5594913398876402
+ },
+ "ExplThreeChangesN": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "89",
+  "value": 89
+ },
+ "ExplThreeChangesNInf": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "11",
+  "value": 11
+ },
+ "ExplThreeChangesOrcAbs": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "7.37",
+  "value": 7.371456067415727
+ },
+ "ExplThreeChangesOrcPct": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "35",
+  "value": 34.582967791795994
+ },
+ "ExplThreeChangesQone": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "$-$0.15",
+  "value": -0.14939999999999998
+ },
+ "ExplThreeChangesQthree": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+2.66",
+  "value": 2.6622000000000003
+ },
+ "ExplThreeChangesSeedAHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "2.4e-05",
+  "value": 2.3533654075332226e-05
+ },
+ "ExplThreeChangesSeedAMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.57",
+  "value": 0.5689000000000028
+ },
+ "ExplThreeChangesSeedBHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "9e-05",
+  "value": 9.024989742654337e-05
+ },
+ "ExplThreeChangesSeedBMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.55",
+  "value": 0.553799999999999
+ },
+ "ExplThreeChangesSeedCHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "0.54",
+  "value": 0.5392659997996073
+ },
+ "ExplThreeChangesSeedCMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.35",
+  "value": 0.35248000000000035
+ },
+ "ExplThreeChangesSelected": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "ExplThreeChangesSucc": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "44",
+  "value": 43.82022471910113
+ },
+ "ExplThreeChangesSuccBase": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "34",
+  "value": 33.70786516853933
+ },
+ "ExplThreeCommit": {
+  "source": "results/controller_comparison_v3/comparison_manifest.json",
+  "tex": "72c1219963",
+  "value": "72c1219963"
+ },
+ "ExplThreeOodCap": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "52",
+  "value": 52.1967946657895
+ },
+ "ExplThreeOodCapMean": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "34",
+  "value": 33.63829584455951
+ },
+ "ExplThreeOodHi": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.96",
+  "value": 0.9622700000000006
+ },
+ "ExplThreeOodInfBase": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-57.3",
+  "value": -57.31838333333334
+ },
+ "ExplThreeOodInfOrc": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-57.0",
+  "value": -56.956633333333336
+ },
+ "ExplThreeOodInfPpo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-57.1",
+  "value": -57.05908333333334
+ },
+ "ExplThreeOodLo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.26",
+  "value": 0.2580400000000007
+ },
+ "ExplThreeOodMean": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.06",
+  "value": 1.0588432978723403
+ },
+ "ExplThreeOodMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.57",
+  "value": 0.5716149999999995
+ },
+ "ExplThreeOodMhi": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.34",
+  "value": 1.3355187367021273
+ },
+ "ExplThreeOodMlo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.81",
+  "value": 0.8065517047872344
+ },
+ "ExplThreeOodN": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "94",
+  "value": 94
+ },
+ "ExplThreeOodNInf": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "6",
+  "value": 6
+ },
+ "ExplThreeOodOrcAbs": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "2.03",
+  "value": 2.028559999999997
+ },
+ "ExplThreeOodOrcPct": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "19",
+  "value": 19.4674094267074
+ },
+ "ExplThreeOodQone": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.07",
+  "value": 0.06843500000000036
+ },
+ "ExplThreeOodQthree": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.84",
+  "value": 1.8357775000000003
+ },
+ "ExplThreeOodSeedAHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "1.1e-08",
+  "value": 1.0918802249563762e-08
+ },
+ "ExplThreeOodSeedAMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.29",
+  "value": 0.2911600000000001
+ },
+ "ExplThreeOodSeedBHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "1.2e-11",
+  "value": 1.170064566743903e-11
+ },
+ "ExplThreeOodSeedBMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.57",
+  "value": 0.5716149999999995
+ },
+ "ExplThreeOodSeedCHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "2.9e-13",
+  "value": 2.9238787945655673e-13
+ },
+ "ExplThreeOodSeedCMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.42",
+  "value": 0.41791500000000004
+ },
+ "ExplThreeOodSelected": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "ExplThreeOodSucc": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "69",
+  "value": 69.14893617021278
+ },
+ "ExplThreeOodSuccBase": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "49",
+  "value": 48.93617021276596
+ },
+ "ExplThreeStaticCap": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "59",
+  "value": 59.39765308129292
+ },
+ "ExplThreeStaticCapMean": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "38",
+  "value": 37.92211673081905
+ },
+ "ExplThreeStaticHi": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.83",
+  "value": 0.8257650000000001
+ },
+ "ExplThreeStaticInfBase": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-57.5",
+  "value": -57.51475
+ },
+ "ExplThreeStaticInfOrc": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-57.1",
+  "value": -57.06776666666667
+ },
+ "ExplThreeStaticInfPpo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "-57.2",
+  "value": -57.19096666666667
+ },
+ "ExplThreeStaticLo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.30",
+  "value": 0.3028200000000001
+ },
+ "ExplThreeStaticMean": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.83",
+  "value": 0.8298964893617019
+ },
+ "ExplThreeStaticMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.50",
+  "value": 0.5048900000000001
+ },
+ "ExplThreeStaticMhi": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.02",
+  "value": 1.0198863164893617
+ },
+ "ExplThreeStaticMlo": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.66",
+  "value": 0.6571184335106381
+ },
+ "ExplThreeStaticN": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "94",
+  "value": 94
+ },
+ "ExplThreeStaticNInf": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "6",
+  "value": 6
+ },
+ "ExplThreeStaticOrcAbs": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "1.40",
+  "value": 1.3971873404255328
+ },
+ "ExplThreeStaticOrcPct": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "18",
+  "value": 17.616602460405627
+ },
+ "ExplThreeStaticQone": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.10",
+  "value": 0.09524499999999969
+ },
+ "ExplThreeStaticQthree": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+1.48",
+  "value": 1.4849925000000004
+ },
+ "ExplThreeStaticSeedAHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "1.4e-05",
+  "value": 1.3638548708905781e-05
+ },
+ "ExplThreeStaticSeedAMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.20",
+  "value": 0.1969050000000001
+ },
+ "ExplThreeStaticSeedBHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "2.6e-13",
+  "value": 2.648897171561855e-13
+ },
+ "ExplThreeStaticSeedBMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.50",
+  "value": 0.5048900000000001
+ },
+ "ExplThreeStaticSeedCHolm": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "1.1e-15",
+  "value": 1.1045401166526295e-15
+ },
+ "ExplThreeStaticSeedCMed": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "+0.37",
+  "value": 0.3709199999999999
+ },
+ "ExplThreeStaticSelected": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "ExplThreeStaticSucc": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "74",
+  "value": 74.46808510638297
+ },
+ "ExplThreeStaticSuccBase": {
+  "source": "results/controller_comparison_v3/per_episode.csv",
+  "tex": "54",
+  "value": 54.25531914893617
+ },
+ "PaperCommit": {
+  "source": "git rev-parse HEAD",
+  "tex": "a3aaef12db",
+  "value": "a3aaef12db"
+ },
+ "VFourPpoChangesCap": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-7",
+  "value": -7.0271965106167
+ },
+ "VFourPpoChangesCapMean": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-10",
+  "value": -10.083568795571773
+ },
+ "VFourPpoChangesHi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.43",
+  "value": 0.4324049999999997
+ },
+ "VFourPpoChangesInfBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-64.8",
+  "value": -64.78241642857144
+ },
+ "VFourPpoChangesInfOrc": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-37.7",
+  "value": -37.72101357142857
+ },
+ "VFourPpoChangesInfPpo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-72.4",
+  "value": -72.41895571428572
+ },
+ "VFourPpoChangesLo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$0.08",
+  "value": -0.08309999999999995
+ },
+ "VFourPpoChangesMean": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$0.49",
+  "value": -0.49092941860465106
+ },
+ "VFourPpoChangesMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.18",
+  "value": 0.17852500000000027
+ },
+ "VFourPpoChangesMhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.18",
+  "value": 0.18498774999999965
+ },
+ "VFourPpoChangesMlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$1.28",
+  "value": -1.283604046511628
+ },
+ "VFourPpoChangesN": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "86",
+  "value": 86
+ },
+ "VFourPpoChangesNInf": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "14",
+  "value": 14
+ },
+ "VFourPpoChangesOrcAbs": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "6.99",
+  "value": 6.986134767441859
+ },
+ "VFourPpoChangesOrcPct": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "35",
+  "value": 35.11735114242174
+ },
+ "VFourPpoChangesQone": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$0.52",
+  "value": -0.5245849999999992
+ },
+ "VFourPpoChangesQthree": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.77",
+  "value": 0.7707825000000001
+ },
+ "VFourPpoChangesSeedAHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.5e-10",
+  "value": 1.459326152288154e-10
+ },
+ "VFourPpoChangesSeedAMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$1.20",
+  "value": -1.1994600000000002
+ },
+ "VFourPpoChangesSeedBHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "VFourPpoChangesSeedBMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.13",
+  "value": 0.13345499999999966
+ },
+ "VFourPpoChangesSeedCHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "VFourPpoChangesSeedCMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.18",
+  "value": 0.17852500000000027
+ },
+ "VFourPpoChangesSelected": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "ppo\\_s2",
+  "value": "ppo_s2"
+ },
+ "VFourPpoChangesSucc": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "40",
+  "value": 39.53488372093023
+ },
+ "VFourPpoChangesSuccBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "36",
+  "value": 36.04651162790697
+ },
+ "VFourPpoCommit": {
+  "source": "results/controller_comparison_v4_ppo/comparison_manifest.json",
+  "tex": "50313602cf",
+  "value": "50313602cf"
+ },
+ "VFourPpoOodCap": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "17",
+  "value": 17.281164671768895
+ },
+ "VFourPpoOodCapMean": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "6",
+  "value": 5.80825583322756
+ },
+ "VFourPpoOodHi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.36",
+  "value": 0.35877999999999943
+ },
+ "VFourPpoOodInfBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-38.3",
+  "value": -38.281302857142855
+ },
+ "VFourPpoOodInfOrc": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-37.4",
+  "value": -37.36855714285714
+ },
+ "VFourPpoOodInfPpo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-38.3",
+  "value": -38.28400857142857
+ },
+ "VFourPpoOodLo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.29",
+  "value": 0.29393
+ },
+ "VFourPpoOodMean": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.31",
+  "value": 0.3091444086021503
+ },
+ "VFourPpoOodMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.34",
+  "value": 0.33663
+ },
+ "VFourPpoOodMhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.47",
+  "value": 0.46826167204301067
+ },
+ "VFourPpoOodMlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.14",
+  "value": 0.13919613709677414
+ },
+ "VFourPpoOodN": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "93",
+  "value": 93
+ },
+ "VFourPpoOodNInf": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "7",
+  "value": 7
+ },
+ "VFourPpoOodOrcAbs": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.79",
+  "value": 1.788909569892474
+ },
+ "VFourPpoOodOrcPct": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "20",
+  "value": 19.953907366669156
+ },
+ "VFourPpoOodQone": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.25",
+  "value": 0.24987000000000004
+ },
+ "VFourPpoOodQthree": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.57",
+  "value": 0.5724999999999998
+ },
+ "VFourPpoOodSeedAHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "5.8e-06",
+  "value": 5.75915446085716e-06
+ },
+ "VFourPpoOodSeedAMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$0.56",
+  "value": -0.5603599999999993
+ },
+ "VFourPpoOodSeedBHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "2e-08",
+  "value": 2.0318366252370454e-08
+ },
+ "VFourPpoOodSeedBMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.30",
+  "value": 0.3013899999999996
+ },
+ "VFourPpoOodSeedCHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "2.5e-08",
+  "value": 2.5338130697272837e-08
+ },
+ "VFourPpoOodSeedCMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.34",
+  "value": 0.33663
+ },
+ "VFourPpoOodSelected": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "ppo\\_s2",
+  "value": "ppo_s2"
+ },
+ "VFourPpoOodSucc": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "66",
+  "value": 65.59139784946237
+ },
+ "VFourPpoOodSuccBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "63",
+  "value": 63.44086021505376
+ },
+ "VFourPpoSelStepA": {
+  "source": "rl/policies/ppo_v4/seed_0/val_curve.json",
+  "tex": "150",
+  "value": 150
+ },
+ "VFourPpoSelStepB": {
+  "source": "rl/policies/ppo_v4/seed_1/val_curve.json",
+  "tex": "20",
+  "value": 20
+ },
+ "VFourPpoSelStepC": {
+  "source": "rl/policies/ppo_v4/seed_2/val_curve.json",
+  "tex": "60",
+  "value": 60
+ },
+ "VFourPpoStaticCap": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "27",
+  "value": 26.997414386328337
+ },
+ "VFourPpoStaticCapMean": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "11",
+  "value": 11.166977730920914
+ },
+ "VFourPpoStaticHi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.36",
+  "value": 0.3588100000000001
+ },
+ "VFourPpoStaticInfBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-42.3",
+  "value": -42.3369
+ },
+ "VFourPpoStaticInfOrc": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-40.4",
+  "value": -40.37867857142857
+ },
+ "VFourPpoStaticInfPpo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "-42.0",
+  "value": -41.96249571428571
+ },
+ "VFourPpoStaticLo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.34",
+  "value": 0.3430900000000001
+ },
+ "VFourPpoStaticMean": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.38",
+  "value": 0.37819182795698914
+ },
+ "VFourPpoStaticMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.35",
+  "value": 0.35212999999999983
+ },
+ "VFourPpoStaticMhi": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.40",
+  "value": 0.39528295430107524
+ },
+ "VFourPpoStaticMlo": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.36",
+  "value": 0.3632882123655913
+ },
+ "VFourPpoStaticN": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "93",
+  "value": 93
+ },
+ "VFourPpoStaticNInf": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "7",
+  "value": 7
+ },
+ "VFourPpoStaticOrcAbs": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.40",
+  "value": 1.400844623655913
+ },
+ "VFourPpoStaticOrcPct": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "19",
+  "value": 19.034927771741252
+ },
+ "VFourPpoStaticQone": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.33",
+  "value": 0.33284999999999965
+ },
+ "VFourPpoStaticQthree": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.39",
+  "value": 0.3916500000000003
+ },
+ "VFourPpoStaticSeedAHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.9e-06",
+  "value": 1.930012631287045e-06
+ },
+ "VFourPpoStaticSeedAMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "$-$0.62",
+  "value": -0.6203400000000006
+ },
+ "VFourPpoStaticSeedBHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.6e-15",
+  "value": 1.615764389187207e-15
+ },
+ "VFourPpoStaticSeedBMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.33",
+  "value": 0.32949999999999946
+ },
+ "VFourPpoStaticSeedCHolm": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "1.6e-15",
+  "value": 1.615764389187207e-15
+ },
+ "VFourPpoStaticSeedCMed": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "+0.35",
+  "value": 0.35212999999999983
+ },
+ "VFourPpoStaticSelected": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "ppo\\_s2",
+  "value": "ppo_s2"
+ },
+ "VFourPpoStaticSucc": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "67",
+  "value": 66.66666666666666
+ },
+ "VFourPpoStaticSuccBase": {
+  "source": "results/controller_comparison_v4_ppo/per_episode.csv",
+  "tex": "66",
+  "value": 65.59139784946237
+ },
+ "VFourPpoValDegA": {
+  "source": "rl/policies/ppo_v4/seed_0/val_curve.json",
+  "tex": "0.13",
+  "value": 0.13006706338390117
+ },
+ "VFourPpoValDegB": {
+  "source": "rl/policies/ppo_v4/seed_1/val_curve.json",
+  "tex": "0.18",
+  "value": 0.18308596770230778
+ },
+ "VFourPpoValDegC": {
+  "source": "rl/policies/ppo_v4/seed_2/val_curve.json",
+  "tex": "0.69",
+  "value": 0.6881496370305644
+ },
+ "VFourSacChangesCap": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-23",
+  "value": -22.539868379492376
+ },
+ "VFourSacChangesCapMean": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-26",
+  "value": -25.861083634668038
+ },
+ "VFourSacChangesHi": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.06",
+  "value": -0.06278499999999942
+ },
+ "VFourSacChangesInfBase": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-64.8",
+  "value": -64.78241642857144
+ },
+ "VFourSacChangesInfOrc": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-37.7",
+  "value": -37.72101357142857
+ },
+ "VFourSacChangesInfPpo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-58.7",
+  "value": -58.72067785714286
+ },
+ "VFourSacChangesLo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$1.14",
+  "value": -1.1400750000000004
+ },
+ "VFourSacChangesMean": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$1.57",
+  "value": -1.5746655813953483
+ },
+ "VFourSacChangesMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.26",
+  "value": -0.255325
+ },
+ "VFourSacChangesMhi": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.86",
+  "value": -0.8599547267441868
+ },
+ "VFourSacChangesMlo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$2.39",
+  "value": -2.3872044563953483
+ },
+ "VFourSacChangesN": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "86",
+  "value": 86
+ },
+ "VFourSacChangesNInf": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "14",
+  "value": 14
+ },
+ "VFourSacChangesOrcAbs": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "6.99",
+  "value": 6.986134767441859
+ },
+ "VFourSacChangesOrcPct": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "35",
+  "value": 35.11735114242174
+ },
+ "VFourSacChangesQone": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$2.37",
+  "value": -2.3734
+ },
+ "VFourSacChangesQthree": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.12",
+  "value": 0.11504000000000003
+ },
+ "VFourSacChangesSeedAHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "0.00041",
+  "value": 0.0004149638050743113
+ },
+ "VFourSacChangesSeedAMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.26",
+  "value": -0.255325
+ },
+ "VFourSacChangesSeedBHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "5.2e-07",
+  "value": 5.192971988573648e-07
+ },
+ "VFourSacChangesSeedBMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.97",
+  "value": -0.9679800000000003
+ },
+ "VFourSacChangesSeedCHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "4.2e-08",
+  "value": 4.157561199586754e-08
+ },
+ "VFourSacChangesSeedCMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$1.40",
+  "value": -1.3982600000000005
+ },
+ "VFourSacChangesSelected": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "sac\\_s0",
+  "value": "sac_s0"
+ },
+ "VFourSacChangesSucc": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "37",
+  "value": 37.2093023255814
+ },
+ "VFourSacChangesSuccBase": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "36",
+  "value": 36.04651162790697
+ },
+ "VFourSacCommit": {
+  "source": "results/controller_comparison_v4_sac/comparison_manifest.json",
+  "tex": "50313602cf",
+  "value": "50313602cf"
+ },
+ "VFourSacOodCap": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-2",
+  "value": -1.578963913801266
+ },
+ "VFourSacOodCapMean": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-12",
+  "value": -12.020810739174513
+ },
+ "VFourSacOodHi": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.29",
+  "value": 0.28907124999999995
+ },
+ "VFourSacOodInfBase": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-38.3",
+  "value": -38.281302857142855
+ },
+ "VFourSacOodInfOrc": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-37.4",
+  "value": -37.36855714285714
+ },
+ "VFourSacOodInfPpo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-38.1",
+  "value": -38.06184428571429
+ },
+ "VFourSacOodLo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.19",
+  "value": 0.1897899999999999
+ },
+ "VFourSacOodMean": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.03",
+  "value": -0.02824623655913996
+ },
+ "VFourSacOodMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.24",
+  "value": 0.23819999999999997
+ },
+ "VFourSacOodMhi": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.18",
+  "value": 0.1771127930107525
+ },
+ "VFourSacOodMlo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.28",
+  "value": -0.2818519946236561
+ },
+ "VFourSacOodN": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "93",
+  "value": 93
+ },
+ "VFourSacOodNInf": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "7",
+  "value": 7
+ },
+ "VFourSacOodOrcAbs": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "1.79",
+  "value": 1.788909569892474
+ },
+ "VFourSacOodOrcPct": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "20",
+  "value": 19.953907366669156
+ },
+ "VFourSacOodQone": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.02",
+  "value": -0.022190000000000154
+ },
+ "VFourSacOodQthree": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.37",
+  "value": 0.3659600000000003
+ },
+ "VFourSacOodSeedAHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "0.029",
+  "value": 0.029498161562822478
+ },
+ "VFourSacOodSeedAMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.24",
+  "value": 0.23819999999999997
+ },
+ "VFourSacOodSeedBHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "VFourSacOodSeedBMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.07",
+  "value": 0.0671999999999997
+ },
+ "VFourSacOodSeedCHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "0.0081",
+  "value": 0.00807037277926087
+ },
+ "VFourSacOodSeedCMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.21",
+  "value": -0.20619999999999994
+ },
+ "VFourSacOodSelected": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "sac\\_s0",
+  "value": "sac_s0"
+ },
+ "VFourSacOodSucc": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "60",
+  "value": 60.215053763440864
+ },
+ "VFourSacOodSuccBase": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "63",
+  "value": 63.44086021505376
+ },
+ "VFourSacSelStepA": {
+  "source": "rl/policies/sac_v4/seed_0/val_curve.json",
+  "tex": "20",
+  "value": 20
+ },
+ "VFourSacSelStepB": {
+  "source": "rl/policies/sac_v4/seed_1/val_curve.json",
+  "tex": "10",
+  "value": 10
+ },
+ "VFourSacSelStepC": {
+  "source": "rl/policies/sac_v4/seed_2/val_curve.json",
+  "tex": "10",
+  "value": 10
+ },
+ "VFourSacStaticCap": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "4",
+  "value": 3.7636203350435373
+ },
+ "VFourSacStaticCapMean": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-10",
+  "value": -10.28182818020832
+ },
+ "VFourSacStaticHi": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.32",
+  "value": 0.31522949999999883
+ },
+ "VFourSacStaticInfBase": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-42.3",
+  "value": -42.3369
+ },
+ "VFourSacStaticInfOrc": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-40.4",
+  "value": -40.37867857142857
+ },
+ "VFourSacStaticInfPpo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "-41.4",
+  "value": -41.44082142857143
+ },
+ "VFourSacStaticLo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.12",
+  "value": 0.12034499999999984
+ },
+ "VFourSacStaticMean": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.05",
+  "value": 0.05272247311827957
+ },
+ "VFourSacStaticMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.25",
+  "value": 0.25309999999999633
+ },
+ "VFourSacStaticMhi": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.28",
+  "value": 0.2787626290322581
+ },
+ "VFourSacStaticMlo": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.18",
+  "value": -0.18073303763440862
+ },
+ "VFourSacStaticN": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "93",
+  "value": 93
+ },
+ "VFourSacStaticNInf": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "7",
+  "value": 7
+ },
+ "VFourSacStaticOrcAbs": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "1.40",
+  "value": 1.400844623655913
+ },
+ "VFourSacStaticOrcPct": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "19",
+  "value": 19.034927771741252
+ },
+ "VFourSacStaticQone": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.29",
+  "value": -0.2893699999999999
+ },
+ "VFourSacStaticQthree": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.41",
+  "value": 0.40657999999999994
+ },
+ "VFourSacStaticSeedAHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "0.47",
+  "value": 0.4711814814477023
+ },
+ "VFourSacStaticSeedAMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.25",
+  "value": 0.25309999999999633
+ },
+ "VFourSacStaticSeedBHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "VFourSacStaticSeedBMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "+0.08",
+  "value": 0.08444999999999991
+ },
+ "VFourSacStaticSeedCHolm": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "0.0011",
+  "value": 0.0010557613451081882
+ },
+ "VFourSacStaticSeedCMed": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "$-$0.24",
+  "value": -0.23519999999999897
+ },
+ "VFourSacStaticSelected": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "sac\\_s0",
+  "value": "sac_s0"
+ },
+ "VFourSacStaticSucc": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "56",
+  "value": 55.91397849462365
+ },
+ "VFourSacStaticSuccBase": {
+  "source": "results/controller_comparison_v4_sac/per_episode.csv",
+  "tex": "66",
+  "value": 65.59139784946237
+ },
+ "VFourSacValDegA": {
+  "source": "rl/policies/sac_v4/seed_0/val_curve.json",
+  "tex": "2.49",
+  "value": 2.48953089515447
+ },
+ "VFourSacValDegB": {
+  "source": "rl/policies/sac_v4/seed_1/val_curve.json",
+  "tex": "0.28",
+  "value": 0.28254009341940645
+ },
+ "VFourSacValDegC": {
+  "source": "rl/policies/sac_v4/seed_2/val_curve.json",
+  "tex": "2.22",
+  "value": 2.220731378730953
+ },
+ "VFourTdChangesCap": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-29",
+  "value": -29.45519213563867
+ },
+ "VFourTdChangesCapMean": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-44",
+  "value": -43.563915917462644
+ },
+ "VFourTdChangesHi": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$1.82",
+  "value": -1.8228082500000014
+ },
+ "VFourTdChangesInfBase": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-64.8",
+  "value": -64.78241642857144
+ },
+ "VFourTdChangesInfOrc": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-37.7",
+  "value": -37.72101357142857
+ },
+ "VFourTdChangesInfPpo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-54.7",
+  "value": -54.664422142857134
+ },
+ "VFourTdChangesLo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$2.50",
+  "value": -2.4994750000000012
+ },
+ "VFourTdChangesMean": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$2.06",
+  "value": -2.057779418604651
+ },
+ "VFourTdChangesMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$2.13",
+  "value": -2.1263199999999998
+ },
+ "VFourTdChangesMhi": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.72",
+  "value": -0.7196669447674423
+ },
+ "VFourTdChangesMlo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$2.91",
+  "value": -2.90660139244186
+ },
+ "VFourTdChangesN": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "86",
+  "value": 86
+ },
+ "VFourTdChangesNInf": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "14",
+  "value": 14
+ },
+ "VFourTdChangesOrcAbs": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "6.99",
+  "value": 6.986134767441859
+ },
+ "VFourTdChangesOrcPct": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "35",
+  "value": 35.11735114242174
+ },
+ "VFourTdChangesQone": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$3.70",
+  "value": -3.6994750000000005
+ },
+ "VFourTdChangesQthree": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$1.17",
+  "value": -1.1687424999999996
+ },
+ "VFourTdChangesSeedAHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "5e-12",
+  "value": 4.955377433032788e-12
+ },
+ "VFourTdChangesSeedAMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$2.13",
+  "value": -2.1263199999999998
+ },
+ "VFourTdChangesSeedBHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "6.3e-10",
+  "value": 6.266856688172775e-10
+ },
+ "VFourTdChangesSeedBMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$2.38",
+  "value": -2.3846349999999994
+ },
+ "VFourTdChangesSeedCHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "3.1e-05",
+  "value": 3.113238761680372e-05
+ },
+ "VFourTdChangesSeedCMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$1.49",
+  "value": -1.4931050000000003
+ },
+ "VFourTdChangesSelected": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "td3\\_s0",
+  "value": "td3_s0"
+ },
+ "VFourTdChangesSucc": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "40",
+  "value": 39.53488372093023
+ },
+ "VFourTdChangesSuccBase": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "36",
+  "value": 36.04651162790697
+ },
+ "VFourTdCommit": {
+  "source": "results/controller_comparison_v4_td3/comparison_manifest.json",
+  "tex": "50313602cf",
+  "value": "50313602cf"
+ },
+ "VFourTdOodCap": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "11",
+  "value": 10.7459647280776
+ },
+ "VFourTdOodCapMean": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-44",
+  "value": -43.62828143621729
+ },
+ "VFourTdOodHi": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.04",
+  "value": 0.0431499999999998
+ },
+ "VFourTdOodInfBase": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-38.3",
+  "value": -38.281302857142855
+ },
+ "VFourTdOodInfOrc": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-37.4",
+  "value": -37.36855714285714
+ },
+ "VFourTdOodInfPpo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-38.6",
+  "value": -38.59464571428571
+ },
+ "VFourTdOodLo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.26",
+  "value": -0.25825999999999993
+ },
+ "VFourTdOodMean": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.19",
+  "value": 0.19223559139784946
+ },
+ "VFourTdOodMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.10",
+  "value": -0.10036999999999985
+ },
+ "VFourTdOodMhi": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.54",
+  "value": 0.538669637096774
+ },
+ "VFourTdOodMlo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.13",
+  "value": -0.13309600268817212
+ },
+ "VFourTdOodN": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "93",
+  "value": 93
+ },
+ "VFourTdOodNInf": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "7",
+  "value": 7
+ },
+ "VFourTdOodOrcAbs": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "1.79",
+  "value": 1.788909569892474
+ },
+ "VFourTdOodOrcPct": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "20",
+  "value": 19.953907366669156
+ },
+ "VFourTdOodQone": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.66",
+  "value": -0.66235
+ },
+ "VFourTdOodQthree": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.47",
+  "value": 0.4728999999999992
+ },
+ "VFourTdOodSeedAHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "2.7e-10",
+  "value": 2.676409355470337e-10
+ },
+ "VFourTdOodSeedAMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.89",
+  "value": -0.8882299999999996
+ },
+ "VFourTdOodSeedBHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "7.3e-07",
+  "value": 7.315399128012849e-07
+ },
+ "VFourTdOodSeedBMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.70",
+  "value": -0.7041599999999999
+ },
+ "VFourTdOodSeedCHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "VFourTdOodSeedCMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.10",
+  "value": -0.10036999999999985
+ },
+ "VFourTdOodSelected": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "td3\\_s2",
+  "value": "td3_s2"
+ },
+ "VFourTdOodSucc": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "73",
+  "value": 73.11827956989248
+ },
+ "VFourTdOodSuccBase": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "63",
+  "value": 63.44086021505376
+ },
+ "VFourTdSelStepA": {
+  "source": "rl/policies/td3_v4/seed_0/val_curve.json",
+  "tex": "50",
+  "value": 50
+ },
+ "VFourTdSelStepB": {
+  "source": "rl/policies/td3_v4/seed_1/val_curve.json",
+  "tex": "30",
+  "value": 30
+ },
+ "VFourTdSelStepC": {
+  "source": "rl/policies/td3_v4/seed_2/val_curve.json",
+  "tex": "60",
+  "value": 60
+ },
+ "VFourTdStaticCap": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "12",
+  "value": 11.839393361378331
+ },
+ "VFourTdStaticCapMean": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-49",
+  "value": -48.687232088475064
+ },
+ "VFourTdStaticHi": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.09",
+  "value": 0.0886400000000016
+ },
+ "VFourTdStaticInfBase": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-42.3",
+  "value": -42.3369
+ },
+ "VFourTdStaticInfOrc": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-40.4",
+  "value": -40.37867857142857
+ },
+ "VFourTdStaticInfPpo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "-41.9",
+  "value": -41.93776714285713
+ },
+ "VFourTdStaticLo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.29",
+  "value": -0.2854800000000002
+ },
+ "VFourTdStaticMean": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.17",
+  "value": 0.16585150537634405
+ },
+ "VFourTdStaticMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.17",
+  "value": -0.16982000000000053
+ },
+ "VFourTdStaticMhi": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.45",
+  "value": 0.4468639543010752
+ },
+ "VFourTdStaticMlo": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.09",
+  "value": -0.09243963709677416
+ },
+ "VFourTdStaticN": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "93",
+  "value": 93
+ },
+ "VFourTdStaticNInf": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "7",
+  "value": 7
+ },
+ "VFourTdStaticOrcAbs": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "1.40",
+  "value": 1.400844623655913
+ },
+ "VFourTdStaticOrcPct": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "19",
+  "value": 19.034927771741252
+ },
+ "VFourTdStaticQone": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.64",
+  "value": -0.6388799999999999
+ },
+ "VFourTdStaticQthree": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "+0.54",
+  "value": 0.5406499999999994
+ },
+ "VFourTdStaticSeedAHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "1.2e-09",
+  "value": 1.1881442555783583e-09
+ },
+ "VFourTdStaticSeedAMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$1.02",
+  "value": -1.01858
+ },
+ "VFourTdStaticSeedBHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "1.1e-08",
+  "value": 1.069894825769275e-08
+ },
+ "VFourTdStaticSeedBMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.70",
+  "value": -0.7042000000000002
+ },
+ "VFourTdStaticSeedCHolm": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "1",
+  "value": 1.0
+ },
+ "VFourTdStaticSeedCMed": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "$-$0.17",
+  "value": -0.16982000000000053
+ },
+ "VFourTdStaticSelected": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "td3\\_s2",
+  "value": "td3_s2"
+ },
+ "VFourTdStaticSucc": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "77",
+  "value": 77.41935483870968
+ },
+ "VFourTdStaticSuccBase": {
+  "source": "results/controller_comparison_v4_td3/per_episode.csv",
+  "tex": "66",
+  "value": 65.59139784946237
+ },
+ "VFourTdValDegA": {
+  "source": "rl/policies/td3_v4/seed_0/val_curve.json",
+  "tex": "0.89",
+  "value": 0.8892343155387508
+ },
+ "VFourTdValDegB": {
+  "source": "rl/policies/td3_v4/seed_1/val_curve.json",
+  "tex": "3.29",
+  "value": 3.2872566152879443
+ },
+ "VFourTdValDegC": {
+  "source": "rl/policies/td3_v4/seed_2/val_curve.json",
+  "tex": "1.45",
+  "value": 1.4519948169745707
+ },
+ "VTwoChangesBanditMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "+0.32",
+  "value": 0.3247999999999962
+ },
+ "VTwoChangesCap": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-13",
+  "value": -13.280034516376865
+ },
+ "VTwoChangesCapMean": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-23",
+  "value": -22.693526970621765
+ },
+ "VTwoChangesHi": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.19",
+  "value": -1.1889000000000003
+ },
+ "VTwoChangesInfBase": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-115.3",
+  "value": -115.30665454545455
+ },
+ "VTwoChangesInfOrc": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-44.0",
+  "value": -44.00262545454545
+ },
+ "VTwoChangesInfPpo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-119.5",
+  "value": -119.51845636363636
+ },
+ "VTwoChangesLo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.68",
+  "value": -1.67551
+ },
+ "VTwoChangesMean": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$0.98",
+  "value": -0.9789319101123594
+ },
+ "VTwoChangesMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.35",
+  "value": -1.3488000000000007
+ },
+ "VTwoChangesMhi": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$0.41",
+  "value": -0.4060158483146079
+ },
+ "VTwoChangesMlo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.50",
+  "value": -1.4951708988764043
+ },
+ "VTwoChangesN": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "89",
+  "value": 89
+ },
+ "VTwoChangesNInf": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "11",
+  "value": 11
+ },
+ "VTwoChangesOrcAbs": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "7.37",
+  "value": 7.371456067415727
+ },
+ "VTwoChangesOrcPct": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "35",
+  "value": 34.582967791795994
+ },
+ "VTwoChangesQone": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.15",
+  "value": -2.145460000000001
+ },
+ "VTwoChangesQthree": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$0.47",
+  "value": -0.4673999999999978
+ },
+ "VTwoChangesSeedAHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1e-06",
+  "value": 1.01215004089797e-06
+ },
+ "VTwoChangesSeedAMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.33",
+  "value": -2.329109999999999
+ },
+ "VTwoChangesSeedBHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "0.0028",
+  "value": 0.002833527991444153
+ },
+ "VTwoChangesSeedBMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.42",
+  "value": -1.4184400000000004
+ },
+ "VTwoChangesSeedCHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "0.0028",
+  "value": 0.002833527991444153
+ },
+ "VTwoChangesSeedCMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.53",
+  "value": -1.5305
+ },
+ "VTwoChangesSeedDHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "2.3e-05",
+  "value": 2.2601503758187975e-05
+ },
+ "VTwoChangesSeedDMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.35",
+  "value": -1.3488000000000007
+ },
+ "VTwoChangesSeedEHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "4.4e-07",
+  "value": 4.3762848133008554e-07
+ },
+ "VTwoChangesSeedEMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.84",
+  "value": -1.8368000000000002
+ },
+ "VTwoChangesSelected": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "ppo\\_s3",
+  "value": "ppo_s3"
+ },
+ "VTwoChangesSucc": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "45",
+  "value": 44.9438202247191
+ },
+ "VTwoChangesSuccBase": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "34",
+  "value": 33.70786516853933
+ },
+ "VTwoCommit": {
+  "source": "results/controller_comparison/comparison_manifest.json",
+  "tex": "051e238fbb",
+  "value": "051e238fbb"
+ },
+ "VTwoDropA": {
+  "source": "rl/policies/ppo_v2/seed_0/evaluations.npz",
+  "tex": "8.9",
+  "value": 8.870878433333328
+ },
+ "VTwoDropB": {
+  "source": "rl/policies/ppo_v2/seed_1/evaluations.npz",
+  "tex": "6.4",
+  "value": 6.439216466666668
+ },
+ "VTwoDropC": {
+  "source": "rl/policies/ppo_v2/seed_2/evaluations.npz",
+  "tex": "0.4",
+  "value": 0.36995600000000195
+ },
+ "VTwoDropD": {
+  "source": "rl/policies/ppo_v2/seed_3/evaluations.npz",
+  "tex": "10.3",
+  "value": 10.289893166666667
+ },
+ "VTwoDropE": {
+  "source": "rl/policies/ppo_v2/seed_4/evaluations.npz",
+  "tex": "8.9",
+  "value": 8.927849366666669
+ },
+ "VTwoDropMean": {
+  "source": "rl/policies/ppo_v2/seed_*/evaluations.npz",
+  "tex": "7.0",
+  "value": 6.979558686666667
+ },
+ "VTwoFinalA": {
+  "source": "rl/policies/ppo_v2/seed_0/evaluations.npz",
+  "tex": "-20.0",
+  "value": -19.984423933333332
+ },
+ "VTwoFinalB": {
+  "source": "rl/policies/ppo_v2/seed_1/evaluations.npz",
+  "tex": "-17.2",
+  "value": -17.21681063333333
+ },
+ "VTwoFinalC": {
+  "source": "rl/policies/ppo_v2/seed_2/evaluations.npz",
+  "tex": "-12.5",
+  "value": -12.455680666666666
+ },
+ "VTwoFinalD": {
+  "source": "rl/policies/ppo_v2/seed_3/evaluations.npz",
+  "tex": "-22.0",
+  "value": -21.96760576666667
+ },
+ "VTwoFinalE": {
+  "source": "rl/policies/ppo_v2/seed_4/evaluations.npz",
+  "tex": "-22.3",
+  "value": -22.26793996666667
+ },
+ "VTwoGainKiA": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "73",
+  "value": 73.40425531914893
+ },
+ "VTwoGainKiB": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "2",
+  "value": 2.127659574468085
+ },
+ "VTwoGainKiC": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "2",
+  "value": 2.127659574468085
+ },
+ "VTwoGainKiD": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "98",
+  "value": 97.87234042553192
+ },
+ "VTwoGainKiE": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "0",
+  "value": 0.0
+ },
+ "VTwoGainKpA": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "100",
+  "value": 100.0
+ },
+ "VTwoGainKpB": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "23",
+  "value": 23.404255319148938
+ },
+ "VTwoGainKpC": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "67",
+  "value": 67.02127659574468
+ },
+ "VTwoGainKpD": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "100",
+  "value": 100.0
+ },
+ "VTwoGainKpE": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "100",
+  "value": 100.0
+ },
+ "VTwoOodBanditMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$0.09",
+  "value": -0.09300500000000067
+ },
+ "VTwoOodCap": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-138",
+  "value": -138.2494048812745
+ },
+ "VTwoOodCapMean": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-105",
+  "value": -104.76382261308542
+ },
+ "VTwoOodHi": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.56",
+  "value": -1.5583950000000004
+ },
+ "VTwoOodInfBase": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-57.3",
+  "value": -57.31838333333334
+ },
+ "VTwoOodInfOrc": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-57.0",
+  "value": -56.956633333333336
+ },
+ "VTwoOodInfPpo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-57.5",
+  "value": -57.47745
+ },
+ "VTwoOodLo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.66",
+  "value": -2.6634399999999996
+ },
+ "VTwoOodMean": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.80",
+  "value": -2.8044721276595745
+ },
+ "VTwoOodMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.99",
+  "value": -1.993075000000001
+ },
+ "VTwoOodMhi": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.21",
+  "value": -2.2081853962765967
+ },
+ "VTwoOodMlo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$3.45",
+  "value": -3.4474446303191493
+ },
+ "VTwoOodN": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "94",
+  "value": 94
+ },
+ "VTwoOodNInf": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "6",
+  "value": 6
+ },
+ "VTwoOodOrcAbs": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "2.03",
+  "value": 2.028559999999997
+ },
+ "VTwoOodOrcPct": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "19",
+  "value": 19.4674094267074
+ },
+ "VTwoOodQone": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$4.19",
+  "value": -4.189699999999999
+ },
+ "VTwoOodQthree": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$0.87",
+  "value": -0.8677625000000002
+ },
+ "VTwoOodSeedAHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.3e-13",
+  "value": 1.3136339634695882e-13
+ },
+ "VTwoOodSeedAMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.16",
+  "value": -2.16381
+ },
+ "VTwoOodSeedBHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.4e-09",
+  "value": 1.372642762013612e-09
+ },
+ "VTwoOodSeedBMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.50",
+  "value": -1.5035600000000002
+ },
+ "VTwoOodSeedCHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "2e-09",
+  "value": 1.955398437360829e-09
+ },
+ "VTwoOodSeedCMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.77",
+  "value": -1.767865
+ },
+ "VTwoOodSeedDHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "2.9e-14",
+  "value": 2.8971827339305264e-14
+ },
+ "VTwoOodSeedDMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.07",
+  "value": -2.06693
+ },
+ "VTwoOodSeedEHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "7.1e-13",
+  "value": 7.089667718651697e-13
+ },
+ "VTwoOodSeedEMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.99",
+  "value": -1.993075000000001
+ },
+ "VTwoOodSelected": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "ppo\\_s4",
+  "value": "ppo_s4"
+ },
+ "VTwoOodSucc": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "28",
+  "value": 27.659574468085108
+ },
+ "VTwoOodSuccBase": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "49",
+  "value": 48.93617021276596
+ },
+ "VTwoPeakA": {
+  "source": "rl/policies/ppo_v2/seed_0/evaluations.npz",
+  "tex": "-11.1",
+  "value": -11.113545500000004
+ },
+ "VTwoPeakB": {
+  "source": "rl/policies/ppo_v2/seed_1/evaluations.npz",
+  "tex": "-10.8",
+  "value": -10.777594166666663
+ },
+ "VTwoPeakC": {
+  "source": "rl/policies/ppo_v2/seed_2/evaluations.npz",
+  "tex": "-12.1",
+  "value": -12.085724666666664
+ },
+ "VTwoPeakD": {
+  "source": "rl/policies/ppo_v2/seed_3/evaluations.npz",
+  "tex": "-11.7",
+  "value": -11.677712600000001
+ },
+ "VTwoPeakE": {
+  "source": "rl/policies/ppo_v2/seed_4/evaluations.npz",
+  "tex": "-13.3",
+  "value": -13.340090600000002
+ },
+ "VTwoPeakStepA": {
+  "source": "rl/policies/ppo_v2/seed_0/evaluations.npz",
+  "tex": "110",
+  "value": 110
+ },
+ "VTwoPeakStepB": {
+  "source": "rl/policies/ppo_v2/seed_1/evaluations.npz",
+  "tex": "90",
+  "value": 90
+ },
+ "VTwoPeakStepC": {
+  "source": "rl/policies/ppo_v2/seed_2/evaluations.npz",
+  "tex": "80",
+  "value": 80
+ },
+ "VTwoPeakStepD": {
+  "source": "rl/policies/ppo_v2/seed_3/evaluations.npz",
+  "tex": "120",
+  "value": 120
+ },
+ "VTwoPeakStepE": {
+  "source": "rl/policies/ppo_v2/seed_4/evaluations.npz",
+  "tex": "60",
+  "value": 60
+ },
+ "VTwoStaticBanditMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$0.16",
+  "value": -0.16196499999999991
+ },
+ "VTwoStaticCap": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-124",
+  "value": -123.99080493097021
+ },
+ "VTwoStaticCapMean": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-172",
+  "value": -171.5861554988779
+ },
+ "VTwoStaticHi": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.53",
+  "value": -1.5255999999999994
+ },
+ "VTwoStaticInfBase": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-57.5",
+  "value": -57.51475
+ },
+ "VTwoStaticInfOrc": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-57.1",
+  "value": -57.06776666666667
+ },
+ "VTwoStaticInfPpo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "-57.6",
+  "value": -57.63361666666666
+ },
+ "VTwoStaticLo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.00",
+  "value": -2.00322
+ },
+ "VTwoStaticMean": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.73",
+  "value": -1.7323838297872343
+ },
+ "VTwoStaticMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.75",
+  "value": -1.7508
+ },
+ "VTwoStaticMhi": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.39",
+  "value": -1.3883629574468084
+ },
+ "VTwoStaticMlo": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.06",
+  "value": -2.0595190531914893
+ },
+ "VTwoStaticN": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "94",
+  "value": 94
+ },
+ "VTwoStaticNInf": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "6",
+  "value": 6
+ },
+ "VTwoStaticOrcAbs": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.40",
+  "value": 1.3971873404255328
+ },
+ "VTwoStaticOrcPct": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "18",
+  "value": 17.616602460405627
+ },
+ "VTwoStaticQone": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.44",
+  "value": -2.43686
+ },
+ "VTwoStaticQthree": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.26",
+  "value": -1.2605100000000002
+ },
+ "VTwoStaticSeedAHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.6e-13",
+  "value": 1.5599861823475216e-13
+ },
+ "VTwoStaticSeedAMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.63",
+  "value": -2.633145
+ },
+ "VTwoStaticSeedBHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.3e-11",
+  "value": 1.3457069343807683e-11
+ },
+ "VTwoStaticSeedBMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.75",
+  "value": -1.7508
+ },
+ "VTwoStaticSeedCHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.9e-12",
+  "value": 1.946983998092638e-12
+ },
+ "VTwoStaticSeedCMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$1.72",
+  "value": -1.7230450000000004
+ },
+ "VTwoStaticSeedDHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.5e-15",
+  "value": 1.476436521693181e-15
+ },
+ "VTwoStaticSeedDMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.22",
+  "value": -2.224455
+ },
+ "VTwoStaticSeedEHolm": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "1.9e-12",
+  "value": 1.946983998092638e-12
+ },
+ "VTwoStaticSeedEMed": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "$-$2.44",
+  "value": -2.4408049999999997
+ },
+ "VTwoStaticSelected": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "ppo\\_s1",
+  "value": "ppo_s1"
+ },
+ "VTwoStaticSucc": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "31",
+  "value": 30.851063829787233
+ },
+ "VTwoStaticSuccBase": {
+  "source": "results/controller_comparison/per_episode.csv",
+  "tex": "54",
+  "value": 54.25531914893617
+ },
+ "VerGym": {
+  "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
+  "tex": "1.4.0",
+  "value": "1.4.0"
+ },
+ "VerNumpy": {
+  "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
+  "tex": "2.4.2",
+  "value": "2.4.2"
+ },
+ "VerPython": {
+  "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
+  "tex": "3.12.10",
+  "value": "3.12.10"
+ },
+ "VerSbthree": {
+  "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
+  "tex": "2.9.0",
+  "value": "2.9.0"
+ },
+ "VerTorch": {
+  "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
+  "tex": "2.14.1+cpu",
+  "value": "2.14.1+cpu"
+ }
+}

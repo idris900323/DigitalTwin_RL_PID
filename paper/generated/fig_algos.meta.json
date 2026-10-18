@@ -1,0 +1,9 @@
+{
+ "data_files": [
+  "results/controller_comparison_v4_ppo/per_episode.csv",
+  "results/controller_comparison_v4_sac/per_episode.csv",
+  "results/controller_comparison_v4_td3/per_episode.csv"
+ ],
+ "commit": "a3aaef12db88872d82f49708044805cc95d8f0dd",
+ "script": "paper/figures.py"
+}

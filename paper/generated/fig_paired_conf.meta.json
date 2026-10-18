@@ -1,0 +1,7 @@
+{
+ "data_files": [
+  "results/controller_comparison_v3_fresh/per_episode.csv"
+ ],
+ "commit": "a3aaef12db88872d82f49708044805cc95d8f0dd",
+ "script": "paper/figures.py"
+}
