@@ -39,6 +39,15 @@ tensorboard_logs/
 cad/*.stl
 cad/*.obj
 
+# Test / tooling caches and large temporary renders
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+results/tmp/
+*.tmp
+
 # OS
 .DS_Store
 Thumbs.db

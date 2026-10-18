@@ -65,16 +65,26 @@ def build_twin(cfg: dict, Kp: float, Ki: float, Kd: float, extra_Jm_kgm2: float 
     return DigitalTwin(motor=motor, gearbox=gearbox, joint=joint, encoder=encoder, pid=pid, dt=dt)
 
 
-def main():
-    cfg = load_config()
+def build_figure(cfg: dict, figsize=(8, 8)):
+    """Build the demo figure (plots, metrics panel, sliders) without showing it.
+
+    Layout is explicit and non-overlapping: the three plots fill the top
+    ~55 % of the figure, the metrics text lives in its own axes at bottom
+    left, and the Kp/Ki/Kd sliders sit at bottom right.
+
+    Returns ``(fig, widgets, axes)`` where ``axes`` maps names to Axes.
+    """
     dt = cfg["simulation"]["control_loop_dt_s"]
     duration = cfg["simulation"]["run_duration_s"]
     n_steps = int(duration / dt)
     theta_ref = math.radians(cfg["simulation"]["theta_ref_default_deg"])
     defaults = cfg["pid_defaults"]
 
-    fig, (ax_theta, ax_err, ax_v) = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
-    plt.subplots_adjust(bottom=0.32, hspace=0.35)
+    fig = plt.figure(figsize=figsize)
+    grid = fig.add_gridspec(3, 1, left=0.11, right=0.96, top=0.95, bottom=0.40, hspace=0.35)
+    ax_theta = fig.add_subplot(grid[0])
+    ax_err = fig.add_subplot(grid[1], sharex=ax_theta)
+    ax_v = fig.add_subplot(grid[2], sharex=ax_theta)
 
     twin = build_twin(cfg, defaults["Kp"], defaults["Ki"], defaults["Kd"])
     log = twin.run(theta_ref, n_steps)
@@ -96,8 +106,12 @@ def main():
     ax_v.axhline(-cfg["supply"]["V_rated"], color="red", linestyle=":", linewidth=0.8)
     ax_v.set_ylabel("Control voltage [V]")
     ax_v.set_xlabel("Time [s]")
+    ax_theta.label_outer()
+    ax_err.label_outer()
 
-    metrics_text = fig.text(0.02, 0.20, "", fontsize=9, family="monospace", va="top")
+    ax_metrics = fig.add_axes([0.04, 0.04, 0.36, 0.26])
+    ax_metrics.axis("off")
+    metrics_text = ax_metrics.text(0.0, 1.0, "", fontsize=9, family="monospace", va="top", transform=ax_metrics.transAxes)
 
     def update_metrics(t, theta):
         rt = rise_time(t, theta, ref_deg)
@@ -115,9 +129,9 @@ def main():
 
     update_metrics(log["t"], theta_deg)
 
-    ax_kp = plt.axes([0.15, 0.20, 0.65, 0.03])
-    ax_ki = plt.axes([0.15, 0.15, 0.65, 0.03])
-    ax_kd = plt.axes([0.15, 0.10, 0.65, 0.03])
+    ax_kp = fig.add_axes([0.52, 0.22, 0.38, 0.04])
+    ax_ki = fig.add_axes([0.52, 0.15, 0.38, 0.04])
+    ax_kd = fig.add_axes([0.52, 0.08, 0.38, 0.04])
     s_kp = Slider(ax_kp, "Kp", 0.0, defaults["Kp_max"], valinit=defaults["Kp"])
     s_ki = Slider(ax_ki, "Ki", 0.0, defaults["Ki_max"], valinit=defaults["Ki"])
     s_kd = Slider(ax_kd, "Kd", 0.0, defaults["Kd_max"], valinit=defaults["Kd"])
@@ -142,6 +156,14 @@ def main():
     s_ki.on_changed(on_change)
     s_kd.on_changed(on_change)
 
+    axes = {"theta": ax_theta, "err": ax_err, "v": ax_v, "metrics": ax_metrics,
+            "kp": ax_kp, "ki": ax_ki, "kd": ax_kd}
+    return fig, (s_kp, s_ki, s_kd), axes, metrics_text
+
+
+def main():
+    cfg = load_config()
+    build_figure(cfg)
     plt.show()
 
 

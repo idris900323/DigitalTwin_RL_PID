@@ -43,7 +43,7 @@ DigitalTwin_RL_PID/
 ├── README.md
 ├── master_prompt_digital_twin_rl_pid.md   # canonical spec — read first
 ├── requirements.txt
-├── data/                  # (empty so far)
+├── data/                  # planned, not created yet
 ├── datasheet/              # source datasheet PDF + parameter_table.md
 ├── cad/                    # reference CAD (see caveat below) + converted mesh
 ├── config/
@@ -52,10 +52,10 @@ DigitalTwin_RL_PID/
 ├── controllers/
 │   └── pid.py               # fixed-gain PID: saturation, anti-windup, filtered D
 ├── simulation/              # phase-by-phase check scripts + demos (see below)
-├── pybullet/                # (empty so far — Phase 10 proper)
-├── environments/            # (empty so far — Phase 13, Gymnasium env)
-├── rl/                      # (empty so far — Phase 14+)
-├── validation/              # (empty so far — Phase 11)
+├── pybullet/                # planned, not created yet — Phase 10 proper
+├── environments/            # planned, not created yet — Phase 13, Gymnasium env
+├── rl/                      # planned, not created yet — Phase 14+
+├── validation/              # planned, not created yet — Phase 11
 ├── results/                 # generated plots/data — gitignored, not source of truth
 └── reference/
     └── legacy_demo/          # pid_demo.pdf/.sch/.ino — see note below
@@ -139,6 +139,31 @@ file's docstring for the exact gains and measured metrics (measured at
 default arm settings; they'll drift if the arm sliders are moved far from
 default). UI text runs a size larger than Qt's small default (app font,
 chart titles/labels/ticks, status readout) for on-screen readability.
+
+## Tests
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+pytest tests                      # about 1 minute
+playwright install chromium       # one-time, ~120 MB; needed only for tests/browser
+```
+
+`tests/test_baseline.py` pins the step-response numbers measured for this twin, so any physics change that moves them fails loudly.
+The browser tests (`tests/browser/`) drive `autotune_360/servo_pid_visualizer_360.html` in Chromium via Playwright; if Playwright or its Chromium download is missing they are **skipped, not failed**.
+
+## RL auto-tuner (`autotune_360/`) — pre-validation prototype
+
+A small numpy REINFORCE policy that picks Kp/Ki/Kd for a given payload and target angle. It is trained and evaluated on the preliminary, unvalidated twin only; nothing here is validated on hardware.
+
+**Headline metric: the feasible-only held-out set** (1000 contexts whose torque margin is at least 1.2, so the motor can actually reach the target). Infeasible contexts cannot be solved by any gains, so they are not part of the headline; they are reported separately.
+
+| Controller | Feasible-only (headline): mean cost | within 2 % of target | Full set incl. infeasible (15.3 % of it): mean cost | within 2 % |
+|---|---|---|---|---|
+| RL auto-tune | **0.539** | **94.7 %** | 1.263 | 80.8 % |
+| "Tuned" preset 15/0/0.3 | 0.925 | 72.2 % | 1.632 | 60.8 % |
+| Legacy default 5/20/0.05 | 1.712 | 44.9 % | 2.245 | 38.0 % |
+
+Lower cost is better. Source: `autotune_360/autotune_policy_360.meta.json` (seed 0, 300 iterations). Training samples only contexts with margin at least 1.2; contexts with margin in [1.0, 1.2) ("marginal", about 3 % of raw draws) are outside the training distribution and the policy is weaker there (cost 2.66, 46 % within 2 % on a 400-context marginal-band check, versus 4.20 / 1.5 % for the Tuned preset). See `autotune_360/README.md` for regeneration.
 
 ## Known issues / platform notes
 

@@ -56,6 +56,12 @@ class DigitalTwin:
         tau_out = self.joint.external_torque(t)
         tau_load_motor = self.gearbox.reflect_load_torque_to_motor(tau_out)
 
+        # Armature current at the instant V_cmd is applied, i.e. from the
+        # motor state at the START of this step (before the RK4 update). It is
+        # consistent with V_cmd: V_cmd*i = R*i^2 + Ke*omega_m*i. For L = 0 this
+        # is algebraic and not part of the state vector (see DCMotor.current).
+        i_motor = self.motor.current(self.state.motor_state, V_cmd)
+
         new_motor_state = self.motor.step(self.state.motor_state, self.dt, V_cmd, tau_load_motor)
         self.state = TwinState(t=t + self.dt, motor_state=new_motor_state)
 
@@ -66,7 +72,7 @@ class DigitalTwin:
             "omega_out": self.gearbox.output_speed(new_motor_state[1]),
             "error": error,
             "V_cmd": V_cmd,
-            "i_motor": new_motor_state[0],
+            "i_motor": i_motor,
         }
 
     def run(self, theta_ref: float, n_steps: int) -> dict:

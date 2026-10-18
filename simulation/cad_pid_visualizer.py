@@ -139,6 +139,7 @@ PRESETS = {
     "sluggish": dict(Kp=1.5, Ki=0.0, Kd=0.0),
     "oscillatory": dict(Kp=45.0, Ki=0.0, Kd=0.0),
     "tuned": dict(Kp=15.0, Ki=0.0, Kd=0.3),
+    "legacy_default": dict(Kp=5.0, Ki=20.0, Kd=0.05),  # old default: ~42 % overshoot, kept for comparison
 }
 
 
@@ -408,7 +409,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addWidget(preset_label)
         preset_row = QtWidgets.QHBoxLayout()
         preset_row.setSpacing(8)
-        for name, label in (("sluggish", "Sluggish"), ("oscillatory", "Oscillatory"), ("tuned", "Tuned")):
+        for name, label in (("sluggish", "Sluggish"), ("oscillatory", "Oscillatory"), ("tuned", "Tuned"), ("legacy_default", "Legacy default")):
             b = QtWidgets.QPushButton(label)
             b.setMinimumHeight(30)
             b.clicked.connect(lambda _checked=False, n=name: self._apply_preset(n))
@@ -507,6 +508,8 @@ class MainWindow(QtWidgets.QMainWindow):
         os_ = overshoot_pct(theta, self.ref_deg)
         st = settling_time(t, theta, self.ref_deg)
         sse = steady_state_error(theta, self.ref_deg)
+        # No torque-margin line: this demo has no gravity yet, so the margin would always be infinite.
+        # G2.3 adds gravity and brings the line back.
         self.status_label.setText(
             f"Kp={Kp:.2f} Ki={Ki:.2f} Kd={Kd:.3f}  |  arm={self.arm_length_m*1000:.0f}mm {self.arm_mass_kg*1000:.0f}g\n"
             f"rise={rt:.2f}s  overshoot={os_:.1f}%  settle={st:.2f}s  sse={sse:.2f}deg"
