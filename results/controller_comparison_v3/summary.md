@@ -3,7 +3,7 @@
 100 held-out paired TEST scenarios per regime (seeds 50000..50099); 40 VALIDATION scenarios (seeds 40000..40039) were used to choose `best_constant` and the reported PPO seed; neither set was used in training. Every controller sees the same plant, payload, target, delay and noise for a given seed. `return` is the environment reward (higher is better).
 `random_search` is an ORACLE (best of 48 random sets + a 20-point Ki = 0 grid + Tuned + bandit + best_constant per scenario, chosen with hindsight): an upper bound for any adaptive tuner of this kind, not a deployable controller. Primary metric: episode return (success rate is descriptive).
 
-**Pre-specified analysis.** One primary comparison: validation-selected PPO minus `best_constant`, `static` regime, feasible scenarios, paired median difference of return with a 95 % bootstrap CI. All other comparisons are secondary: paired Wilcoxon p-values, Holm-adjusted across the whole secondary family (feasible scenarios, all regimes). Infeasible scenarios (torque margin < 1.0 at any point, including after a payload change) are reported separately.
+**Analysis status: exploratory.** The policy design under test was chosen after seeing results on an earlier test set that overlaps these seeds, so this set is exploratory, not confirmatory. One primary comparison: validation-selected PPO minus `best_constant`, `static` regime, feasible scenarios, paired median difference of return with a 95 % bootstrap CI. All other comparisons are secondary: paired Wilcoxon p-values, Holm-adjusted across the whole secondary family (feasible scenarios, all regimes). Infeasible scenarios (torque margin < 1.0 at any point, including after a payload change) are reported separately.
 
 ## Regime `static`
 
@@ -31,6 +31,7 @@ Feasible scenarios: 94 of 100; infeasible: 6.
 | ppo_s2 | -7.478 ± 8.065 | -5.480 | +0.371 [+0.348, +0.402] | 3.81e-17 | 1.1e-15 | 29.5 | 4.4 | 0.587 | 56 % | 0 % | 0 % |
 
 Oracle headroom over best_constant (feasible): mean return +1.397 (17.6 % of |best_constant return|); this is the ceiling for any adaptive tuner on this scenario set.
+Headroom captured (mean PPO gain over best_constant divided by the oracle headroom): selected 59 %; per seed ppo_s0 22 %, ppo_s1 59 %, ppo_s2 32 %. Success rate is descriptive only; return is the headline.
 Bandit vs best_constant (return, median difference): -0.162 [-0.236, -0.050].
 
 PPO across training seeds (feasible test scenarios, mean return): ppo_s0 -7.624, ppo_s1 -7.101, ppo_s2 -7.478. Seed mean -7.401, std 0.220, range [-7.624, -7.101]; best constant -7.931.
@@ -81,6 +82,7 @@ Feasible scenarios: 89 of 100; infeasible: 11.
 | ppo_s2 | -21.253 ± 24.578 | -13.438 | +0.352 [+0.138, +0.604] | 0.135 | 0.539 | 57.6 | 52.3 | 1.102 | 40 % | 0 % | 0 % |
 
 Oracle headroom over best_constant (feasible): mean return +7.371 (34.6 % of |best_constant return|); this is the ceiling for any adaptive tuner on this scenario set.
+Headroom captured (mean PPO gain over best_constant divided by the oracle headroom): selected 20 %; per seed ppo_s0 12 %, ppo_s1 20 %, ppo_s2 1 %. Success rate is descriptive only; return is the headline.
 Bandit vs best_constant (return, median difference): +0.325 [+0.110, +0.890].
 
 PPO across training seeds (feasible test scenarios, mean return): ppo_s0 -20.415, ppo_s1 -19.845, ppo_s2 -21.253. Seed mean -20.504, std 0.578, range [-21.253, -19.845]; best constant -21.315.
@@ -129,6 +131,7 @@ Feasible scenarios: 94 of 100; infeasible: 6.
 | ppo_s2 | -9.835 ± 12.967 | -5.740 | +0.418 [+0.319, +0.575] | 1.46e-14 | 2.92e-13 | 35.4 | 5.3 | 0.668 | 57 % | 0 % | 0 % |
 
 Oracle headroom over best_constant (feasible): mean return +2.029 (19.5 % of |best_constant return|); this is the ceiling for any adaptive tuner on this scenario set.
+Headroom captured (mean PPO gain over best_constant divided by the oracle headroom): selected 52 %; per seed ppo_s0 20 %, ppo_s1 52 %, ppo_s2 29 %. Success rate is descriptive only; return is the headline.
 Bandit vs best_constant (return, median difference): -0.093 [-0.155, -0.045].
 
 PPO across training seeds (feasible test scenarios, mean return): ppo_s0 -10.018, ppo_s1 -9.361, ppo_s2 -9.835. Seed mean -9.738, std 0.276, range [-10.018, -9.361]; best constant -10.420.
@@ -153,7 +156,7 @@ Infeasible seeds (min margin): 50017 (0.81), 50024 (0.66), 50041 (0.67), 50064 (
 
 ## Verdict
 
-**Primary** (static, feasible, n=94): validation-selected PPO (`ppo_s1`) is BETTER than the best constant gains: paired median difference of return +0.505, 95 % CI [+0.303, +0.826] (Wilcoxon p = 1.26e-14, single pre-specified test, unadjusted).
+**Primary** (static, feasible, n=94): validation-selected PPO (`ppo_s1`) is BETTER than the best constant gains: paired median difference of return +0.505, 95 % CI [+0.303, +0.826] (Wilcoxon p = 1.26e-14, single primary test, unadjusted; analysis status: exploratory).
 
 Secondary comparisons against best_constant with Holm-adjusted p < 0.05: static/tuned (p=1.7e-13), static/legacy (p=2.3e-15), static/zn (p=6.5e-11), static/random_search (p=1.1e-15), static/ppo_s0 (p=1.4e-05), static/ppo_s1 (p=2.6e-13), static/ppo_s2 (p=1.1e-15), changes/tuned (p=1.9e-12), changes/legacy (p=9.1e-15), changes/zn (p=9e-05), changes/bandit (p=6.3e-05), changes/random_search (p=6.1e-15), changes/ppo (p=9e-05), changes/ppo_s0 (p=2.4e-05), changes/ppo_s1 (p=9e-05), ood/tuned (p=1e-10), ood/legacy (p=2e-15), ood/zn (p=1e-11), ood/random_search (p=1.1e-15), ood/ppo (p=1.2e-11), ood/ppo_s0 (p=1.1e-08), ood/ppo_s1 (p=1.2e-11), ood/ppo_s2 (p=2.9e-13). The sign of the median difference in the tables gives the direction.
 

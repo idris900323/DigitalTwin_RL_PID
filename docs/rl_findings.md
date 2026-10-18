@@ -15,12 +15,28 @@ Configuration: multiplicative actions (+-10 % per 20 ms), Kp in [0.5, 50], Ki in
 
 Changes: the action is an *offset from the best constant* (zero action = Kp 19, Ki 0, Kd 1.3, `rl_env.residual` in the YAML; Kp and Kd scale by 2^a, Ki = a * 20), learning rate 1e-4, `log_std_init` -1 (the entropy coefficient was already 0), a shaped reward (an extra time-outside-2 %-band term plus the existing overshoot term, used for training only; scoring uses the default reward), 400k decisions, 3 seeds, a checkpoint every 10k decisions selected on validation seeds 40000+ (`rl/select_checkpoints.py`).
 
-Result (primary): validation-selected seed `ppo_s1` is **better** than the best constant: median return difference **+0.505, CI [+0.303, +0.826]**; seed means -7.40 +- 0.22 against -7.93 for the constant. Success within 2 % with overshoot <= 10 %: 74 % against 54 %. The `changes` (+0.55) and `ood` (+0.57) regimes agree in sign. No policy sits at a gain bound. The mean improvement over the constant closes about 59 % (`static`), 20 % (`changes`) and 52 % (`ood`) of the gap to the hindsight oracle. Peak-to-final degradation on the validation curve is 0.0, 0.07 and 0.6 (v2: about 7 on the training-evaluation stream; the two numbers are not the same measurement).
+**Evidence status.** v3's design was chosen *after* seeing the v2 results on test seeds 50000+, so those seeds are **exploratory** for v3 (`results/controller_comparison_v3/`). The **confirmatory** result is on fresh seeds 60000-60099 per regime (`results/controller_comparison_v3_fresh/`), which were never used to train, select or tune anything and were run once; best constants were re-selected on the validation seeds only. The headline is the episode return; success rate is descriptive.
 
-**Caveats, to be read with the result.**
-1. v3's design was chosen *after* seeing the v2 test results, on the same test scenarios (seeds 50000+). No choice inside v3 used the test seeds, but the test set is no longer untouched with respect to the design. Confirm on fresh test seeds before relying on the result.
-2. The reference constant was found on `static` validation scenarios and is the residual's zero point; part of v3's gain is that it starts from a good point. The honest reading is "a residual PPO around a tuned constant improves it modestly in simulation", not "RL replaces tuning".
-3. The improvement (about 0.5 to 0.8 return units, 6 to 10 % of |return|) is small against the oracle headroom and has not been checked on hardware or on a validated twin.
+Median return difference of the validation-selected PPO seed to the best constant (feasible scenarios; 95 % bootstrap CI), with the three training seeds:
+
+| regime | exploratory 50000+ | **confirmatory 60000+** | seeds s0 / s1 / s2 (60000+) |
+|---|---|---|---|
+| static (primary) | +0.505 [+0.303, +0.826] | **+0.610 [+0.286, +0.752]** | +0.226 / +0.610 / +0.405 |
+| changes | +0.554 [+0.253, +1.486] | **+0.579 [+0.244, +1.227]** | +0.535 / +0.579 / +0.321 |
+| ood | +0.572 [+0.258, +0.962] | **+0.452 [+0.236, +0.737]** | +0.297 / +0.452 / +0.317 |
+
+- **Per-seed significance.** All three seeds beat the best constant in the median in every regime, and no policy sits at a gain bound. After Holm adjustment (secondary family, all regimes) seeds 0 and 1 survive in all three regimes on both seed sets. **Seed 2 in `changes` is inconclusive** (Holm-adjusted p = 1.0 on 60000+, 0.54 on 50000+), so the claim for that regime rests on two of three seeds.
+- **Success rate is not stable, so it is descriptive only.** `static`: 74 % against 54 % for the best constant on 50000+, but **58 % against 49 %** on 60000+; `changes`: 44 % against 34 % and 37 % against 27 %; `ood`: 69 % against 49 % and 56 % against 47 %. Do not quote the 50000+ figure without the fresh one.
+- **Headroom captured** (mean PPO gain over the best constant divided by the hindsight-oracle headroom; selected seed on 60000+): 60 % `static`, 24 % `changes`, 46 % `ood`; the seed average is 44 %, 10 % and 31 %, and one seed captures less than nothing in `changes` (-4 %). The oracle chooses its gains per scenario with hindsight, so this is the ceiling for any adaptive tuner of this kind; v3 is not close to it, and `changes` leaves the most unrealised.
+- **Infeasible scenarios stay a separate table** (torque margin < 1.0 at any point). On 60000+, `changes` has 17 of 100 infeasible; there PPO is no better than the best constant (mean return -85.2 against -85.5; oracle -42.6), so the infeasible split matters for reading the regime. Numbers move with the seed set (11 of 100 on 50000+).
+- **Training stability.** Peak-to-final degradation on the validation curve is 0.0, 0.07 and 0.6 (v2: about 7 on the training-evaluation stream; the two numbers are not the same measurement).
+
+**Supported claim.** In simulation on the unvalidated twin, a PPO policy acting as a residual on a validation-tuned constant beats that constant by about 0.5-0.6 median return (about 6-10 % of |return|), consistently across training seeds and on fresh scenarios. This is not a validated or hardware result, it does not show that RL adaptation replaces tuning (the policy starts from a tuned constant, and the v2 failure shows the unconstrained setup does not find it), and the benefit in `changes` is the weakest.
+
+**Other caveats.**
+1. The reference constant was found on `static` validation scenarios and is the residual's zero point; part of v3's gain is that it starts from a good point.
+2. The improvement is small against the oracle headroom and has not been checked on hardware or a validated twin.
+3. The v2 failure is best described as an *unconstrained* setup (unbounded-feeling multiplicative walk to the bounds, an under-shaped reward, early-peaking checkpoints chosen on the training stream); v3 changed all of these at once, so this work does not isolate which change mattered.
 
 ## Reproducibility
 
