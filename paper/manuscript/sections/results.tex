@@ -1,0 +1,74 @@
+\section{Results (simulation only)}\label{sec:results}
+All results are simulated on the unvalidated twin. ``Median difference'' is the paired median return difference to the best constant on feasible scenarios with its $95\,\%$ bootstrap interval; means and interquartile ranges are in the tables.
+
+\subsection{v2: an unconstrained setup failed}\label{sec:v2}
+With unconstrained multiplicative actions the validation-selected PPO was \emph{worse} than the best constant in the primary test (median difference $\VTwoStaticMed$ [$\VTwoStaticLo$, $\VTwoStaticHi$], $n=\VTwoStaticN$), and likewise in the other two regimes. Training was unstable: the evaluation return peaked between $60$k and $120$k decisions and then degraded in most seeds, by $\VTwoDropMean$ on average between peak and final (Table~\ref{tab:v2}, Fig.~\ref{fig:curves}). The final gains piled up at the bounds: for example $\VTwoGainKiA\,\%$ and $\VTwoGainKiD\,\%$ of the static scenarios ended at the maximum $K_i$ for seeds 0 and 3, with $K_p$ at its maximum in most episodes, whereas the best constant has $K_i\approx0$. We read this as a failure of this particular configuration (reward, action space, training length, checkpoint chosen on the training-evaluation stream), not as a limit of RL adaptation. The one-shot bandit was also slightly worse than the best constant in the median in the static regime ($\VTwoStaticBanditMed$).
+
+\input{../generated/tab_v2.tex}
+
+\subsection{v3: a residual PPO beats the tuned constant}\label{sec:v3}
+\textbf{Confirmatory result (seeds 60000--60099).} The validation-selected residual PPO improved on the best constant by $\ConfThreeStaticMed$ [$\ConfThreeStaticLo$, $\ConfThreeStaticHi$] median return in the static regime (primary test; mean $\ConfThreeStaticMean$ [$\ConfThreeStaticMlo$, $\ConfThreeStaticMhi$], IQR [$\ConfThreeStaticQone$, $\ConfThreeStaticQthree$], $n=\ConfThreeStaticN$), by $\ConfThreeChangesMed$ [$\ConfThreeChangesLo$, $\ConfThreeChangesHi$] with changing payload and target ($n=\ConfThreeChangesN$) and by $\ConfThreeOodMed$ [$\ConfThreeOodLo$, $\ConfThreeOodHi$] out of distribution (Table~\ref{tab:main_conf}, Fig.~\ref{fig:paired}). The per-seed median differences are $\ConfThreeStaticSeedAMed$, $\ConfThreeStaticSeedBMed$, $\ConfThreeStaticSeedCMed$ (static), so all three training seeds beat the constant in every regime in the median. After Holm correction two seeds are significant in every regime; \textbf{seed 2 in the changes regime is inconclusive} (median $\ConfThreeChangesSeedCMed$, Holm-adjusted $p=\ConfThreeChangesSeedCHolm$).
+
+\textbf{Exploratory set (seeds 50000--50099).} The same analysis gives $\ExplThreeStaticMed$, $\ExplThreeChangesMed$ and $\ExplThreeOodMed$ (Table~\ref{tab:main_expl}), in agreement; because the design was chosen after seeing earlier results on these seeds they are not counted as confirmation.
+
+\textbf{Success rate is descriptive and not stable.} In the static regime $\ConfThreeStaticSucc\,\%$ of scenarios met the success criterion against $\ConfThreeStaticSuccBase\,\%$ for the best constant on the confirmatory seeds, but $\ExplThreeStaticSucc\,\%$ against $\ExplThreeStaticSuccBase\,\%$ on the exploratory seeds; we therefore make no claim about success rate.
+
+\input{../generated/tab_main_conf.tex}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{fig_paired_conf.pdf}
+\caption{Simulation, confirmatory seeds 60000--60099, feasible scenarios: paired return difference of the validation-selected residual PPO (v3) to the best constant, per regime. Box: median and interquartile range; points: every scenario; right of each box: median with $95\,\%$ bootstrap interval (bar) and mean (diamond). Positive is better than the constant.}
+\label{fig:paired}\end{figure}
+
+\subsection{How much of the oracle headroom is captured?}\label{sec:headroom}
+The hindsight oracle improves on the best constant by $\ConfThreeStaticOrcAbs$, $\ConfThreeChangesOrcAbs$ and $\ConfThreeOodOrcAbs$ mean return in the three regimes ($\ConfThreeStaticOrcPct$, $\ConfThreeChangesOrcPct$ and $\ConfThreeOodOrcPct\,\%$ of $|$return$|$). The selected residual PPO captures $\ConfThreeStaticCap$, $\ConfThreeChangesCap$ and $\ConfThreeOodCap\,\%$ of that headroom; averaged over the three training seeds it captures $\ConfThreeStaticCapMean$, $\ConfThreeChangesCapMean$ and $\ConfThreeOodCapMean\,\%$, and one seed captures less than nothing in the changes regime (Fig.~\ref{fig:headroom}). The learned policy is therefore far from the ceiling for a scenario-aware tuner, most clearly when the payload and target change.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{fig_headroom.pdf}
+\caption{Simulation, confirmatory seeds: headroom captured per training seed, i.e.\ the mean return gain of the policy over the best constant divided by the gain of the hindsight oracle (dashed line: oracle, $100\,\%$), feasible scenarios.}
+\label{fig:headroom}\end{figure}
+
+\subsection{Infeasible scenarios}
+Infeasible scenarios (margin $<1$ at any point) are $\ConfThreeStaticNInf$, $\ConfThreeChangesNInf$ and $\ConfThreeOodNInf$ of $100$ in the three regimes on the confirmatory seeds. No controller can hold these targets; the policy is not better than the best constant there (changes regime: mean return $\ConfThreeChangesInfPpo$ against $\ConfThreeChangesInfBase$, oracle $\ConfThreeChangesInfOrc$; Table~\ref{tab:infeasible}). They are excluded from the headline tables.
+
+\input{../generated/tab_infeasible.tex}
+
+\subsection{v4: a smaller residual range, and SAC and TD3}\label{sec:v4}
+On the unseen seeds $70000$--$70099$ PPO with the smaller range gave median differences of $\VFourPpoStaticMed$ (static) and $\VFourPpoOodMed$ (ood), but seed 0 was worse than the constant in both and the changes regime was inconclusive ($\VFourPpoChangesMed$, mean $\VFourPpoChangesMean$, IQR [$\VFourPpoChangesQone$, $\VFourPpoChangesQthree$]); the benefit is smaller than in v3 and the seed sets differ, so we do not conclude that the smaller range is better or worse. \textbf{SAC is mixed:} in the static regime the selected seed's median difference is $\VFourSacStaticMed$ [$\VFourSacStaticLo$, $\VFourSacStaticHi$], an interval that excludes zero, but the paired Wilcoxon test is not significant (Holm-adjusted $p=\VFourSacStaticSeedAHolm$), the mean is $\VFourSacStaticMean$ and the interquartile range [$\VFourSacStaticQone$, $\VFourSacStaticQthree$] straddles zero; the other two seeds are $\VFourSacStaticSeedBMed$ and $\VFourSacStaticSeedCMed$, and all three SAC seeds are worse than the constant when payload and target change. \textbf{TD3 did not beat the constant} (static median $\VFourTdStaticMed$, changes $\VFourTdChangesMed$). SAC and TD3 selected early checkpoints and degraded afterwards (validation degradation up to $\VFourSacValDegA$ and $\VFourTdValDegB$ return units, against at most $\VFourPpoValDegC$ for PPO). No policy helped in the changes regime in v4 (Table~\ref{tab:v4}, Fig.~\ref{fig:algos}).
+
+\input{../generated/tab_v4.tex}
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{fig_algos.pdf}
+\caption{Simulation, unseen seeds 70000--70099 (v4), feasible scenarios: paired return difference of the validation-selected policy of each algorithm to the best constant, per regime. Box: median and interquartile range, points: scenarios, diamond: mean.}
+\label{fig:algos}\end{figure*}
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{fig_curves.pdf}
+\caption{Simulation. Left: v2 evaluation return on the training-evaluation seeds (five seeds): peak at $60$k--$120$k decisions, then degradation. Right: v3 validation return on seeds 40000+ (three seeds); dots mark the checkpoint selected on validation. The two panels use different evaluation streams and are not the same measurement.}
+\label{fig:curves}\end{figure*}
+
+\subsection{Post hoc: how much of the gain is just a better constant?}\label{sec:posthoc}
+\textbf{Why this was added.} The learned policies end at gains that vary little across scenarios: in v3 the median final gains in the static regime are $K_p=\ConfThreeStaticGainKpMed$ ($10$--$90\,\%$ range $\ConfThreeStaticGainKpPlo$--$\ConfThreeStaticGainKpPhi$) and $K_d=\ConfThreeStaticGainKdMed$ against $\ConfThreeStaticGainKpBase$ and $\ConfThreeStaticGainKdBase$ for the best constant; in v4 the PPO gains are almost constant ($K_p=\VFourPpoStaticGainKpMed$, range $\VFourPpoStaticGainKpPlo$--$\VFourPpoStaticGainKpPhi$). We therefore asked, \emph{after} the confirmatory runs and labelled post hoc, how much of the benefit is a better operating point rather than adaptation. Every new baseline is derived on validation seeds only and evaluated once on a fresh range, seeds $80000$--$80099$ (Section~\ref{sec:method}, Table~\ref{tab:sensitivity}, Fig.~\ref{fig:sens}). An earlier look on seeds $60000$--$60099$ (ledger L11) gave the same picture and is kept in the repository.
+
+\textbf{The policy still beats the original constant on fresh seeds} ($\SensVThreeStaticPpoBestConstantMed$, $\SensVThreeChangesPpoBestConstantMed$, $\SensVThreeOodPpoBestConstantMed$ median return in the three regimes), as in the confirmatory comparison.
+
+\textbf{But a larger constant search recovers most of it.} The extended-search constant (static $K_p=\SensVThreeStaticExtKp$, $K_d=\SensVThreeStaticExtKd$, at the $K_d$ bound; raising the bound to $4$ does not change the conclusions, Appendix~\ref{app:kdbound}) improves on the original constant by $\SensVThreeStaticBestConstantExtBestConstantMed$ (static), $\SensVThreeChangesBestConstantExtBestConstantMed$ (changes) and $\SensVThreeOodBestConstantExtBestConstantMed$ (ood) median return. Most of the policy's gain over the original constant is therefore a better constant. A small residual remains and is stated plainly: policy minus extended constant is $\SensVThreeStaticPpoBestConstantExtMed$ [$\SensVThreeStaticPpoBestConstantExtLo$, $\SensVThreeStaticPpoBestConstantExtHi$] median (mean $\SensVThreeStaticPpoBestConstantExtMean$, IQR [$\SensVThreeStaticPpoBestConstantExtQone$, $\SensVThreeStaticPpoBestConstantExtQthree$]) in the static regime, $\SensVThreeOodPpoBestConstantExtMed$ [$\SensVThreeOodPpoBestConstantExtLo$, $\SensVThreeOodPpoBestConstantExtHi$] (mean $\SensVThreeOodPpoBestConstantExtMean$, IQR [$\SensVThreeOodPpoBestConstantExtQone$, $\SensVThreeOodPpoBestConstantExtQthree$]) out of distribution, both with intervals excluding zero and equal to about $\SensVThreeStaticPpoExtPct\,\%$ and $\SensVThreeOodPpoExtPct\,\%$ of $|$return$|$, and $\SensVThreeChangesPpoBestConstantExtMed$ [$\SensVThreeChangesPpoBestConstantExtLo$, $\SensVThreeChangesPpoBestConstantExtHi$] (mean $\SensVThreeChangesPpoBestConstantExtMean$, IQR [$\SensVThreeChangesPpoBestConstantExtQone$, $\SensVThreeChangesPpoBestConstantExtQthree$]) when payload and target change, not distinguishable from zero. This residual is small, \emph{we do not attribute the residual to adaptation}: the non-learned rule below closes it within noise. The policy's own median gains used as a constant give $\SensVThreeStaticPpoDistilledBestConstantMed$, $\SensVThreeChangesPpoDistilledBestConstantMed$ and $\SensVThreeOodPpoDistilledBestConstantMed$.
+
+\textbf{A non-learned scenario-conditioned rule matches the policy.} Gains with $\log K_p$ and $\log K_d$ linear in payload mass, gravity torque and payload inertia, fitted on validation seeds, improve on the original constant by $\SensVThreeStaticScenarioFitBestConstantMed$, $\SensVThreeChangesScenarioFitBestConstantMed$ and $\SensVThreeOodScenarioFitBestConstantMed$; policy minus rule is $\SensVThreeStaticPpoScenarioFitMed$ [$\SensVThreeStaticPpoScenarioFitLo$, $\SensVThreeStaticPpoScenarioFitHi$], $\SensVThreeChangesPpoScenarioFitMed$ [$\SensVThreeChangesPpoScenarioFitLo$, $\SensVThreeChangesPpoScenarioFitHi$] and $\SensVThreeOodPpoScenarioFitMed$ [$\SensVThreeOodPpoScenarioFitLo$, $\SensVThreeOodPpoScenarioFitHi$], all intervals including zero. Adaptation is therefore not doing work beyond what three load features and a small fit capture.
+
+\textbf{Does the policy track the load?} Yes, partly: its $K_p$ is markedly higher when gravity acts and rises mildly with payload mass, while it is almost flat in arm length and target (Fig.~\ref{fig:scatter}), which is the dependence the non-learned rule also finds.
+
+\textbf{v4 (smaller residual range) is essentially a constant.} A single pooled constant, the median final gains of the v4 PPO policy over the validation scenarios of all three regimes ($K_p\approx19.5$, $K_i=0$, $K_d\approx1.2$), improves on the original constant by $\SensVFourStaticPpoDistilledPooledBestConstantMed$, $\SensVFourChangesPpoDistilledPooledBestConstantMed$ and $\SensVFourOodPpoDistilledPooledBestConstantMed$ (static, changes, ood) and the policy itself by $\SensVFourStaticPpoBestConstantMed$, $\SensVFourChangesPpoBestConstantMed$ and $\SensVFourOodPpoBestConstantMed$. The v4 policy is \emph{not better} than the extended-search constant ($\SensVFourStaticPpoBestConstantExtMed$ static, $\SensVFourOodPpoBestConstantExtMed$ out of distribution, intervals including zero) and is \emph{worse} when payload and target change ($\SensVFourChangesPpoBestConstantExtMed$ [$\SensVFourChangesPpoBestConstantExtLo$, $\SensVFourChangesPpoBestConstantExtHi$]); in that regime it is also worse than the non-learned scenario rule ($\SensVFourChangesPpoScenarioFitMed$). Its small advantage over its own pooled constant ($\SensVFourStaticPpoPpoDistilledPooledMed$ static, $\SensVFourChangesPpoPpoDistilledPooledMed$ with changes) is the only trace of adaptation.
+
+\input{../generated/tab_sensitivity.tex}
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{fig_sens.pdf}
+\caption{Simulation, post hoc, fresh seeds 80000--80099, feasible scenarios: paired median return difference with $95\,\%$ bootstrap interval of each stronger baseline and of the learned policy to the original best constant (filled markers), and of the policy to the extended-search constant (open circle). All baselines were derived on validation seeds only.}
+\label{fig:sens}\end{figure*}
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{fig_gain_scatter_kp.pdf}
+\caption{Simulation, post hoc, seeds 80000--80099, feasible scenarios: final $K_p$ of the validation-selected v3 PPO policy against payload mass, arm length, gravity flag and target, per regime (rows). Dashed line: the original best constant of that regime. The $K_d$ version is in the supplement (\texttt{fig\_gain\_scatter\_kd}).}
+\label{fig:scatter}\end{figure*}

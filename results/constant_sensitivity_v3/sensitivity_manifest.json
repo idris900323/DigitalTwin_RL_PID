@@ -1,0 +1,31 @@
+{
+  "args": {
+    "n": 100,
+    "n_val": 40,
+    "nm_evals": 100,
+    "policy_dir": "ppo_v3",
+    "random_candidates": 150,
+    "test_seed0": 60000,
+    "which": "selected"
+  },
+  "commit": "88c66ea3a4ca5e063e41d2b73d166896a744369e",
+  "config_sha256": "69c6859d774e0d84dd65c29989cce8fa962b92f6b75ea9f91304b6c9e081a4ff",
+  "files_sha256": {
+    "constants.json": "2f36d7a4cf73181bf118fa12696b28fa8ab05ad7cdbe1f95558b4d320d157e18",
+    "per_episode.csv": "8a064cdcd97d139eed4e071c78cec373be0bafdedd1689d406dbecd02d93402c",
+    "summary.md": "bfa601cf31abbd54add9e288689b21ec52614cb43e820a9201587b321e13ede2"
+  },
+  "script": "simulation/constant_sensitivity.py",
+  "seeds": [
+    40000,
+    60000,
+    60099
+  ],
+  "software": {
+    "numpy": "2.4.2",
+    "platform": "Windows AMD64",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}

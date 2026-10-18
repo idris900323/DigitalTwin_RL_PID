@@ -1,0 +1,31 @@
+{
+  "args": {
+    "kd_max": 4.0,
+    "n": 100,
+    "n_val": 40,
+    "nm_evals": 100,
+    "policy_dir": "ppo_v3",
+    "random_candidates": 150,
+    "test_seed0": 90000,
+    "which": "selected"
+  },
+  "commit": "7bcea76a806675119f390c1ce63d70ba97ad2b47",
+  "config_sha256": "69c6859d774e0d84dd65c29989cce8fa962b92f6b75ea9f91304b6c9e081a4ff",
+  "files_sha256": {
+    "constants.json": "4c50bcd9a9aa2116f4cab3ed7f49e9265662a79abb41552a6b2b8811bd87d138",
+    "per_episode.csv": "c6645dc5f85e9d69688aeedbc1ecb06917576e0bafff472c12d86b60e45bf19a",
+    "summary.md": "d17da68c7b31c3227344c7af28705b77ba99e7704689fe13d8bfe816603c19f4"
+  },
+  "script": "simulation/kd_bound_check.py",
+  "seeds": [
+    40000,
+    90000
+  ],
+  "software": {
+    "numpy": "2.4.2",
+    "platform": "Windows AMD64",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}

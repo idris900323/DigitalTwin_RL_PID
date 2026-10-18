@@ -1,0 +1,24 @@
+{
+  "best_constant": [
+    18.936237143589413,
+    0.011285805844833744,
+    1.3165664262384769
+  ],
+  "best_constant_ext": [
+    28.53843978185484,
+    0.0,
+    2.0
+  ],
+  "best_constant_ext_kd4": [
+    28.53843978185484,
+    0.0,
+    2.0
+  ],
+  "val_return_original": -8.098964797467621,
+  "val_return_ext": -7.614179210405091,
+  "val_return_ext_kd4": -7.614179210405091,
+  "evaluations_kd4": 250,
+  "ppo_selected": "ppo_s1",
+  "val_return_ppo": -7.48857024222289,
+  "kd_max": 4.0
+}

@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\small
+\caption{RL experiments: settings that differ between versions. Common: Stable-Baselines3 PPO, decision every 20\,ms over a 2\,s episode, 16-dimensional observation, reward weights from the YAML (error 1.0, effort 0.02, chatter 0.5, gain change 0.02, overshoot 2.0).}
+\label{tab:hparams}
+\begin{tabular}{llll}
+\toprule
+ & v2 & v3 & v4\\
+\midrule
+Action space & multiplicative, $\pm10\,\%$ / decision & residual, $\times2^{a}$ (Ki: $+20a$) & residual, $\times1.5^{a}$ (Ki: $+10a$)\\
+Decisions per seed & 150000 & 400000 & 200000\\
+Seeds & 5 & 3 & 3\\
+Learning rate (PPO) & 0.0003 & 0.0001 & 0.0001\\
+PPO log-std init & default (0) & -1.0 & -1.0\\
+Training reward extra term & none & time outside 2\,\% band ($w=1$) & same as v3\\
+Checkpoint used & best on training-eval seeds & best on validation seeds 40000+ & best on validation seeds 40000+\\
+Net architecture & 64--64 & 64--64 & 64--64\\
+\bottomrule
+\end{tabular}
+\end{table}
