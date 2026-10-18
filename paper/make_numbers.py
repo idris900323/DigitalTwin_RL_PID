@@ -75,6 +75,11 @@ def main() -> int:
                 add(f"{pre}{R}Gain{gname}Plo", float(np.percentile(g, 10)), src, "{:.2f}")
                 add(f"{pre}{R}Gain{gname}Phi", float(np.percentile(g, 90)), src, "{:.2f}")
                 add(f"{pre}{R}Gain{gname}Base", b, src, "{:.2f}")
+    c3 = Comparison("v3_conf")
+    for reg, R in REG.items():
+        bs = c3.summary(reg, "bandit")
+        add(f"ConfThree{R}BanditMed", bs["med"], "results/controller_comparison_v3_fresh/per_episode.csv", sgn(bs["med"]))
+        add(f"ConfThree{R}BanditMean", bs["mean"], "results/controller_comparison_v3_fresh/per_episode.csv", sgn(bs["mean"]))
     # v2 specifics: bandit versus best constant, and where the v2 PPO gains ended up
     c2 = Comparison("v2")
     for reg, R in REG.items():

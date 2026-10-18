@@ -4,8 +4,8 @@
 #   make -C paper pdf          # also builds the manuscript when a LaTeX toolchain is installed (not available on the drafting machine)
 PYTHON ?= python
 
-.PHONY: all numbers tables figures pdf clean
-all: numbers tables figures
+.PHONY: all numbers tables figures sensitivity pdf clean
+all: numbers tables figures sensitivity
 
 numbers:
 	$(PYTHON) make_numbers.py
@@ -15,6 +15,9 @@ tables: numbers
 
 figures: numbers
 	$(PYTHON) figures.py
+
+sensitivity: figures
+	$(PYTHON) sensitivity.py
 
 pdf: all
 	cd manuscript && latexmk -pdf main.tex

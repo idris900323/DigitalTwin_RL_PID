@@ -2,7 +2,7 @@ claim,section,figure_or_table,script,data_files,status
 Unconstrained multiplicative PPO (v2) is worse than the validation-tuned constant in the primary test,Results 6.1,Table v2; macros VTwo*,paper/make_numbers.py,results/controller_comparison/per_episode.csv,mapped
 v2 training is unstable (peak 60k-120k then degradation),Results 6.1,Fig curves; Table v2,paper/figures.py;paper/tables.py,rl/policies/ppo_v2/seed_*/evaluations.npz,mapped
 v2 final gains pile up at the bounds,Results 6.1,Table v2,paper/make_numbers.py,results/controller_comparison/per_episode.csv,mapped
-Residual PPO (v3) beats the best constant by about 0.5-0.6 median return (static/changes/ood) on fresh seeds 60000+,Results 6.2; Abstract; Conclusion,Table main_conf; Fig paired,paper/make_numbers.py;paper/tables.py;paper/figures.py,results/controller_comparison_v3_fresh/per_episode.csv,mapped; REVISE after post-hoc constant check
+Residual PPO (v3) beats the best constant by about 0.5-0.6 median return (static/changes/ood) on fresh seeds 60000+,Results 6.2; Abstract; Conclusion,Table main_conf; Fig paired,paper/make_numbers.py;paper/tables.py;paper/figures.py,results/controller_comparison_v3_fresh/per_episode.csv,mapped; secondary result after the post-hoc check
 All three v3 seeds beat the constant in the median in every regime; seed 2 in changes is inconclusive after Holm,Results 6.2,Table main_conf,paper/make_numbers.py,results/controller_comparison_v3_fresh/per_episode.csv,mapped
 v3 exploratory set agrees,Results 6.2,Table main_expl,paper/tables.py,results/controller_comparison_v3/per_episode.csv,mapped
 Success-rate gain is not stable across seed sets (descriptive only),Results 6.2,macros ConfThree*Succ; ExplThree*Succ,paper/make_numbers.py,results/controller_comparison_v3*/per_episode.csv,mapped
@@ -12,6 +12,9 @@ v4 PPO: static and ood positive for 2 of 3 seeds; changes inconclusive,Results 6
 SAC is mixed (CI excludes zero; Wilcoxon not significant; mean ~0; IQR spans zero),Results 6.5,Table v4,paper/make_numbers.py;paper/tables.py,results/controller_comparison_v4_sac/per_episode.csv,mapped
 TD3 does not beat the constant,Results 6.5,Table v4,paper/tables.py,results/controller_comparison_v4_td3/per_episode.csv,mapped
 Learned policies end at nearly constant gains,Results 6.6,macros *Gain*,paper/make_numbers.py,results/controller_comparison_v3_fresh/per_episode.csv; results/controller_comparison_v4_ppo/per_episode.csv,mapped
-Post-hoc: a better constant does / does not explain the benefit,Results 6.6; Discussion; Abstract,TBD,simulation/constant_sensitivity.py,results/constant_sensitivity_v3/,PENDING (job running)
-The bandit improves the mean but not the median over the best constant in static,Discussion (to add),Table main_conf,paper/tables.py,results/controller_comparison_v3_fresh/per_episode.csv,mapped; not yet in text
+A much larger validation search for the constant recovers most of the residual-PPO gain (fresh seeds 80000+),Results 6.6; Abstract; Discussion,Table sensitivity; Fig sens,paper/sensitivity.py,results/constant_sensitivity_v3_80k/per_episode.csv,mapped
+A non-learned scenario-conditioned rule matches the policy (intervals include zero),Results 6.6; Abstract,Table sensitivity; Fig sens,paper/sensitivity.py,results/constant_sensitivity_v3_80k/per_episode.csv,mapped
+v4 PPO is essentially a constant; not better than the extended constant; worse with changes,Results 6.6,Table sensitivity,paper/sensitivity.py,results/constant_sensitivity_v4_80k/per_episode.csv,mapped
+The policy tracks gravity load (Kp higher when gravity acts),Results 6.6; Discussion,Fig gain_scatter,paper/sensitivity.py,results/constant_sensitivity_v3_80k/per_episode.csv,mapped
+The bandit improves the mean but not the median over the best constant in static,Discussion,Table main_conf; macros ConfThree*Bandit*,paper/make_numbers.py,results/controller_comparison_v3_fresh/per_episode.csv,mapped
 Everything is simulation on an unvalidated twin,all,--,--,--,standing statement (no data)

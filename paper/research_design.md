@@ -5,10 +5,8 @@ Scope decision: simulation only for now; hardware experiments are not run (motor
 ## Question
 Does a reinforcement-learning policy improve the position PID gains of a geared DC-motor joint beyond a validation-tuned constant gain set, on an open, datasheet-derived (unvalidated) digital twin, and by how much of what a scenario-aware oracle could achieve?
 
-## Central claim (the only RL claim the evidence supports)
-In simulation on the unvalidated twin, a PPO policy acting as a residual on a validation-tuned constant beats that constant by about 0.5-0.6 median return (roughly 6-10 % of |return|), across seeds and on fresh seeds 60000+ (static +0.61, changes +0.58, ood +0.45). It is not "RL tunes PID well": PPO captures only part of the oracle headroom (seed-average 44 % / 10 % / 31 % in static / changes / ood).
-
-**Open threat to this claim (post-hoc check running):** the learned policies end at nearly constant gains, so the benefit may come from a better constant than the baseline search found rather than from adaptation. `simulation/constant_sensitivity.py` adds two validation-derived constants. The claim and the abstract are to be revised according to its result.
+## Central claim (revised after the post-hoc sensitivity result; headline = evaluation protocol)
+How much of an apparent RL gain survives a properly tuned constant baseline? On the unvalidated twin, a residual PPO around a validation-tuned constant beats that constant by about 0.5-0.6 median return (confirmatory seeds 60000+: static +0.61, changes +0.58, ood +0.45; fresh seeds 80000+: +0.49, +0.60, +0.46). But a much larger validation search for the constant alone recovers most of it (+0.39, +0.67, +0.33), and a non-learned scenario-conditioned rule matches the policy (policy minus rule: -0.04, -0.10, -0.04 with intervals including zero). The policy's remaining advantage over the stronger constant is at most +0.10 (static) and absent when payload and target change. The residual-RL result is secondary. The supported contribution is the evaluation protocol and the evidence that it matters.
 
 ## Hypotheses and rules (as applied; not formally pre-registered, see decision_log.md)
 - Primary metric: episode return (default reward). Success rate: descriptive only.

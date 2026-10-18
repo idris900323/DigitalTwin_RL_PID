@@ -1,4 +1,14 @@
 {
+ "ConfThreeChangesBanditMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+1.19",
+  "value": 1.1862025301204817
+ },
+ "ConfThreeChangesBanditMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.17",
+  "value": 0.17231999999999914
+ },
  "ConfThreeChangesCap": {
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
   "tex": "24",
@@ -193,6 +203,16 @@
   "source": "results/controller_comparison_v3_fresh/comparison_manifest.json",
   "tex": "72c1219963",
   "value": "72c1219963"
+ },
+ "ConfThreeOodBanditMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.45",
+  "value": 0.4547727472527474
+ },
+ "ConfThreeOodBanditMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "$-$0.05",
+  "value": -0.04889999999999972
  },
  "ConfThreeOodCap": {
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
@@ -398,6 +418,16 @@
   "source": "rl/policies/ppo_v3/seed_2/val_curve.json",
   "tex": "30",
   "value": 30
+ },
+ "ConfThreeStaticBanditMean": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "+0.69",
+  "value": 0.6923507692307692
+ },
+ "ConfThreeStaticBanditMed": {
+  "source": "results/controller_comparison_v3_fresh/per_episode.csv",
+  "tex": "$-$0.09",
+  "value": -0.08849000000000018
  },
  "ConfThreeStaticCap": {
   "source": "results/controller_comparison_v3_fresh/per_episode.csv",
@@ -1001,8 +1031,8 @@
  },
  "PaperCommit": {
   "source": "git rev-parse HEAD",
-  "tex": "90717d262e",
-  "value": "90717d262e"
+  "tex": "dae93216ae",
+  "value": "dae93216ae"
  },
  "VFourPpoChangesCap": {
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",

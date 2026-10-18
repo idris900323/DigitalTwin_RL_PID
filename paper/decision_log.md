@@ -10,8 +10,14 @@ The RL experiments were **not pre-registered** before they were run. This log re
 | v3 on seeds 50000-50099 | Run once; labelled exploratory. | Exploratory. |
 | v3 on seeds 60000-60099 | Run once, nothing trained or selected on them. | **Confirmatory** for v3. |
 | v4 design | Smaller residual range (span 1.5, Ki offset 10), 200k decisions, PPO, SAC and TD3, 3 seeds each. Fixed before looking at the 60000+ results for v4 purposes; run once on seeds 70000-70099. | **Confirmatory** for v4 (a separate experiment). |
-| Post-hoc constant-sensitivity analysis | Added **after** the confirmatory runs because the learned policies end at nearly constant gains (median PPO gains vary little across scenarios, `paper/gain_spread` in `make_numbers.py` outputs). Two extra constants derived on validation seeds only: an extended-search best constant and the PPO policy's median gains on the validation scenarios. Evaluated once on the test seeds. | POST HOC, labelled as such wherever reported. |
+| Post-hoc constant-sensitivity analysis | Added **after** the confirmatory runs because the learned policies end at nearly constant gains (median PPO gains vary little across scenarios, the `*Gain*` macros in `paper/generated/numbers.tex`). Two extra constants derived on validation seeds only: an extended-search best constant and the PPO policy's median gains on the validation scenarios. Evaluated once on the test seeds. | POST HOC, labelled as such wherever reported. |
 
 Rules kept throughout: nothing was re-tuned on seeds 50000+, 60000+ or 70000+; every run is in `experiment_ledger.csv`; negative results are reported (v2 failure and instability, TD3, SAC mixed, no helpful policy in `changes` for v4).
 
 Known departures from the paper-preparation prompt: no formal pre-registration file for the RL runs (this log instead); no hardware data (scope decision: simulation only, hardware sections are a replication plan); the related-work search is incomplete (see `literature_log.md`).
+
+## Update (after the first paper draft)
+
+- A first post-hoc look (seeds 60000-60099; constants derived on validation seeds only) found that a much larger validation search for the constant already recovers most of the residual-PPO gain (extended constant: static +0.48, changes +0.60, ood +0.21 median return over the original best constant, against PPO +0.61, +0.58, +0.45). This changed the decision: the paper is framed around the evaluation protocol (how much of an apparent RL gain survives a properly tuned constant), with the residual-RL result as a secondary result; the final title waits for the sensitivity result.
+- Because seeds 60000+ had already been used for the v3 confirmatory comparison, the full post-hoc analysis (extended constant, policy-distilled constants, a non-learned scenario-conditioned baseline, gain scatter) is run once on a fresh seed range, 80000-80099 (ledger L12, L13). Related work is extended only after the claims are final; more seeds are added only if the residual claim survives the check.
+

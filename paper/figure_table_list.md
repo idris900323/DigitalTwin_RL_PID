@@ -19,9 +19,14 @@ Regenerate everything: `make -C paper all` (numbers -> tables -> figures). Every
 | Table seedsets, Table baselines (manual) | Seed-set roles; information and tuning budget of each method | `sections/appendix_supplement.tex` | decision log, comparison script | 5, supplement |
 | Numbers | ~620 macros (every number in the text) with source file | `paper/make_numbers.py` | `results/`, `rl/policies/` | all |
 
+## Added after the post-hoc sensitivity result
+| ID | Content | Script | Data |
+|---|---|---|---|
+| Fig. sens | Paired median differences (CI) of the extended-search constant, the policy's median gains, the non-learned scenario rule and the policy to the original best constant; and policy minus extended constant. Fresh seeds 80000+ | `paper/sensitivity.py` | `results/constant_sensitivity_v3_80k/per_episode.csv` |
+| Fig. gain_scatter (Kp; Kd in the supplement) | Final gains of the v3 policy against mass, length, gravity, target, per regime | `paper/sensitivity.py` | same |
+| Table sensitivity | A minus B paired differences (median [CI], mean, IQR, p) for v3 and v4 sets, per regime | `paper/sensitivity.py` | `results/constant_sensitivity_{v3,v4}_80k/per_episode.csv` |
+
 ## Not yet made (candidates, add or drop with you)
-- Post-hoc constant-sensitivity figure/table (pending run): paired differences of `best_constant_ext` and `ppo_distilled` to the original constant next to the residual PPO.
-- Gain-spread figure: distribution of the policies' final gains against the best constant per regime.
 - Per-context breakdown (no payload / payload no gravity / payload + gravity) of the paired differences.
 - Twin figures (block diagram, fixed-PID test sequence, datasheet inconsistency, sensitivity, motor zoo): available from the project results; only needed if the paper's scope includes the twin and tuning pipeline contributions (decision needed).
 - Hardware figures (rig, identification, validation): none; no hardware data.

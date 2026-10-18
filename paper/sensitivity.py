@@ -116,7 +116,7 @@ def main() -> int:
         ax.axhline(0, color="black", lw=0.8)
         ax.set_xticks(range(3), REGIMES)
         ax.set_ylabel("paired median $\\Delta$ return")
-        ax.legend(frameon=False, fontsize=6, ncol=2)
+        ax.legend(frameon=False, fontsize=6, ncol=3, loc="upper center", bbox_to_anchor=(0.5, -0.12))
         save(fig, "fig_sens", [f"results/{SETS['v3'][0]}/per_episode.csv"])
         # --- figure: do the policy's gains track the load?
         for gname, gi in (("Kp", "Kp"), ("Kd", "Kd")):
