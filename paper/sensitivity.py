@@ -47,7 +47,7 @@ def diff(by, reg, A, B):
 
 
 def main() -> int:
-    macros, lines = {}, []
+    macros = {}
     tex = [r"\begin{table*}[t]", r"\centering", r"\small",
            r"\caption{\textbf{Post hoc.} Stronger baselines derived on validation seeds only and evaluated once on fresh seeds 80000--80099 (feasible scenarios). "
            r"Paired return difference A$-$B: median [95\,\% CI], mean, IQR; unadjusted Wilcoxon $p$. Constants: ``extended'' = much larger validation search; ``policy's median gains'' = "
