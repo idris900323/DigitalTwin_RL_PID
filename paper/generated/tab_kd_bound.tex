@@ -1,0 +1,32 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{\textbf{Post hoc, supplement.} Kd-bound check: the extended-constant search repeated with the $K_d$ upper bound raised from $2$ to $4$ (constants only; the policy keeps its training environment), constants derived on validation seeds, evaluated once on fresh seeds 90000--90099, feasible scenarios. Paired return difference A$-$B: median [95\,\% CI], mean, IQR; unadjusted Wilcoxon $p$.}
+\label{tab:kdbound}
+\begin{tabular}{llrrrr}
+\toprule
+Regime (constants) & A $-$ B & $\Delta$ median [95\,\% CI] & $\Delta$ mean & IQR of $\Delta$ & $p$\\
+\midrule
+static (Kp 28.5, Kd 2.00) & extended constant (Kd $\le2$) $-$ original constant & +0.46 [+0.36, +0.69] & +0.70 & [+0.10, +0.97] & 1.6e-13\\
+ & extended constant (Kd $\le4$) $-$ original constant & +0.46 [+0.36, +0.69] & +0.70 & [+0.10, +0.97] & 1.6e-13\\
+ & extended constant (Kd $\le4$) $-$ extended constant (Kd $\le2$) & +0.00 [+0.00, +0.00] & +0.00 & [+0.00, +0.00] & nan\\
+ & policy $-$ original constant & +0.56 [+0.41, +0.85] & +0.86 & [+0.13, +1.28] & 1.3e-14\\
+ & policy $-$ extended constant (Kd $\le2$) & +0.10 [+0.07, +0.14] & +0.16 & [+0.03, +0.23] & 7.3e-12\\
+ & policy $-$ extended constant (Kd $\le4$) & +0.10 [+0.07, +0.14] & +0.16 & [+0.03, +0.23] & 7.3e-12\\
+\midrule
+changes (Kp 44.5, Kd 2.16) & extended constant (Kd $\le2$) $-$ original constant & +0.90 [+0.69, +1.15] & +1.99 & [+0.04, +1.75] & 3.4e-11\\
+ & extended constant (Kd $\le4$) $-$ original constant & +0.95 [+0.70, +1.23] & +2.24 & [$-$0.01, +1.88] & 6.3e-10\\
+ & extended constant (Kd $\le4$) $-$ extended constant (Kd $\le2$) & +0.04 [$-$0.01, +0.09] & +0.25 & [$-$0.09, +0.14] & 0.015\\
+ & policy $-$ original constant & +0.70 [+0.43, +1.09] & +2.29 & [$-$0.24, +2.42] & 9.7e-08\\
+ & policy $-$ extended constant (Kd $\le2$) & $-$0.09 [$-$0.30, +0.15] & +0.30 & [$-$0.63, +0.60] & 0.87\\
+ & policy $-$ extended constant (Kd $\le4$) & $-$0.12 [$-$0.28, +0.19] & +0.05 & [$-$0.58, +0.53] & 0.81\\
+\midrule
+ood (Kp 24.3, Kd 1.76) & extended constant (Kd $\le2$) $-$ original constant & +0.33 [+0.11, +0.90] & +1.03 & [+0.01, +1.52] & 3.6e-10\\
+ & extended constant (Kd $\le4$) $-$ original constant & +0.40 [+0.19, +0.84] & +0.91 & [+0.11, +1.27] & 3.9e-16\\
+ & extended constant (Kd $\le4$) $-$ extended constant (Kd $\le2$) & +0.04 [$-$0.09, +0.08] & $-$0.12 & [$-$0.26, +0.11] & 0.04\\
+ & policy $-$ original constant & +0.43 [+0.27, +0.99] & +1.05 & [+0.06, +1.56] & 2.3e-13\\
+ & policy $-$ extended constant (Kd $\le2$) & +0.05 [+0.03, +0.08] & +0.03 & [$-$0.02, +0.15] & 0.0039\\
+ & policy $-$ extended constant (Kd $\le4$) & +0.08 [+0.00, +0.14] & +0.15 & [$-$0.09, +0.28] & 0.00018\\
+\bottomrule
+\end{tabular}
+\end{table*}

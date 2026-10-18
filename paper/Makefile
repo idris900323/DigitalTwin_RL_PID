@@ -18,6 +18,7 @@ figures: numbers
 
 sensitivity: figures
 	$(PYTHON) sensitivity.py
+	$(PYTHON) kd_bound.py
 
 pdf: all
 	cd manuscript && latexmk -pdf main.tex

@@ -1031,8 +1031,8 @@
  },
  "PaperCommit": {
   "source": "git rev-parse HEAD",
-  "tex": "dae93216ae",
-  "value": "dae93216ae"
+  "tex": "7bcea76a80",
+  "value": "7bcea76a80"
  },
  "VFourPpoChangesCap": {
   "source": "results/controller_comparison_v4_ppo/per_episode.csv",

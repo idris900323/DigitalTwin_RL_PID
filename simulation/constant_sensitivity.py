@@ -46,10 +46,10 @@ CACHE_DIR = ROOT / "results" / "constant_sensitivity"
 
 
 # ------------------------------------------------------------------ constants
-def ext_constant(regime: str, n_val: int, n_rand: int, nm_evals: int, start: np.ndarray, seed: int = 99):
+def ext_constant(regime: str, n_val: int, n_rand: int, nm_evals: int, start: np.ndarray, seed: int = 99, overrides: dict | None = None):
     from scipy.optimize import minimize
 
-    env = make_env(regime)
+    env = make_env(regime, overrides)
     vseeds = [VAL_SEED0 + i for i in range(n_val)]
     lo = np.array([env.lo[0], 0.0, env.lo[2]])
     cache = {}

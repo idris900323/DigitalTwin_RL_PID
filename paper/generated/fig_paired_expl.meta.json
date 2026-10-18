@@ -2,6 +2,6 @@
  "data_files": [
   "results/controller_comparison_v3/per_episode.csv"
  ],
- "commit": "dae93216ae0e36214a2a5f03b07512c083b3c425",
+ "commit": "7bcea76a806675119f390c1ce63d70ba97ad2b47",
  "script": "paper/figures.py"
 }

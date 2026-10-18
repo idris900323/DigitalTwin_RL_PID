@@ -1,0 +1,10 @@
+{
+ "policy_dir": "ppo_v3",
+ "which": "selected",
+ "test_seed0": 90000,
+ "n": 100,
+ "n_val": 40,
+ "random_candidates": 150,
+ "nm_evals": 100,
+ "kd_max": 4.0
+}

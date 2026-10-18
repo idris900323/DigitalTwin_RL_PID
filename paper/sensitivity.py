@@ -16,7 +16,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 from analysis import GEN, REGIMES, RESULTS, STYLE, bootstrap_ci, wilcoxon_p  # noqa: E402
-from figures import COL1, COL2, save  # noqa: E402
+from figures import COL2, save  # noqa: E402
 
 SETS = {"v3": ("constant_sensitivity_v3_80k", "SensVThree"), "v4": ("constant_sensitivity_v4_80k", "SensVFour")}
 PAIRS = [("best_constant_ext", "best_constant"), ("ppo_distilled", "best_constant"), ("scenario_fit", "best_constant"), ("ppo", "best_constant"),
@@ -79,6 +79,9 @@ def main() -> int:
                 tex.append(f"{(key + ' / ' + reg) if first else ''} & {lab} & {f'{np.median(dd):+.2f} [{lo:+.2f}, {hi:+.2f}]'.replace('-', '$-$')} & "
                            f"{f'{dd.mean():+.2f}'.replace('-', '$-$')} & {f'[{q1:+.2f}, {q3:+.2f}]'.replace('-', '$-$')} & {p:.2g}\\\\")
                 first = False
+            f = np.array([float(r["margin"]) >= 1.0 for r in by[reg]["best_constant"]])
+            ext_ret = np.array([float(r["ret"]) for r in by[reg]["best_constant_ext"]])[f].mean()
+            macros[f"{pre}{R}PpoExtPct"] = f"{100 * np.median(diff(by, reg, 'ppo', 'best_constant_ext')) / abs(ext_ret):.1f}".replace("-", "$-$")
             c = consts[reg]
             macros[f"{pre}{R}ExtKp"] = f"{c['best_constant_ext'][0]:.1f}"
             macros[f"{pre}{R}ExtKd"] = f"{c['best_constant_ext'][2]:.2f}"
