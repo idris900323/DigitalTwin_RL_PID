@@ -1,6 +1,7 @@
 {
   "args": {
     "const_candidates": 48,
+    "label": "confirmatory",
     "n": 100,
     "n_val": 40,
     "oracle_candidates": 48,
@@ -17,7 +18,7 @@
   "files_sha256": {
     "per_episode.csv": "9f448d93e3d8f6a46ce6330194fe6462b31161c628f935f70c2317fda301191c",
     "selection.json": "48ee69b775fc266dcf6bf4b34ea6de8b3fd77a5ae49c2c0d37fcde0386a7200d",
-    "summary.md": "7d9c86ad0e05db35774efcf8a943678a6b03c9450cc32b22e25f941b2aa2822f"
+    "summary.md": "00156623398ef5322bfebf38fc5858908db35da88dd38ec1a9ad5f366c709104"
   },
   "policy_sha256": {
     "sac_s0/selected_model.zip": "5a929b5ef6ba0aaa853d5e9ea23d2ea107c1849199da1f2036c08c32b15af175",

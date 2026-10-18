@@ -1,6 +1,7 @@
 {
   "args": {
     "const_candidates": 48,
+    "label": "exploratory",
     "n": 100,
     "n_val": 40,
     "oracle_candidates": 48,
@@ -17,7 +18,7 @@
   "files_sha256": {
     "per_episode.csv": "c65980075a026221152754269bfdae5e1067b2346a5cf5b4e1455cc0d23a9e8d",
     "selection.json": "c8ad62e4ce6424aae5b21b4609efc7c30e49f9558e4bad6e0a255cd4c83331f5",
-    "summary.md": "f1b7e7c60a430d31534287ee63fe60922f293c60d27495cb95820833154de80d"
+    "summary.md": "cb8086856d891d46bc07cfead561984091074ca76307d2ff7b28477f7a49590d"
   },
   "policy_sha256": {
     "ppo_s0/selected_model.zip": "4960551d7d255402a8c2d8282a54f63ee7efdfcc2415da2eeec010fadd8bb817",

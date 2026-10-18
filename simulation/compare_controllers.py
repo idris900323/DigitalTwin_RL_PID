@@ -33,6 +33,7 @@ import csv
 import json
 import math
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -263,6 +264,7 @@ def load_ppo(policy_dir: pathlib.Path, which: str):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Paired comparison of PID strategies (pre-validation).")
+    ap.add_argument("--rerender", default=None, metavar="DIR", help="only re-render DIR/summary.md from its per_episode.csv, selection.json and manifest (no simulation)")
     ap.add_argument("--policy-dir", default=None, help="run folder from rl/train_ppo.py (contains seed_*/)")
     ap.add_argument("--which", default="best", choices=["best", "final", "selected"], help="best = EvalCallback best (training-side eval seeds), selected = chosen on validation seeds by rl/select_checkpoints.py")
     ap.add_argument("--n", type=int, default=150, help="held-out test scenarios per regime")
@@ -276,6 +278,8 @@ def main(argv=None) -> int:
     ap.add_argument("--regimes", nargs="*", default=list(REGIMES))
     ap.add_argument("--out-dir", default=str(ROOT / "results" / "controller_comparison"))
     a = ap.parse_args(argv)
+    if a.rerender:
+        return rerender(a.rerender, None if a.label == "pre-specified" else a.label)
     out = pathlib.Path(a.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     bandit = Bandit()
@@ -344,7 +348,7 @@ def main(argv=None) -> int:
         extra["policy_sha256"] = {f"{n}/{p['file'].name}": rawlog.sha256_file(p["file"]) for n, p in ppo.items()}
         extra["policy_training_software"] = {n: p["meta"].get("software", {}) for n, p in ppo.items()}
     rawlog.write_manifest(out, script="simulation/compare_controllers.py",
-                          args=dict(n=a.n, n_val=a.n_val, which=a.which, oracle_candidates=a.oracle_candidates, const_candidates=a.const_candidates,
+                          args=dict(n=a.n, n_val=a.n_val, which=a.which, oracle_candidates=a.oracle_candidates, const_candidates=a.const_candidates, label=a.label, test_seed0=a.test_seed0,
                                     regimes=a.regimes, policy_dir=pathlib.Path(a.policy_dir).name if a.policy_dir else None),
                           seeds=[vseeds[0], vseeds[-1], seeds[0], seeds[-1]],
                           files=[out / "per_episode.csv", out / "summary.md", out / "selection.json"], extra=extra, name="comparison_manifest.json")
@@ -352,7 +356,10 @@ def main(argv=None) -> int:
     return 0
 
 
-def report(results, seeds, ppo, selection, a) -> str:
+def report(results, seeds, ppo, selection, a, algo: str = "PPO") -> str:
+    def dn(n):
+        return f"{algo.lower()} (selected)" if n == "ppo" else n
+
     L = ["# Controller comparison (PRE-VALIDATION, simulated on the unvalidated twin)", "",
          f"{len(seeds)} held-out paired TEST scenarios per regime (seeds {seeds[0]}..{seeds[-1]}); {a.n_val} VALIDATION scenarios "
          f"(seeds {VAL_SEED0}..{VAL_SEED0 + a.n_val - 1}) were used to choose `best_constant` and the reported PPO seed; neither set was used in training. "
@@ -376,7 +383,9 @@ def report(results, seeds, ppo, selection, a) -> str:
             r = np.array([x["ret"] for x in lst])
             d = r - ref
             lo, hi = bootstrap_ci(d, np.median)
-            tab.append(dict(name=name, lst=lst, r=r, d=d, lo=lo, hi=hi, p=wilcoxon_p(d) if name != "best_constant" else float("nan")))
+            mlo, mhi = bootstrap_ci(d, np.mean)
+            q1, q3 = (float(x) for x in np.percentile(d, [25, 75]))
+            tab.append(dict(name=name, lst=lst, r=r, d=d, lo=lo, hi=hi, mlo=mlo, mhi=mhi, q1=q1, q3=q3, p=wilcoxon_p(d) if name != "best_constant" else float("nan")))
         tables[reg] = (feas, ref, names, tab)
     secondary = [(reg, t) for reg, (_, _, _, tab) in tables.items() for t in tab
                  if t["name"] != "best_constant" and not (reg == PRIMARY["regime"] and t["name"] == "ppo")]
@@ -397,12 +406,13 @@ def report(results, seeds, ppo, selection, a) -> str:
         if reg == "changes":
             L += ["", "Note: in this regime the target and payload change mid-episode, so overshoot, settling and success refer to the final target only; the return is the headline."]
         L += ["", f"Feasible scenarios: {nf} of {len(feas)}; infeasible: {len(feas) - nf}.", "", "### Feasible scenarios (headline)", "",
-              "| controller | return mean ± std | median | Δmedian vs best_constant [95 % CI] | p (Wilcoxon) | p Holm | IAE | overshoot % | settle s | success | at a gain bound | diverged |",
-              "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+              "| controller | return mean ± std | median | Δmedian vs best_constant [95 % CI] | Δmean [95 % CI] | IQR of Δ | p (Wilcoxon) | p Holm | IAE | overshoot % | settle s | success | at a gain bound | diverged |",
+              "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
         for t in tab:
             name, lst, r = t["name"], t["lst"], t["r"]
             tag = " **(primary)**" if (reg == PRIMARY["regime"] and name == "ppo") else ""
-            L.append(f"| {name}{tag} | {r.mean():.3f} ± {r.std():.3f} | {np.median(r):.3f} | {np.median(t['d']):+.3f} [{t['lo']:+.3f}, {t['hi']:+.3f}] | {t['p']:.3g} | "
+            L.append(f"| {dn(name)}{tag} | {r.mean():.3f} ± {r.std():.3f} | {np.median(r):.3f} | {np.median(t['d']):+.3f} [{t['lo']:+.3f}, {t['hi']:+.3f}] | "
+                     f"{t['d'].mean():+.3f} [{t['mlo']:+.3f}, {t['mhi']:+.3f}] | [{t['q1']:+.3f}, {t['q3']:+.3f}] | {t['p']:.3g} | "
                      f"{adj_map.get((reg, name), float('nan')):.3g} | {finite_mean([x['iae'] for x in lst]):.1f} | {finite_mean([x['overshoot'] for x in lst]):.1f} | "
                      f"{finite_mean([x['settle'] for x in lst]):.3f} | {100 * np.mean([x['success'] for x in lst]):.0f} % | "
                      f"{100 * np.mean([x['at_bound'] for x in lst]):.0f} % | {100 * np.mean([x['diverged'] for x in lst]):.0f} % |")
@@ -415,26 +425,33 @@ def report(results, seeds, ppo, selection, a) -> str:
             def cap(n):
                 rr = np.array([x["ret"] for x, f in zip(res[n], feas) if f])
                 return 100 * (rr.mean() - ref.mean()) / (orc.mean() - ref.mean())
-            L += ["Headroom captured (mean PPO gain over best_constant divided by the oracle headroom): selected " + f"{cap('ppo'):.0f} %" + "; per seed " + ", ".join(f"{n} {cap(n):.0f} %" for n in ppo) + ". Success rate is descriptive only; return is the headline."]
+            L += ["Headroom captured (mean gain of the learned policy over best_constant divided by the oracle headroom): selected " + f"{cap('ppo'):.0f} %" + "; per seed " + ", ".join(f"{n} {cap(n):.0f} %" for n in ppo) + ". Success rate is descriptive only; return is the headline."]
         bd = next(t for t in tab if t["name"] == "bandit")
         L += [f"Bandit vs best_constant (return, median difference): {np.median(bd['d']):+.3f} [{bd['lo']:+.3f}, {bd['hi']:+.3f}].", ""]
         if ppo:
             per_seed = [(n, float(np.mean([x["ret"] for x, f in zip(res[n], feas) if f]))) for n in ppo]
             vals = np.array([v for _, v in per_seed])
-            L += ["PPO across training seeds (feasible test scenarios, mean return): " + ", ".join(f"{n} {v:.3f}" for n, v in per_seed)
+            L += [f"{algo} across training seeds (feasible test scenarios, mean return): " + ", ".join(f"{n} {v:.3f}" for n, v in per_seed)
                   + f". Seed mean {vals.mean():.3f}, std {vals.std():.3f}, range [{vals.min():.3f}, {vals.max():.3f}]; best constant {np.mean(ref):.3f}.", ""]
         if (~feas).any():
             L += ["### Infeasible scenarios (reported separately)", "", "| controller | n | return mean | median |", "|---|---|---|---|"]
             for name in names:
                 rr = np.array([x["ret"] for x, f in zip(res[name], feas) if not f])
-                L.append(f"| {name} | {len(rr)} | {rr.mean():.3f} | {np.median(rr):.3f} |")
+                L.append(f"| {dn(name)} | {len(rr)} | {rr.mean():.3f} | {np.median(rr):.3f} |")
             bad = [(seeds[i], res["tuned"][i]["margin"]) for i in range(len(feas)) if not feas[i]]
             L += ["", "Infeasible seeds (min margin): " + ", ".join(f"{s} ({m:.2f})" for s, m in bad[:12]) + ("..." if len(bad) > 12 else ""), ""]
     L += ["## Verdict", ""]
     if primary:
         m, lo, hi, p, n, k = primary
-        word = "BETTER than" if lo > 0 else ("WORSE than" if hi < 0 else "NOT distinguishable from")
-        L += [f"**Primary** (static, feasible, n={k}): validation-selected PPO (`{n}`) is {word} the best constant gains: paired median difference of "
+        if lo > 0 and p < 0.05:
+            word = "BETTER than"
+        elif hi < 0 and p < 0.05:
+            word = "WORSE than"
+        elif lo > 0 or hi < 0:
+            word = f"MIXED against (the median CI excludes zero, direction {'positive' if lo > 0 else 'negative'}, but the Wilcoxon test is not significant)"
+        else:
+            word = "NOT distinguishable from"
+        L += [f"**Primary** (static, feasible, n={k}): validation-selected {algo} (`{n}`) is {word} the best constant gains: paired median difference of "
               f"return {m:+.3f}, 95 % CI [{lo:+.3f}, {hi:+.3f}] (Wilcoxon p = {p:.3g}, single primary test, unadjusted; analysis status: {a.label}).", ""]
     else:
         L += ["No primary comparison was computed (no RL policy supplied, or the `static` regime was not run).", ""]
@@ -443,6 +460,36 @@ def report(results, seeds, ppo, selection, a) -> str:
           + ". The sign of the median difference in the tables gives the direction.", "",
           "Everything above is simulated on the preliminary twin and has not been validated on hardware."]
     return "\n".join(L) + "\n"
+
+
+def rerender(out_dir: str, label: str | None = None) -> int:
+    """Re-render summary.md (and refresh its checksum in the manifest) from per_episode.csv, selection.json and the manifest: no simulation is run.
+    Values come from the CSV (6 significant digits), so bootstrap CIs can differ from the original run in the last digit."""
+    import types
+
+    out = pathlib.Path(out_dir)
+    man = json.loads((out / "comparison_manifest.json").read_text(encoding="utf-8"))
+    selection = json.loads((out / "selection.json").read_text(encoding="utf-8"))
+    args = man["args"]
+    a = types.SimpleNamespace(n_val=args["n_val"], oracle_candidates=args["oracle_candidates"], label=label or args.get("label", "pre-specified"))
+    by = {}
+    for row in csv.DictReader(open(out / "per_episode.csv", encoding="utf-8")):
+        by.setdefault(row["regime"], {}).setdefault(row["controller"], []).append(row)
+    results, seeds = {}, None
+    for reg, ctrls in by.items():
+        results[reg] = {c: [dict(ret=float(r["ret"]), iae=float(r["iae"]), overshoot=float(r["overshoot"]), settle=float(r["settle"]), margin=float(r["margin"]),
+                                 success=bool(int(r["success"])), at_bound=bool(int(r["at_bound"])), diverged=bool(int(r["diverged"]))) for r in rows] for c, rows in ctrls.items()}
+        seeds = seeds or [int(r["seed"]) for r in ctrls["tuned"]]
+    ppo = [c for c in next(iter(results.values())) if re.match(r"^(ppo|sac|td3)_s\d+$", c)]
+    sel = next(iter(selection.values()))["ppo_selected"]
+    algo = sel.split("_s")[0].upper() if sel else "PPO"
+    md = report(results, seeds, ppo, selection, a, algo)
+    (out / "summary.md").write_text(md, encoding="utf-8", newline="\n")
+    man["files_sha256"]["summary.md"] = rawlog.sha256_file(out / "summary.md")
+    man["args"]["label"] = a.label
+    (out / "comparison_manifest.json").write_text(json.dumps(man, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    print(f"re-rendered {out / 'summary.md'} (algorithm label {algo}, status {a.label})")
+    return 0
 
 
 if __name__ == "__main__":
