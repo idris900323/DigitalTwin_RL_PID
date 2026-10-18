@@ -1,0 +1,70 @@
+{
+  "algo": "ppo",
+  "seed": 1,
+  "pre_validation_prototype": true,
+  "hyperparameters": {
+    "policy": "MlpPolicy",
+    "net_arch": [
+      64,
+      64
+    ],
+    "learning_rate": 0.0001,
+    "n_steps": 2048,
+    "batch_size": 256,
+    "n_epochs": 10,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.0,
+    "log_std_init": -1.0
+  },
+  "common": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "total_timesteps": 200000,
+    "eval_freq": 10000,
+    "n_eval_episodes": 30,
+    "save_checkpoints": true,
+    "env": {
+      "action_mode": "residual",
+      "n_stack": 1,
+      "change_prob": {
+        "payload": 0.3,
+        "target": 0.3
+      },
+      "rl_env_overrides": {
+        "reward": {
+          "w_band": 1.0
+        },
+        "residual": {
+          "span": 1.5,
+          "ki_add": 10.0
+        }
+      }
+    }
+  },
+  "total_timesteps": 200000,
+  "runtime_s": 1164.4,
+  "commit": "72c121996335ffdd860f6453e948a13684a9b38f",
+  "config_sha256": "69c6859d774e0d84dd65c29989cce8fa962b92f6b75ea9f91304b6c9e081a4ff",
+  "software": {
+    "python": "3.12.10",
+    "numpy": "2.4.2",
+    "torch": "2.14.1+cpu",
+    "stable_baselines3": "2.9.0",
+    "platform": "Windows AMD64"
+  },
+  "policy_files_sha256": {
+    "best_model.zip": "a46c9f222e859fb9635bd9ca34927426c214df2991b33f7dbcbdeb131f1ec001",
+    "final_model.zip": "51b8729c187a5321b90232b186f0336050e7d0ed8368cec04e9fbe70d02ea318",
+    "selected_model.zip": "ae4436d4adf27b51dccf92b7ae6701b2cdfc054cab18ccd4a02bc30a67750ace"
+  },
+  "selected_checkpoint": {
+    "step": 20000,
+    "sha256": "ae4436d4adf27b51dccf92b7ae6701b2cdfc054cab18ccd4a02bc30a67750ace",
+    "val_mean": -12.458973164759163
+  }
+}

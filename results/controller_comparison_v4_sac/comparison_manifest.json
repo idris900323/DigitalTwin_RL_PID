@@ -1,0 +1,120 @@
+{
+  "args": {
+    "const_candidates": 48,
+    "n": 100,
+    "n_val": 40,
+    "oracle_candidates": 48,
+    "policy_dir": "sac_v4",
+    "regimes": [
+      "static",
+      "changes",
+      "ood"
+    ],
+    "which": "selected"
+  },
+  "commit": "50313602cff2ff2c39cf030a51aa1f0657000486",
+  "config_sha256": "69c6859d774e0d84dd65c29989cce8fa962b92f6b75ea9f91304b6c9e081a4ff",
+  "files_sha256": {
+    "per_episode.csv": "9f448d93e3d8f6a46ce6330194fe6462b31161c628f935f70c2317fda301191c",
+    "selection.json": "48ee69b775fc266dcf6bf4b34ea6de8b3fd77a5ae49c2c0d37fcde0386a7200d",
+    "summary.md": "7d9c86ad0e05db35774efcf8a943678a6b03c9450cc32b22e25f941b2aa2822f"
+  },
+  "policy_sha256": {
+    "sac_s0/selected_model.zip": "5a929b5ef6ba0aaa853d5e9ea23d2ea107c1849199da1f2036c08c32b15af175",
+    "sac_s1/selected_model.zip": "97cab72d1fbdbfefb0891cb7268dcdbb337b03d39e4db2b8e7774ccab8683bbc",
+    "sac_s2/selected_model.zip": "0f2e8cc051e50c51fd50d2849c8badd1cf61519ee1fb1c4b405028ef3d08eb9e"
+  },
+  "policy_training_software": {
+    "sac_s0": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    },
+    "sac_s1": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    },
+    "sac_s2": {
+      "numpy": "2.4.2",
+      "platform": "Windows AMD64",
+      "python": "3.12.10",
+      "stable_baselines3": "2.9.0",
+      "torch": "2.14.1+cpu"
+    }
+  },
+  "primary_comparison": {
+    "a": "ppo",
+    "b": "best_constant",
+    "regime": "static",
+    "statistic": "paired median difference of return",
+    "subset": "feasible"
+  },
+  "rl_software": {
+    "gymnasium": "1.4.0",
+    "stable_baselines3": "2.9.0",
+    "torch": "2.14.1+cpu"
+  },
+  "script": "simulation/compare_controllers.py",
+  "seeds": [
+    40000,
+    40039,
+    70000,
+    70099
+  ],
+  "selection": {
+    "changes": {
+      "best_constant": [
+        29.587870536858457,
+        0.011285805844833744,
+        1.3165664262384769
+      ],
+      "best_constant_val_return": -19.770120194788994,
+      "ppo_selected": "sac_s0",
+      "ppo_val_return": {
+        "sac_s0": -21.67708843471847,
+        "sac_s1": -22.359645381461622,
+        "sac_s2": -22.01395676621365
+      }
+    },
+    "ood": {
+      "best_constant": [
+        23.670296429486765,
+        0.011285805844833744,
+        1.3165664262384769
+      ],
+      "best_constant_val_return": -10.172870240579044,
+      "ppo_selected": "sac_s0",
+      "ppo_val_return": {
+        "sac_s0": -10.031641859415576,
+        "sac_s1": -10.460924496753623,
+        "sac_s2": -10.411744118689537
+      }
+    },
+    "static": {
+      "best_constant": [
+        18.936237143589413,
+        0.011285805844833744,
+        1.3165664262384769
+      ],
+      "best_constant_val_return": -8.098964797467621,
+      "ppo_selected": "sac_s0",
+      "ppo_val_return": {
+        "sac_s0": -7.98857657164171,
+        "sac_s1": -8.345577875993165,
+        "sac_s2": -8.288523578996799
+      }
+    }
+  },
+  "software": {
+    "numpy": "2.4.2",
+    "platform": "Windows AMD64",
+    "python": "3.12.10",
+    "pyyaml": "6.0.1",
+    "scipy": "1.17.1"
+  }
+}

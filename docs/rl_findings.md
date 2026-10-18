@@ -38,6 +38,23 @@ Median return difference of the validation-selected PPO seed to the best constan
 2. The improvement is small against the oracle headroom and has not been checked on hardware or a validated twin.
 3. The v2 failure is best described as an *unconstrained* setup (unbounded-feeling multiplicative walk to the bounds, an under-shaped reward, early-peaking checkpoints chosen on the training stream); v3 changed all of these at once, so this work does not isolate which change mattered.
 
+## v4: smaller residual range, and SAC / TD3 (the next experiment from the review)
+
+Changes against v3 (`rl/ppo_v4.yaml`): residual range halved (Kp, Kd scale by 1.5^a instead of 2^a, Ki offset 10 instead of 20), 200k decisions, 3 seeds each of PPO, SAC and TD3 (learning rate 1e-4, buffers 200k), checkpoints selected on validation seeds 40000+. Evaluated once on seeds 70000-70099 per regime, which were never used for any choice (`results/controller_comparison_v4_{ppo,sac,td3}/`, labelled confirmatory). The summary tables label the validation-selected policy of every algorithm with the row name `ppo` and the text "validation-selected PPO"; for the SAC and TD3 folders read it as the SAC / TD3 seed named in the verdict.
+
+| algorithm | static median difference (selected seed) | per seed s0 / s1 / s2 | changes (selected) | ood (selected) |
+|---|---|---|---|---|
+| PPO | **+0.352 [+0.343, +0.359]** | -0.620 / +0.329 / +0.352 | +0.179 [-0.083, +0.432] (inconclusive) | +0.337 [+0.294, +0.359] |
+| SAC | +0.253 [+0.120, +0.315], Holm p = 0.47 (not significant) | +0.253 / +0.084 / -0.235 | -0.255 [-1.140, -0.063] (worse) | +0.238 |
+| TD3 | -0.170 [-0.285, +0.089] (not distinguishable) | -1.019 / -0.704 / -0.170 | -2.126 (worse) | -0.100 (not distinguishable) |
+
+- **PPO remains the only algorithm that beats the best constant in the median**, in `static` and `ood`, for two of three seeds; seed 0 is worse than the constant in both (-0.62, -0.56). In `changes` the selected seed is inconclusive and seed 0 is clearly worse (-1.20). The halved range gives a smaller gain (about +0.35) than v3's (+0.45 to +0.61); the test seeds differ, so the comparison with v3 is indicative only, and this work does not show that the smaller range is better.
+- **SAC and TD3 did not beat the constant** at this budget and learning rate. Their validation curves peak early (selected checkpoints at 10k-60k decisions) and then degrade by 0.3-2.5 return units (SAC) and 0.9-3.3 (TD3) by the end of training (PPO v4: 0.1-0.7), the same early-peak pattern as v2. They have more seed-to-seed spread than PPO (TD3 seeds range from -1.0 to -0.17 in `static`).
+- **Headroom captured** on 70000+ (selected seed): PPO 27 % / -7 % / 17 % (`static` / `changes` / `ood`); SAC 4 % / -23 % / -2 %; TD3 12 % / -29 % / 11 %. `changes` is the regime where none of them helps, as in v3.
+- **Infeasible scenarios** are tabulated separately in each folder (7, 14 and 7 of 100 in `static`, `changes`, `ood`); the selected policies are not better than the best constant there either.
+
+Still untried: longer training for SAC/TD3 with a lower learning rate or a larger batch, the unconstrained (non-residual) formulation with the v3 reward and checkpoint selection, and a per-regime reference constant.
+
 ## Reproducibility
 
-Policies are committed under `rl/policies/ppo_v2/` and `rl/policies/ppo_v3/` (the repository previously ignored `*.zip`, so the first push of PR #10 did not contain the weights; `rl/policies/**/*.zip` is now un-ignored). The SHA-256 of every weight file is in each seed's `meta.json` (`policy_files_sha256`) and of the loaded files in `comparison_manifest.json`, together with the torch, stable-baselines3 and gymnasium versions. Intermediate checkpoints are not committed; `val_curve.json` keeps the validation curve.
+Policies are committed under `rl/policies/ppo_v2/`, `ppo_v3/`, `ppo_v4/`, `sac_v4/` and `td3_v4/` (the repository previously ignored `*.zip`, so the first push of PR #10 did not contain the weights; `rl/policies/**/*.zip` is now un-ignored). The SHA-256 of every weight file is in each seed's `meta.json` (`policy_files_sha256`) and of the loaded files in `comparison_manifest.json`, together with the torch, stable-baselines3 and gymnasium versions. Intermediate checkpoints are not committed; `val_curve.json` keeps the validation curve.
