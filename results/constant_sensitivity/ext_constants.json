@@ -1,0 +1,32 @@
+{
+  "static": {
+    "gains": [
+      28.53843978185484,
+      0.0,
+      2.0
+    ],
+    "val_return": -7.614179210405091,
+    "evaluations": 245,
+    "original_val_return": -8.098964797467621
+  },
+  "changes": {
+    "gains": [
+      41.815865101114724,
+      0.0,
+      2.0
+    ],
+    "val_return": -19.00169065433332,
+    "evaluations": 233,
+    "original_val_return": -19.770120194788994
+  },
+  "ood": {
+    "gains": [
+      26.080266891442612,
+      0.0,
+      2.0
+    ],
+    "val_return": -9.767242720675238,
+    "evaluations": 249,
+    "original_val_return": -10.172870240579044
+  }
+}
